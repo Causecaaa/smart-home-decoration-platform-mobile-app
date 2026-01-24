@@ -34,7 +34,6 @@
     },
     "popGesture": "close",
     "launchwebview": {
-      "render": "always",
       "id": "1",
       "kernel": "WKWebview"
     },
@@ -45,8 +44,8 @@
     },
     "statusbar": {
       "immersed": "supportedDevice",
-      "style": "dark",
-      "background": "#000000"
+      "style": "light",
+      "background": "#1296db"
     },
     "allowsInlineMediaPlayback": true,
     "distribute": {
@@ -56,6 +55,12 @@
             "description": "Android平台录音支持MP3格式文件"
           }
         }
+      }
+    },
+    "safearea": {
+      "background": "#ffffff",
+      "bottom": {
+        "offset": "auto"
       }
     },
     "uni-app": {
@@ -71,12 +76,62 @@
       "webView": {
         "minUserAgentVersion": "49.0"
       }
+    },
+    "tabBar": {
+      "position": "bottom",
+      "color": "#8a8a8a",
+      "selectedColor": "#1296db",
+      "borderStyle": "rgba(0,0,0,0.4)",
+      "blurEffect": "none",
+      "fontSize": "10px",
+      "iconWidth": "24px",
+      "spacing": "3px",
+      "height": "50px",
+      "list": [
+        {
+          "pagePath": "src/pages/home/home",
+          "text": "首页",
+          "iconPath": "/static/tabbar/home.png",
+          "selectedIconPath": "/static/tabbar/home.png"
+        },
+        {
+          "pagePath": "src/pages/project/project",
+          "text": "项目",
+          "iconPath": "/static/tabbar/project.png",
+          "selectedIconPath": "/static/tabbar/project.png"
+        },
+        {
+          "pagePath": "src/pages/message/message",
+          "text": "消息",
+          "iconPath": "/static/tabbar/message.png",
+          "selectedIconPath": "/static/tabbar/message.png"
+        },
+        {
+          "pagePath": "src/pages/profile/profile",
+          "text": "我的",
+          "iconPath": "/static/tabbar/profile.png",
+          "selectedIconPath": "/static/tabbar/profile.png"
+        }
+      ],
+      "backgroundColor": "#ffffff",
+      "selectedIndex": 0,
+      "shown": true,
+      "child": [
+        "lauchwebview"
+      ],
+      "selected": 0
     }
   },
   "app-harmony": {
     "useragent": {
       "value": "uni-app",
       "concatenate": true
+    },
+    "safearea": {
+      "background": "#ffffff",
+      "bottom": {
+        "offset": "auto"
+      }
     }
   },
   "launch_path": "__uniappview.html"

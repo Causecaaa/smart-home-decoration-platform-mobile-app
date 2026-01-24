@@ -31,6 +31,40 @@ if (uni.restoreGlobal) {
 }
 (function(vue) {
   "use strict";
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
+  const _sfc_main$6 = {
+    name: "HomePage"
+  };
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("text", null, "首页内容")
+    ]);
+  }
+  const SrcPagesHomeHome = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__scopeId", "data-v-0cd09a48"], ["__file", "D:/CODE/mobile-app/src/pages/home/home.vue"]]);
+  const _sfc_main$5 = {
+    name: "ProjectPage"
+  };
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("text", null, "项目页面")
+    ]);
+  }
+  const SrcPagesProjectProject = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__scopeId", "data-v-31440fc0"], ["__file", "D:/CODE/mobile-app/src/pages/project/project.vue"]]);
+  const _sfc_main$4 = { name: "MessagePage" };
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("text", null, "消息页面")
+    ]);
+  }
+  const SrcPagesMessageMessage = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__scopeId", "data-v-3556fc04"], ["__file", "D:/CODE/mobile-app/src/pages/message/message.vue"]]);
+  const ON_SHOW = "onShow";
+  const ON_LAUNCH = "onLaunch";
   function formatAppLog(type, filename, ...args) {
     if (uni.__log__) {
       uni.__log__(type, filename, ...args);
@@ -38,6 +72,19 @@ if (uni.restoreGlobal) {
       console[type].apply(console, [...args, filename]);
     }
   }
+  const createLifeCycleHook = (lifecycle, flag = 0) => (hook, target = vue.getCurrentInstance()) => {
+    !vue.isInSSRComponentSetup && vue.injectHook(lifecycle, hook, target);
+  };
+  const onShow = /* @__PURE__ */ createLifeCycleHook(
+    ON_SHOW,
+    1 | 2
+    /* HookFlags.PAGE */
+  );
+  const onLaunch = /* @__PURE__ */ createLifeCycleHook(
+    ON_LAUNCH,
+    1
+    /* HookFlags.APP */
+  );
   var isVue2 = false;
   function set(target, key, val) {
     if (Array.isArray(target)) {
@@ -1480,46 +1527,18 @@ This will fail in production.`);
     useStore.$id = id;
     return useStore;
   }
-  const useUserStore = defineStore("user", {
-    state: () => ({
-      token: "",
-      user: null
-    }),
-    actions: {
-      loginSuccess(data) {
-        this.token = data.token;
-        this.user = data.user;
-        uni.setStorageSync("token", data.token);
-        uni.setStorageSync("user", data.user);
-      },
-      logout() {
-        this.token = "";
-        this.user = null;
-        uni.removeStorageSync("token");
-        uni.removeStorageSync("user");
-        uni.reLaunch({ url: "/src/pages/login/login" });
-      },
-      init() {
-        const token = uni.getStorageSync("token");
-        const user = uni.getStorageSync("user");
-        if (token)
-          this.token = token;
-        if (user)
-          this.user = user;
-      }
-    }
-  });
   const BASE_URL = "http://192.168.31.47:8181";
   function request(options) {
     return new Promise((resolve, reject) => {
       const userStore = useUserStore();
+      const skipGlobalToken = options.skipGlobalToken || false;
       uni.request({
         url: BASE_URL + options.url,
         method: options.method || "GET",
         data: options.data || {},
         header: {
-          ...options.header || {},
-          ...userStore.token ? { Authorization: `Bearer ${userStore.token}` } : {}
+          ...skipGlobalToken ? {} : userStore.token ? { Authorization: `Bearer ${userStore.token}` } : {},
+          ...options.header || {}
         },
         timeout: 1e4,
         success: (res) => {
@@ -1544,6 +1563,68 @@ This will fail in production.`);
       });
     });
   }
+  function validateToken(token) {
+    return request({
+      url: "/auth/validate",
+      method: "POST",
+      header: {
+        "Authorization": `Bearer ${token}`
+      },
+      skipGlobalToken: true
+      // 绕过全局 token 设置
+    });
+  }
+  const useUserStore = defineStore("user", {
+    state: () => ({
+      token: "",
+      user: null,
+      hasTokenChanged: false
+      // 添加标记
+    }),
+    actions: {
+      loginSuccess(data) {
+        this.token = data.token;
+        this.user = data.user;
+        uni.setStorageSync("token", data.token);
+        uni.setStorageSync("user", data.user);
+      },
+      logout() {
+        this.token = "";
+        this.user = null;
+        uni.removeStorageSync("token");
+        uni.removeStorageSync("user");
+        uni.reLaunch({ url: "/src/pages/login/login" });
+      },
+      async init() {
+        const token = uni.getStorageSync("token");
+        uni.getStorageSync("user");
+        if (token) {
+          formatAppLog("log", "at src/store/userStore.js:33", "init token", token);
+          try {
+            const res = await validateToken(token);
+            formatAppLog("log", "at src/store/userStore.js:36", "success");
+            this.token = token;
+            this.user = res.user;
+          } catch (error) {
+            formatAppLog("error", "at src/store/userStore.js:41", "Token validation failed:", error);
+            this.logout();
+          }
+        }
+      },
+      updateUserInfo(userData) {
+        if (this.user) {
+          Object.assign(this.user, userData);
+        }
+      }
+    }
+  });
+  function registerUser(data) {
+    return request({
+      url: "/user/create",
+      method: "POST",
+      data
+    });
+  }
   function loginUser(data) {
     return request({
       url: "/user/login",
@@ -1551,13 +1632,472 @@ This will fail in production.`);
       data
     });
   }
-  const _export_sfc = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-      target[key] = val;
+  function getCurrentUserInfo() {
+    return request({
+      url: "/user/userInfo",
+      method: "GET"
+    });
+  }
+  function updateUserProfile(data) {
+    return request({
+      url: "/user/update-profile",
+      method: "PUT",
+      data
+    });
+  }
+  function changeUserPassword(data) {
+    return request({
+      url: "/user/change-password",
+      method: "PUT",
+      data
+    });
+  }
+  function uploadUserAvatar(filePath) {
+    return new Promise((resolve, reject) => {
+      const token = uni.getStorageSync("token");
+      uni.uploadFile({
+        url: BASE_URL + "/user/upload-avatar",
+        filePath,
+        name: "file",
+        header: {
+          Authorization: `Bearer ${token}`
+        },
+        success: (res) => {
+          const data = JSON.parse(res.data);
+          if (data.code === 200) {
+            resolve(data.data);
+          } else {
+            reject(data.message);
+          }
+        },
+        fail: reject
+      });
+    });
+  }
+  const _sfc_main$3 = {
+    __name: "profile",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const userStore = useUserStore();
+      const userInfo = vue.ref(null);
+      const loading = vue.ref(true);
+      const editMode = vue.ref(false);
+      const tempUserInfo = vue.ref({});
+      const showPasswordModal = vue.ref(false);
+      const passwordForm = vue.ref({
+        oldPassword: "",
+        newPassword: "",
+        confirmNewPassword: ""
+      });
+      const confirmPasswordError = vue.ref("");
+      const initializePage = async () => {
+        try {
+          loading.value = true;
+          formatAppLog("log", "at src/pages/profile/profile.vue:164", "获取用户信息...");
+          const userData = await getCurrentUserInfo();
+          userInfo.value = userData;
+          userStore.user = userData;
+        } catch (error) {
+          formatAppLog("error", "at src/pages/profile/profile.vue:171", "获取用户信息失败:", error);
+          uni.showToast({
+            title: "获取用户信息失败",
+            icon: "none"
+          });
+        } finally {
+          loading.value = false;
+        }
+      };
+      const formatTime = (timeStr) => {
+        if (!timeStr)
+          return "";
+        return new Date(timeStr).toLocaleString("zh-CN");
+      };
+      const startEdit = () => {
+        tempUserInfo.value = { ...userInfo.value };
+        editMode.value = true;
+      };
+      const cancelEdit = () => {
+        editMode.value = false;
+        tempUserInfo.value = {};
+      };
+      const saveChanges = async () => {
+        try {
+          if (!tempUserInfo.value) {
+            uni.showToast({
+              title: "临时用户信息为空",
+              icon: "none"
+            });
+            return;
+          }
+          await updateUserProfile(tempUserInfo.value);
+          Object.assign(userInfo.value, tempUserInfo.value);
+          userStore.user = { ...userInfo.value };
+          editMode.value = false;
+          uni.showToast({
+            title: "资料更新成功",
+            icon: "success"
+          });
+        } catch (error) {
+          formatAppLog("error", "at src/pages/profile/profile.vue:220", "更新用户资料失败:", error);
+          uni.showToast({
+            title: "更新失败，请重试",
+            icon: "none"
+          });
+        }
+      };
+      const chooseImage = async () => {
+        uni.chooseImage({
+          count: 1,
+          sourceType: ["album", "camera"],
+          success: async (res) => {
+            const filePath = res.tempFilePaths[0];
+            try {
+              const result = await uploadUserAvatar(filePath);
+              userInfo.value.avatar_url = result.avatar_url;
+              userStore.user.avatar_url = result.avatar_url;
+              uni.showToast({
+                title: "头像上传成功",
+                icon: "success"
+              });
+            } catch (error) {
+              formatAppLog("error", "at src/pages/profile/profile.vue:249", "上传头像失败:", error);
+              uni.showToast({
+                title: "上传失败，请重试",
+                icon: "none"
+              });
+            }
+          }
+        });
+      };
+      const onUserNameInput = (event) => {
+        tempUserInfo.value.userName = event.detail.value;
+      };
+      const onPhoneInput = (event) => {
+        tempUserInfo.value.phone = event.detail.value;
+      };
+      const onOldPasswordInput = (event) => {
+        passwordForm.value.oldPassword = event.detail.value;
+      };
+      const onNewPasswordInput = (event) => {
+        passwordForm.value.newPassword = event.detail.value;
+      };
+      const onConfirmPasswordInput = (event) => {
+        passwordForm.value.confirmNewPassword = event.detail.value;
+      };
+      const validateConfirmPassword = () => {
+        if (passwordForm.value.newPassword !== passwordForm.value.confirmNewPassword) {
+          confirmPasswordError.value = "两次输入的密码不一致";
+          return false;
+        }
+        confirmPasswordError.value = "";
+        return true;
+      };
+      const isPasswordFormValid = vue.computed(() => {
+        return passwordForm.value.oldPassword && passwordForm.value.newPassword && passwordForm.value.confirmNewPassword && passwordForm.value.newPassword === passwordForm.value.confirmNewPassword && !confirmPasswordError.value;
+      });
+      const handleChangePassword = async () => {
+        if (!validateConfirmPassword())
+          return;
+        try {
+          await changeUserPassword({
+            oldPassword: passwordForm.value.oldPassword,
+            newPassword: passwordForm.value.newPassword
+          });
+          uni.showToast({
+            title: "密码修改成功",
+            icon: "success"
+          });
+          closePasswordModal();
+        } catch (error) {
+          formatAppLog("error", "at src/pages/profile/profile.vue:317", "密码修改失败:", error);
+          uni.showToast({
+            title: error.message || "密码修改失败，请检查原密码是否正确",
+            icon: "none"
+          });
+        }
+      };
+      const openPasswordModal = () => {
+        showPasswordModal.value = true;
+        passwordForm.value = {
+          oldPassword: "",
+          newPassword: "",
+          confirmNewPassword: ""
+        };
+        confirmPasswordError.value = "";
+      };
+      const closePasswordModal = () => {
+        showPasswordModal.value = false;
+        confirmPasswordError.value = "";
+      };
+      const handleLogout = () => {
+        uni.showModal({
+          title: "确认退出",
+          content: "确定要退出登录吗？",
+          success: (res) => {
+            if (res.confirm) {
+              userStore.logout();
+            }
+          }
+        });
+      };
+      onShow(async () => {
+        const userStore2 = useUserStore();
+        if (!userStore2.token) {
+          uni.navigateTo({
+            url: "/src/pages/login/login"
+          });
+          return;
+        }
+        if (!userInfo.value || userStore2.hasTokenChanged) {
+          await initializePage();
+          userStore2.hasTokenChanged = false;
+        }
+      });
+      const __returned__ = { userStore, userInfo, loading, editMode, tempUserInfo, showPasswordModal, passwordForm, confirmPasswordError, initializePage, formatTime, startEdit, cancelEdit, saveChanges, chooseImage, onUserNameInput, onPhoneInput, onOldPasswordInput, onNewPasswordInput, onConfirmPasswordInput, validateConfirmPassword, isPasswordFormValid, handleChangePassword, openPasswordModal, closePasswordModal, handleLogout, ref: vue.ref, computed: vue.computed, get useUserStore() {
+        return useUserStore;
+      }, get getCurrentUserInfo() {
+        return getCurrentUserInfo;
+      }, get uploadUserAvatar() {
+        return uploadUserAvatar;
+      }, get updateUserProfile() {
+        return updateUserProfile;
+      }, get changeUserPassword() {
+        return changeUserPassword;
+      }, get BASE_URL() {
+        return BASE_URL;
+      }, get onShow() {
+        return onShow;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
     }
-    return target;
   };
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      vue.Fragment,
+      null,
+      [
+        vue.createElementVNode("view", { class: "profile-container" }, [
+          $setup.loading ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "loading"
+          }, "加载中...")) : (vue.openBlock(), vue.createElementBlock("view", {
+            key: 1,
+            class: "profile-content"
+          }, [
+            vue.createElementVNode("view", { class: "profile-card" }, [
+              vue.createElementVNode("view", { class: "avatar-section" }, [
+                vue.createElementVNode("view", {
+                  class: "avatar-wrapper",
+                  onClick: $setup.chooseImage
+                }, [
+                  $setup.userInfo && $setup.userInfo.avatar_url ? (vue.openBlock(), vue.createElementBlock("view", {
+                    key: 0,
+                    class: "avatar-img"
+                  }, [
+                    vue.createElementVNode("image", {
+                      src: $setup.BASE_URL + `${$setup.userInfo.avatar_url}`,
+                      mode: "aspectFill"
+                    }, null, 8, ["src"])
+                  ])) : (vue.openBlock(), vue.createElementBlock("view", {
+                    key: 1,
+                    class: "default-avatar"
+                  }, "头像"))
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "info-section" }, [
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "邮箱:"),
+                  !$setup.editMode ? (vue.openBlock(), vue.createElementBlock(
+                    "text",
+                    {
+                      key: 0,
+                      class: "value"
+                    },
+                    vue.toDisplayString($setup.userInfo.email),
+                    1
+                    /* TEXT */
+                  )) : (vue.openBlock(), vue.createElementBlock("input", {
+                    key: 1,
+                    value: $setup.tempUserInfo.email,
+                    class: "edit-input",
+                    disabled: ""
+                  }, null, 8, ["value"]))
+                ]),
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "用户名:"),
+                  !$setup.editMode ? (vue.openBlock(), vue.createElementBlock(
+                    "text",
+                    {
+                      key: 0,
+                      class: "value"
+                    },
+                    vue.toDisplayString($setup.userInfo.userName),
+                    1
+                    /* TEXT */
+                  )) : (vue.openBlock(), vue.createElementBlock("input", {
+                    key: 1,
+                    value: $setup.tempUserInfo.userName,
+                    onInput: $setup.onUserNameInput,
+                    class: "edit-input"
+                  }, null, 40, ["value"]))
+                ]),
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "电话:"),
+                  !$setup.editMode ? (vue.openBlock(), vue.createElementBlock(
+                    "text",
+                    {
+                      key: 0,
+                      class: "value"
+                    },
+                    vue.toDisplayString($setup.userInfo.phone),
+                    1
+                    /* TEXT */
+                  )) : (vue.openBlock(), vue.createElementBlock("input", {
+                    key: 1,
+                    value: $setup.tempUserInfo.phone,
+                    onInput: $setup.onPhoneInput,
+                    class: "edit-input"
+                  }, null, 40, ["value"]))
+                ]),
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "角色:"),
+                  vue.createElementVNode(
+                    "text",
+                    { class: "value" },
+                    vue.toDisplayString($setup.userInfo.role),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "状态:"),
+                  vue.createElementVNode(
+                    "text",
+                    { class: "value" },
+                    vue.toDisplayString($setup.userInfo.status === "ACTIVE" ? "活跃" : "非活跃"),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "注册时间:"),
+                  vue.createElementVNode(
+                    "text",
+                    { class: "value" },
+                    vue.toDisplayString($setup.formatTime($setup.userInfo.createdAt)),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                vue.createElementVNode("view", { class: "info-item" }, [
+                  vue.createElementVNode("text", { class: "label" }, "最后更新:"),
+                  vue.createElementVNode(
+                    "text",
+                    { class: "value" },
+                    vue.toDisplayString($setup.formatTime($setup.userInfo.updatedAt)),
+                    1
+                    /* TEXT */
+                  )
+                ])
+              ]),
+              vue.createElementVNode("view", { class: "action-buttons" }, [
+                !$setup.editMode ? (vue.openBlock(), vue.createElementBlock("button", {
+                  key: 0,
+                  onClick: $setup.startEdit,
+                  class: "edit-btn"
+                }, "编辑资料")) : vue.createCommentVNode("v-if", true),
+                !$setup.editMode ? (vue.openBlock(), vue.createElementBlock("button", {
+                  key: 1,
+                  onClick: $setup.openPasswordModal,
+                  class: "password-btn"
+                }, "修改密码")) : (vue.openBlock(), vue.createElementBlock("view", {
+                  key: 2,
+                  class: "edit-controls"
+                }, [
+                  vue.createElementVNode("button", {
+                    onClick: $setup.saveChanges,
+                    class: "save-btn"
+                  }, "保存"),
+                  vue.createElementVNode("button", {
+                    onClick: $setup.cancelEdit,
+                    class: "cancel-btn"
+                  }, "取消")
+                ]))
+              ]),
+              vue.createElementVNode("button", {
+                onClick: $setup.handleLogout,
+                class: "logout-btn"
+              }, "退出登录")
+            ])
+          ]))
+        ]),
+        $setup.showPasswordModal ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 0,
+          class: "password-modal"
+        }, [
+          vue.createElementVNode("view", { class: "modal-content" }, [
+            vue.createElementVNode("text", { class: "modal-title" }, "修改密码"),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.createElementVNode("text", { class: "input-label" }, "原密码:"),
+              vue.createElementVNode("input", {
+                value: $setup.passwordForm.oldPassword,
+                onInput: $setup.onOldPasswordInput,
+                password: "",
+                placeholder: "请输入原密码",
+                class: "modal-input"
+              }, null, 40, ["value"])
+            ]),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.createElementVNode("text", { class: "input-label" }, "新密码:"),
+              vue.createElementVNode("input", {
+                value: $setup.passwordForm.newPassword,
+                onInput: $setup.onNewPasswordInput,
+                password: "",
+                placeholder: "请输入新密码",
+                class: "modal-input"
+              }, null, 40, ["value"])
+            ]),
+            vue.createElementVNode("view", { class: "form-group" }, [
+              vue.createElementVNode("text", { class: "input-label" }, "确认新密码:"),
+              vue.createElementVNode("input", {
+                value: $setup.passwordForm.confirmNewPassword,
+                onInput: $setup.onConfirmPasswordInput,
+                password: "",
+                placeholder: "请再次输入新密码",
+                onBlur: $setup.validateConfirmPassword,
+                class: "modal-input"
+              }, null, 40, ["value"]),
+              $setup.confirmPasswordError ? (vue.openBlock(), vue.createElementBlock(
+                "text",
+                {
+                  key: 0,
+                  class: "error-msg"
+                },
+                vue.toDisplayString($setup.confirmPasswordError),
+                1
+                /* TEXT */
+              )) : vue.createCommentVNode("v-if", true)
+            ]),
+            vue.createElementVNode("view", { class: "form-actions" }, [
+              vue.createElementVNode("button", {
+                onClick: $setup.handleChangePassword,
+                disabled: !$setup.isPasswordFormValid,
+                class: "modal-submit-btn"
+              }, "修改密码", 8, ["disabled"]),
+              vue.createElementVNode("button", {
+                onClick: $setup.closePasswordModal,
+                class: "modal-cancel-btn"
+              }, "取消")
+            ])
+          ])
+        ])) : vue.createCommentVNode("v-if", true)
+      ],
+      64
+      /* STABLE_FRAGMENT */
+    );
+  }
+  const SrcPagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "D:/CODE/mobile-app/src/pages/profile/profile.vue"]]);
   const _sfc_main$2 = {
     __name: "login",
     setup(__props, { expose: __expose }) {
@@ -1565,14 +2105,57 @@ This will fail in production.`);
       const email = vue.ref("");
       const password = vue.ref("");
       const userStore = useUserStore();
+      const errors = vue.ref({
+        email: "",
+        password: ""
+      });
       const onEmailInput = (event) => {
         email.value = event.detail.value;
+        validateEmail();
       };
       const onPasswordInput = (event) => {
         password.value = event.detail.value;
+        validatePassword();
+      };
+      const goToRegister = () => {
+        formatAppLog("log", "at src/pages/login/login.vue:72", "goToRegister");
+        uni.redirectTo({
+          url: "/src/pages/register/register"
+        });
+      };
+      const validateEmail = () => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.value) {
+          errors.value.email = "邮箱不能为空";
+          return false;
+        } else if (!re.test(email.value)) {
+          errors.value.email = "邮箱格式不正确";
+          return false;
+        }
+        errors.value.email = "";
+        return true;
+      };
+      const validatePassword = () => {
+        if (!password.value) {
+          errors.value.password = "密码不能为空";
+          return false;
+        } else if (password.value.length < 6) {
+          errors.value.password = "密码长度至少6位";
+          return false;
+        }
+        errors.value.password = "";
+        return true;
       };
       const handleLogin = async () => {
-        formatAppLog("log", "at src/pages/login/login.vue:36", "handleLogin");
+        const isEmailValid = validateEmail();
+        const isPasswordValid = validatePassword();
+        if (!isEmailValid || !isPasswordValid) {
+          uni.showToast({
+            title: "请检查输入信息",
+            icon: "none"
+          });
+          return;
+        }
         try {
           const data = await loginUser({
             email: email.value,
@@ -1580,13 +2163,17 @@ This will fail in production.`);
           });
           userStore.loginSuccess(data);
           uni.reLaunch({
-            url: "/src/pages/index/index"
+            url: "/src/pages/home/home"
           });
         } catch (e) {
-          formatAppLog("error", "at src/pages/login/login.vue:49", e);
+          formatAppLog("error", "at src/pages/login/login.vue:132", e);
+          uni.showToast({
+            title: e.message || "登录失败",
+            icon: "none"
+          });
         }
       };
-      const __returned__ = { email, password, userStore, onEmailInput, onPasswordInput, handleLogin, ref: vue.ref, get loginUser() {
+      const __returned__ = { email, password, userStore, errors, onEmailInput, onPasswordInput, goToRegister, validateEmail, validatePassword, handleLogin, ref: vue.ref, get loginUser() {
         return loginUser;
       }, get useUserStore() {
         return useUserStore;
@@ -1596,58 +2183,354 @@ This will fail in production.`);
     }
   };
   function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "login" }, [
-      vue.createElementVNode("input", {
-        value: $setup.email,
-        onInput: $setup.onEmailInput,
-        placeholder: "邮箱"
-      }, null, 40, ["value"]),
-      vue.createElementVNode("input", {
-        value: $setup.password,
-        onInput: $setup.onPasswordInput,
-        password: "",
-        placeholder: "密码"
-      }, null, 40, ["value"]),
-      vue.createElementVNode("button", { onClick: $setup.handleLogin }, "登录1")
+    return vue.openBlock(), vue.createElementBlock("view", { class: "login-container" }, [
+      vue.createElementVNode("view", { class: "login-card" }, [
+        vue.createElementVNode("view", { class: "login-header" }, [
+          vue.createElementVNode("text", { class: "title" }, "用户登录")
+        ]),
+        vue.createElementVNode("view", { class: "login-form" }, [
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.email,
+              onInput: $setup.onEmailInput,
+              placeholder: "请输入邮箱",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.email ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.email),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.password,
+              onInput: $setup.onPasswordInput,
+              password: "",
+              placeholder: "请输入密码",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.password ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.password),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("button", {
+            class: "login-btn",
+            onClick: $setup.handleLogin
+          }, "登录")
+        ]),
+        vue.createElementVNode("view", { class: "switch-container" }, [
+          vue.createElementVNode("text", { class: "switch-text" }, "没有账号？"),
+          vue.createElementVNode("text", {
+            class: "switch-link",
+            onClick: $setup.goToRegister
+          }, "立即注册")
+        ])
+      ])
     ]);
   }
   const SrcPagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "D:/CODE/mobile-app/src/pages/login/login.vue"]]);
   const _sfc_main$1 = {
-    __name: "index",
+    __name: "register",
     setup(__props, { expose: __expose }) {
       __expose();
-      const userStore = useUserStore();
-      const user = userStore.user;
-      const logout = () => {
-        userStore.logout();
+      const username = vue.ref("");
+      const email = vue.ref("");
+      const phone = vue.ref("");
+      const password = vue.ref("");
+      const confirmPassword = vue.ref("");
+      const errors = vue.ref({
+        username: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: ""
+      });
+      const validateUsername = () => {
+        if (!username.value) {
+          errors.value.username = "用户名不能为空";
+          return false;
+        } else if (username.value.length < 5 || username.value.length > 50) {
+          errors.value.username = "长度应在5-50个字符";
+          return false;
+        }
+        errors.value.username = "";
+        return true;
       };
-      const __returned__ = { userStore, user, logout, get useUserStore() {
-        return useUserStore;
+      const validateEmail = () => {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.value) {
+          errors.value.email = "邮箱不能为空";
+          return false;
+        } else if (!re.test(email.value)) {
+          errors.value.email = "邮箱格式不正确";
+          return false;
+        }
+        errors.value.email = "";
+        return true;
+      };
+      const validatePhone = () => {
+        if (!phone.value) {
+          errors.value.phone = "手机号不能为空";
+          return false;
+        } else if (phone.value.length < 10 || phone.value.length > 20) {
+          errors.value.phone = "电话长度应在10-20字符";
+          return false;
+        }
+        errors.value.phone = "";
+        return true;
+      };
+      const validatePassword = () => {
+        const re = /^(?=.*[A-Za-z])(?=.*[0-9!@#$%^&*()_+\-=]).+$/;
+        if (!password.value) {
+          errors.value.password = "密码不能为空";
+          return false;
+        } else if (password.value.length < 8) {
+          errors.value.password = "密码长度至少8位";
+          return false;
+        } else if (!re.test(password.value)) {
+          errors.value.password = "密码必须包含字母和数字";
+          return false;
+        }
+        errors.value.password = "";
+        return true;
+      };
+      const validateConfirmPassword = () => {
+        if (!confirmPassword.value) {
+          errors.value.confirmPassword = "请再次输入密码";
+          return false;
+        } else if (confirmPassword.value !== password.value) {
+          errors.value.confirmPassword = "两次输入不一致";
+          return false;
+        }
+        errors.value.confirmPassword = "";
+        return true;
+      };
+      const onUsernameInput = (event) => {
+        username.value = event.detail.value;
+        validateUsername();
+      };
+      const onEmailInput = (event) => {
+        email.value = event.detail.value;
+        validateEmail();
+      };
+      const onPhoneInput = (event) => {
+        phone.value = event.detail.value;
+        validatePhone();
+      };
+      const onPasswordInput = (event) => {
+        password.value = event.detail.value;
+        validatePassword();
+      };
+      const onConfirmPasswordInput = (event) => {
+        confirmPassword.value = event.detail.value;
+        validateConfirmPassword();
+      };
+      const handleRegister = async () => {
+        const validations = [
+          validateUsername(),
+          validateEmail(),
+          validatePhone(),
+          validatePassword(),
+          validateConfirmPassword()
+        ];
+        const isValid = validations.every((v) => v);
+        if (!isValid) {
+          uni.showToast({
+            title: "请检查输入信息",
+            icon: "none"
+          });
+          return;
+        }
+        try {
+          await registerUser({
+            username: username.value,
+            email: email.value,
+            phone: phone.value,
+            password: password.value
+          });
+          uni.showToast({
+            title: "注册成功",
+            icon: "success"
+          });
+          setTimeout(() => {
+            goToLogin();
+          }, 1e3);
+        } catch (e) {
+          formatAppLog("error", "at src/pages/register/register.vue:235", e);
+          uni.showToast({
+            title: e.message || "注册失败",
+            icon: "none"
+          });
+        }
+      };
+      const goToLogin = () => {
+        uni.redirectTo({
+          url: "/src/pages/login/login"
+        });
+      };
+      const __returned__ = { username, email, phone, password, confirmPassword, errors, validateUsername, validateEmail, validatePhone, validatePassword, validateConfirmPassword, onUsernameInput, onEmailInput, onPhoneInput, onPasswordInput, onConfirmPasswordInput, handleRegister, goToLogin, ref: vue.ref, get registerUser() {
+        return registerUser;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
   function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
-    var _a;
-    return vue.openBlock(), vue.createElementBlock("view", { class: "home" }, [
-      vue.createElementVNode("text", null, "欢迎你："),
-      vue.createElementVNode(
-        "text",
-        null,
-        vue.toDisplayString((_a = $setup.user) == null ? void 0 : _a.userName),
-        1
-        /* TEXT */
-      ),
-      vue.createElementVNode("button", { onClick: $setup.logout }, "退出登录")
+    return vue.openBlock(), vue.createElementBlock("view", { class: "register-container" }, [
+      vue.createElementVNode("view", { class: "register-card" }, [
+        vue.createElementVNode("view", { class: "register-header" }, [
+          vue.createElementVNode("text", { class: "title" }, "用户注册")
+        ]),
+        vue.createElementVNode("view", { class: "register-form" }, [
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.username,
+              onInput: $setup.onUsernameInput,
+              placeholder: "请输入用户名",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.username ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.username),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.email,
+              onInput: $setup.onEmailInput,
+              placeholder: "请输入邮箱",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.email ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.email),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.phone,
+              onInput: $setup.onPhoneInput,
+              placeholder: "请输入手机号",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.phone ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.phone),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.password,
+              onInput: $setup.onPasswordInput,
+              password: "",
+              placeholder: "请输入密码",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.password ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.password),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("view", { class: "input-group" }, [
+            vue.createElementVNode("input", {
+              class: "input-field",
+              value: $setup.confirmPassword,
+              onInput: $setup.onConfirmPasswordInput,
+              password: "",
+              placeholder: "请再次输入密码",
+              type: "text"
+            }, null, 40, ["value"]),
+            $setup.errors.confirmPassword ? (vue.openBlock(), vue.createElementBlock(
+              "text",
+              {
+                key: 0,
+                class: "error-text"
+              },
+              vue.toDisplayString($setup.errors.confirmPassword),
+              1
+              /* TEXT */
+            )) : vue.createCommentVNode("v-if", true)
+          ]),
+          vue.createElementVNode("button", {
+            class: "register-btn",
+            onClick: $setup.handleRegister
+          }, "注册"),
+          vue.createElementVNode("view", { class: "switch-container" }, [
+            vue.createElementVNode("text", { class: "switch-text" }, "已有账号？"),
+            vue.createElementVNode("text", {
+              class: "switch-link",
+              onClick: $setup.goToLogin
+            }, "立即登录")
+          ])
+        ])
+      ])
     ]);
   }
-  const SrcPagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/index/index.vue"]]);
+  const SrcPagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/register/register.vue"]]);
+  __definePage("src/pages/home/home", SrcPagesHomeHome);
+  __definePage("src/pages/project/project", SrcPagesProjectProject);
+  __definePage("src/pages/message/message", SrcPagesMessageMessage);
+  __definePage("src/pages/profile/profile", SrcPagesProfileProfile);
   __definePage("src/pages/login/login", SrcPagesLoginLogin);
-  __definePage("src/pages/index/index", SrcPagesIndexIndex);
+  __definePage("src/pages/register/register", SrcPagesRegisterRegister);
   const _sfc_main = {
-    onLaunch() {
-      formatAppLog("log", "at App.vue:10", "App onLaunch");
+    __name: "App",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      onLaunch(async () => {
+        const userStore = useUserStore();
+        await userStore.init();
+      });
+      const __returned__ = { get onLaunch() {
+        return onLaunch;
+      }, get useUserStore() {
+        return useUserStore;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
     }
   };
   function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {

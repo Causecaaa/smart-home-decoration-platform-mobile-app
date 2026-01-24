@@ -1,16 +1,48 @@
 {
 	"pages": [
-		{
-			"path": "src/pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录"
+		{ "path": "src/pages/home/home", "style": { "navigationBarTitleText": "首页" } },
+		{ "path": "src/pages/project/project", "style": { "navigationBarTitleText": "项目" } },
+		{ "path": "src/pages/message/message", "style": { "navigationBarTitleText": "消息" } },
+		{ "path": "src/pages/profile/profile", "style": { "navigationBarTitleText": "我的" } },
+		{ "path": "src/pages/login/login", "style": { "navigationBarTitleText": "登录" }},
+		{ "path": "src/pages/register/register", "style": { "navigationBarTitleText": "注册"}}
+	],
+	"globalStyle": {
+		"navigationBarBackgroundColor": "#1296db",
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "SmartHome",
+		"backgroundColor": "#f8f8f8"
+	},
+	"tabBar": {
+		"color": "#8a8a8a",
+		"selectedColor": "#1296db",
+		"backgroundColor": "#ffffff",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "src/pages/home/home",
+				"text": "首页",
+				"iconPath": "/static/tabbar/home.png",
+				"selectedIconPath": "/static/tabbar/home.png"
+			},
+			{
+				"pagePath": "src/pages/project/project",
+				"text": "项目",
+				"iconPath": "/static/tabbar/project.png",
+				"selectedIconPath": "/static/tabbar/project.png"
+			},
+			{
+				"pagePath": "src/pages/message/message",
+				"text": "消息",
+				"iconPath": "/static/tabbar/message.png",
+				"selectedIconPath": "/static/tabbar/message.png"
+			},
+			{
+				"pagePath": "src/pages/profile/profile",
+				"text": "我的",
+				"iconPath": "/static/tabbar/profile.png",
+				"selectedIconPath": "/static/tabbar/profile.png"
 			}
-		},
-		{
-			"path": "src/pages/index/index",
-			"style": {
-				"navigationBarTitleText": "首页"
-			}
-		}
-	]
+		]
+	}
 }

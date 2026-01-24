@@ -5,15 +5,18 @@ function request(options) {
     return new Promise((resolve, reject) => {
         const userStore = useUserStore()
 
+        // 检查是否需要绕过全局 token
+        const skipGlobalToken = options.skipGlobalToken || false
+
         uni.request({
             url: BASE_URL + options.url,
             method: options.method || 'GET',
             data: options.data || {},
             header: {
-                ...(options.header || {}),
-                ...(userStore.token
+                ...(skipGlobalToken ? {} : (userStore.token
                     ? { Authorization: `Bearer ${userStore.token}` }
-                    : {})
+                    : {})),
+                ...(options.header || {})
             },
             timeout: 10000,
             success: (res) => {
