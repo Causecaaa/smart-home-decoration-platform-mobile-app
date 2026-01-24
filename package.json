@@ -1,0 +1,11 @@
+{
+  "name": "smart-home-decoration-platform-app",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@nutui/nutui": "^4.3.14",
+    "axios": "^1.13.2",
+    "pinia": "^3.0.4",
+    "vue": "^3.5.27"
+  }
+}

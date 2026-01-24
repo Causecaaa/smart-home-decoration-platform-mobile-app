@@ -1,0 +1,25 @@
+{
+  "hash": "46486ac2",
+  "configHash": "ec7d22cd",
+  "lockfileHash": "60f02490",
+  "browserHash": "63c7cacb",
+  "optimized": {
+    "@nutui/nutui": {
+      "src": "../../../../../node_modules/@nutui/nutui/dist/nutui.es.js",
+      "file": "@nutui_nutui.js",
+      "fileHash": "0338d354",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../../../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "549bc16f",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-CSAU5B4Q": {
+      "file": "chunk-CSAU5B4Q.js"
+    }
+  }
+}
