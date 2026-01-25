@@ -126,7 +126,7 @@ const handleLogin = async () => {
     userStore.loginSuccess(data)
 
     uni.reLaunch({
-      url: '/src/pages/home/home'
+      url: '/src/pages/profile/profile'
     })
   } catch (e) {
     console.error(e)

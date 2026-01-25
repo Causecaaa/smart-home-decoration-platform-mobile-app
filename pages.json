@@ -1,11 +1,32 @@
 {
 	"pages": [
-		{ "path": "src/pages/home/home", "style": { "navigationBarTitleText": "首页" } },
-		{ "path": "src/pages/project/project", "style": { "navigationBarTitleText": "项目" } },
-		{ "path": "src/pages/message/message", "style": { "navigationBarTitleText": "消息" } },
+		{ "path": "src/pages/index/index", "style": { "navigationBarTitleText": "首页" } },
+		{
+			"path": "src/pages/project/project",
+			"style": {
+				"navigationBarTitleText": "项目",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"type": "more",
+							"float": "right",
+							"color": "#ffffff",
+							"text": "⋮",
+							"fontSize": "20px",
+							"width": "44px",
+							"height": "44px"
+						}]
+					}
+				}
+			}
+		},
+
+		{ "path": "src/pages/contact/contact", "style": { "navigationBarTitleText": "联系" } },
 		{ "path": "src/pages/profile/profile", "style": { "navigationBarTitleText": "我的" } },
 		{ "path": "src/pages/login/login", "style": { "navigationBarTitleText": "登录" }},
-		{ "path": "src/pages/register/register", "style": { "navigationBarTitleText": "注册"}}
+		{ "path": "src/pages/register/register", "style": { "navigationBarTitleText": "注册"}},
+		{ "path": "src/pages/contact/contactDetail", "style": { "navigationBarTitleText": "聊天"}}
+
 	],
 	"globalStyle": {
 		"navigationBarBackgroundColor": "#1296db",
@@ -20,7 +41,7 @@
 		"borderStyle": "black",
 		"list": [
 			{
-				"pagePath": "src/pages/home/home",
+				"pagePath": "src/pages/index/index",
 				"text": "首页",
 				"iconPath": "/static/tabbar/home.png",
 				"selectedIconPath": "/static/tabbar/home.png"
@@ -32,7 +53,7 @@
 				"selectedIconPath": "/static/tabbar/project.png"
 			},
 			{
-				"pagePath": "src/pages/message/message",
+				"pagePath": "src/pages/contact/contact",
 				"text": "消息",
 				"iconPath": "/static/tabbar/message.png",
 				"selectedIconPath": "/static/tabbar/message.png"
