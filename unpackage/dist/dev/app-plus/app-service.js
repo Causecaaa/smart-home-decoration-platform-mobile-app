@@ -4284,18 +4284,34 @@ This will fail in production.`);
       data
     });
   };
-  const sendImageMessage = (receiverId, file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    return request({
-      url: `/chat/image-create/${receiverId}`,
-      method: "post",
-      data: formData,
-      headers: {
-        "Content-Type": "multipart/form-data"
-      }
+  function sendImageMessage(receiverId, filePath) {
+    return new Promise((resolve, reject) => {
+      const token = uni.getStorageSync("token");
+      uni.uploadFile({
+        url: `${BASE_URL}/chat/image-create/${receiverId}`,
+        filePath,
+        name: "file",
+        header: {
+          Authorization: `Bearer ${token}`
+        },
+        success: (res) => {
+          try {
+            const data = JSON.parse(res.data);
+            if (data.code === 200) {
+              resolve(data.data);
+            } else {
+              reject(data.message || "发送失败");
+            }
+          } catch (e) {
+            reject("返回数据解析失败");
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        }
+      });
     });
-  };
+  }
   const getConversation = (otherId) => {
     return request({
       url: `/chat/conversation/${otherId}`,
@@ -4319,7 +4335,7 @@ This will fail in production.`);
         try {
           chatPartners.value = await getChatPartners();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contact.vue:16", "获取聊天伙伴失败:", error);
+          formatAppLog("error", "at src/pages/contact/contact.vue:19", "获取聊天伙伴失败:", error);
           uni.showToast({
             title: "获取联系人列表失败",
             icon: "none"
@@ -4329,18 +4345,44 @@ This will fail in production.`);
         }
       };
       const goToChat = (partner) => {
-        formatAppLog("log", "at src/pages/contact/contact.vue:29", "点击了联系人:", partner);
+        formatAppLog("log", "at src/pages/contact/contact.vue:32", "点击了联系人:", partner);
         uni.navigateTo({
-          url: `/src/pages/contact/contactDetail?targetUserId=${partner.userId}&targetUserName=${partner.userName}&targetAvatarUrl=${partner.avatar_url}`
+          url: `/src/pages/contact/contactDetail?targetUserId=${partner.partnerId}&targetUserName=${partner.partnerName}&targetAvatarUrl=${partner.partnerAvatar}`
         });
       };
-      vue.onMounted(() => {
+      const formatTime = (timeString) => {
+        if (!timeString)
+          return "";
+        const date = new Date(timeString);
+        const today = /* @__PURE__ */ new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isToday = date.toDateString() === today.toDateString();
+        const isYesterday = date.toDateString() === yesterday.toDateString();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        if (isToday) {
+          return `${hours}:${minutes}`;
+        } else if (isYesterday) {
+          return `昨天 ${hours}:${minutes}`;
+        } else {
+          return `${year}/${month}/${day} ${hours}:${minutes}`;
+        }
+      };
+      onShow(() => {
         loadChatPartners();
       });
-      const __returned__ = { chatPartners, isLoading, loadChatPartners, goToChat, onMounted: vue.onMounted, ref: vue.ref, get getChatPartners() {
+      const __returned__ = { chatPartners, isLoading, loadChatPartners, goToChat, formatTime, onMounted: vue.onMounted, ref: vue.ref, get getChatPartners() {
         return getChatPartners;
       }, get BASE_URL() {
         return BASE_URL;
+      }, get onLoad() {
+        return onLoad;
+      }, get onShow() {
+        return onShow;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -4363,13 +4405,13 @@ This will fail in production.`);
           vue.renderList($setup.chatPartners, (partner) => {
             return vue.openBlock(), vue.createElementBlock("view", {
               class: "partner-item",
-              key: partner.userId,
+              key: partner.partnerId,
               onClick: ($event) => $setup.goToChat(partner)
             }, [
               vue.createElementVNode("view", { class: "partner-avatar" }, [
-                partner.avatar_url ? (vue.openBlock(), vue.createElementBlock("image", {
+                partner.partnerAvatar ? (vue.openBlock(), vue.createElementBlock("image", {
                   key: 0,
-                  src: $setup.BASE_URL + partner.avatar_url,
+                  src: $setup.BASE_URL + partner.partnerAvatar,
                   class: "avatar-img"
                 }, null, 8, ["src"])) : (vue.openBlock(), vue.createElementBlock(
                   "view",
@@ -4377,26 +4419,42 @@ This will fail in production.`);
                     key: 1,
                     class: "default-avatar"
                   },
-                  vue.toDisplayString(partner.userName.charAt(0)),
+                  vue.toDisplayString(partner.partnerName.charAt(0)),
                   1
                   /* TEXT */
-                ))
+                )),
+                partner.unread ? (vue.openBlock(), vue.createElementBlock("view", {
+                  key: 2,
+                  class: "unread-dot"
+                })) : vue.createCommentVNode("v-if", true)
               ]),
               vue.createElementVNode("view", { class: "partner-info" }, [
-                vue.createElementVNode(
+                vue.createElementVNode("view", { class: "top-row" }, [
+                  vue.createElementVNode(
+                    "view",
+                    { class: "partner-name" },
+                    vue.toDisplayString(partner.partnerName),
+                    1
+                    /* TEXT */
+                  ),
+                  vue.createElementVNode(
+                    "view",
+                    { class: "partner-time" },
+                    vue.toDisplayString($setup.formatTime(partner.lastMessageTime)),
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                partner.lastMessageContent ? (vue.openBlock(), vue.createElementBlock(
                   "view",
-                  { class: "partner-name" },
-                  vue.toDisplayString(partner.userName),
+                  {
+                    key: 0,
+                    class: "partner-message"
+                  },
+                  vue.toDisplayString(partner.lastMessageContent),
                   1
                   /* TEXT */
-                ),
-                vue.createElementVNode(
-                  "view",
-                  { class: "partner-role" },
-                  vue.toDisplayString(partner.role === "DESIGNER" ? "设计师" : partner.role === "CONTRACTOR" ? "承包商" : "用户"),
-                  1
-                  /* TEXT */
-                )
+                )) : vue.createCommentVNode("v-if", true)
               ])
             ], 8, ["onClick"]);
           }),
@@ -4502,10 +4560,27 @@ This will fail in production.`);
           loading.value = false;
         }
       };
-      const formatTime = (timeStr) => {
-        if (!timeStr)
+      const formatTime = (timeString) => {
+        if (!timeString)
           return "";
-        return new Date(timeStr).toLocaleString("zh-CN");
+        const date = new Date(timeString);
+        const today = /* @__PURE__ */ new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const isToday = date.toDateString() === today.toDateString();
+        const isYesterday = date.toDateString() === yesterday.toDateString();
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const hours = date.getHours().toString().padStart(2, "0");
+        const minutes = date.getMinutes().toString().padStart(2, "0");
+        if (isToday) {
+          return `${hours}:${minutes}`;
+        } else if (isYesterday) {
+          return `昨天 ${hours}:${minutes}`;
+        } else {
+          return `${year}/${month}/${day} ${hours}:${minutes}`;
+        }
       };
       const startEdit = () => {
         tempUserInfo.value = { ...userInfo.value };
@@ -4533,7 +4608,7 @@ This will fail in production.`);
             icon: "success"
           });
         } catch (error) {
-          formatAppLog("error", "at src/pages/profile/profile.vue:220", "更新用户资料失败:", error);
+          formatAppLog("error", "at src/pages/profile/profile.vue:247", "更新用户资料失败:", error);
           uni.showToast({
             title: "更新失败，请重试",
             icon: "none"
@@ -4555,7 +4630,7 @@ This will fail in production.`);
                 icon: "success"
               });
             } catch (error) {
-              formatAppLog("error", "at src/pages/profile/profile.vue:249", "上传头像失败:", error);
+              formatAppLog("error", "at src/pages/profile/profile.vue:276", "上传头像失败:", error);
               uni.showToast({
                 title: "上传失败，请重试",
                 icon: "none"
@@ -4604,7 +4679,7 @@ This will fail in production.`);
           });
           closePasswordModal();
         } catch (error) {
-          formatAppLog("error", "at src/pages/profile/profile.vue:317", "密码修改失败:", error);
+          formatAppLog("error", "at src/pages/profile/profile.vue:344", "密码修改失败:", error);
           uni.showToast({
             title: error.message || "密码修改失败，请检查原密码是否正确",
             icon: "none"
@@ -5345,7 +5420,7 @@ This will fail in production.`);
       const loadConversation = async () => {
         try {
           const response = await getConversation(props.targetUserId);
-          formatAppLog("log", "at src/pages/contact/contactDetail.vue:140", "对话记录:", response);
+          formatAppLog("log", "at src/pages/contact/contactDetail.vue:141", "对话记录:", response);
           let conversationData = [];
           if (response && typeof response === "object") {
             if (response.data && Array.isArray(response.data)) {
@@ -5353,12 +5428,12 @@ This will fail in production.`);
             } else if (Array.isArray(response)) {
               conversationData = response;
             } else {
-              formatAppLog("warn", "at src/pages/contact/contactDetail.vue:151", "API 返回数据格式不符合预期:", response);
+              formatAppLog("warn", "at src/pages/contact/contactDetail.vue:152", "API 返回数据格式不符合预期:", response);
               messages.value = [];
               return;
             }
           } else {
-            formatAppLog("warn", "at src/pages/contact/contactDetail.vue:156", "API 返回数据格式错误:", response);
+            formatAppLog("warn", "at src/pages/contact/contactDetail.vue:157", "API 返回数据格式错误:", response);
             messages.value = [];
             return;
           }
@@ -5372,15 +5447,35 @@ This will fail in production.`);
           await vue.nextTick();
           await scrollToBottom();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contactDetail.vue:173", "获取对话失败:", error);
+          formatAppLog("error", "at src/pages/contact/contactDetail.vue:174", "获取对话失败:", error);
           if (error.response) {
-            formatAppLog("error", "at src/pages/contact/contactDetail.vue:176", "服务器错误:", error.response.status, error.response.data);
+            formatAppLog("error", "at src/pages/contact/contactDetail.vue:177", "服务器错误:", error.response.status, error.response.data);
           } else if (error.request) {
-            formatAppLog("error", "at src/pages/contact/contactDetail.vue:178", "网络错误:", error.request);
+            formatAppLog("error", "at src/pages/contact/contactDetail.vue:179", "网络错误:", error.request);
           } else {
-            formatAppLog("error", "at src/pages/contact/contactDetail.vue:180", "请求配置错误:", error.message);
+            formatAppLog("error", "at src/pages/contact/contactDetail.vue:181", "请求配置错误:", error.message);
           }
         }
+      };
+      const chooseChatImage = () => {
+        if (isSending.value)
+          return;
+        uni.chooseImage({
+          count: 1,
+          sourceType: ["album", "camera"],
+          success: async (res) => {
+            const filePath = res.tempFilePaths[0];
+            try {
+              isSending.value = true;
+              await sendImageMessage(props.targetUserId, filePath);
+              await loadConversation();
+            } catch (e) {
+              uni.showToast({ title: "发送失败", icon: "none" });
+            } finally {
+              isSending.value = false;
+            }
+          }
+        });
       };
       const getImageUrl = (url) => {
         if (!url)
@@ -5406,7 +5501,7 @@ This will fail in production.`);
           inputText.value = "";
           await loadConversation();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contactDetail.vue:217", "发送消息失败:", error);
+          formatAppLog("error", "at src/pages/contact/contactDetail.vue:239", "发送消息失败:", error);
           alert("发送消息失败，请稍后重试");
         } finally {
           isSending.value = false;
@@ -5422,15 +5517,10 @@ This will fail in production.`);
           event.target.value = "";
           await loadConversation();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contactDetail.vue:236", "发送图片失败:", error);
+          formatAppLog("error", "at src/pages/contact/contactDetail.vue:258", "发送图片失败:", error);
           alert("发送图片失败，请稍后重试");
         } finally {
           isSending.value = false;
-        }
-      };
-      const triggerFileSelect = () => {
-        if (!isSending.value) {
-          fileInputRef.value.click();
         }
       };
       const formatTime = (timeString) => {
@@ -5469,7 +5559,7 @@ This will fail in production.`);
       vue.onMounted(() => {
         loadConversation();
       });
-      const __returned__ = { defaultAvatar, messages, inputText, isSending, messagesContainer, fileInputRef, props, userStore, currentUserInfo, getUserDisplayName, loadConversation, getImageUrl, scrollToBottom, sendTextMessageHandler, handleImageUpload, triggerFileSelect, formatTime, previewImage, ref: vue.ref, onMounted: vue.onMounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get getConversation() {
+      const __returned__ = { defaultAvatar, messages, inputText, isSending, messagesContainer, fileInputRef, props, userStore, currentUserInfo, getUserDisplayName, loadConversation, chooseChatImage, getImageUrl, scrollToBottom, sendTextMessageHandler, handleImageUpload, formatTime, previewImage, ref: vue.ref, onMounted: vue.onMounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get getConversation() {
         return getConversation;
       }, get sendTextMessage() {
         return sendTextMessage;
@@ -5566,11 +5656,8 @@ This will fail in production.`);
         vue.createElementVNode("div", { class: "input-actions" }, [
           vue.createElementVNode("button", {
             class: "action-btn",
-            onClick: $setup.triggerFileSelect,
-            disabled: $setup.isSending
-          }, [
-            vue.createElementVNode("span", null, "📎")
-          ], 8, ["disabled"]),
+            onClick: $setup.chooseChatImage
+          }, " 📎 "),
           vue.createElementVNode(
             "input",
             {

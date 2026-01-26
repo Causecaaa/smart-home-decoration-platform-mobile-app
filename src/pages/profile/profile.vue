@@ -178,10 +178,37 @@ const initializePage = async () => {
   }
 }
 
-// 格式化时间
-const formatTime = (timeStr) => {
-  if (!timeStr) return ''
-  return new Date(timeStr).toLocaleString('zh-CN')
+// 格式化时间 - 统一格式
+const formatTime = (timeString) => {
+  if (!timeString) return ''
+  const date = new Date(timeString)
+
+  // 获取今天的日期，用于比较
+  const today = new Date()
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  // 比较日期
+  const isToday = date.toDateString() === today.toDateString()
+  const isYesterday = date.toDateString() === yesterday.toDateString()
+
+  // 统一使用数字格式获取时间
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1  // 月份从0开始，需要+1
+  const day = date.getDate()
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+
+  if (isToday) {
+    // 今天：显示时间 HH:MM
+    return `${hours}:${minutes}`
+  } else if (isYesterday) {
+    // 昨天：显示"昨天 HH:MM"
+    return `昨天 ${hours}:${minutes}`
+  } else {
+    // 更早：显示日期 + 时间格式，如 2026/1/20 14:30
+    return `${year}/${month}/${day} ${hours}:${minutes}`
+  }
 }
 
 // 编辑模式

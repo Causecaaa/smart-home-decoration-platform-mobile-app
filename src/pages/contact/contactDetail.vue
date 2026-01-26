@@ -53,9 +53,10 @@
     <!-- 输入区域 -->
     <div class="input-area">
       <div class="input-actions">
-        <button class="action-btn" @click="triggerFileSelect" :disabled="isSending">
-          <span>📎</span>
+        <button class="action-btn" @click="chooseChatImage">
+          📎
         </button>
+
         <input
             type="file"
             ref="fileInputRef"
@@ -182,6 +183,27 @@ const loadConversation = async () => {
   }
 }
 
+const chooseChatImage = () => {
+  if (isSending.value) return
+
+  uni.chooseImage({
+    count: 1,
+    sourceType: ['album', 'camera'],
+    success: async (res) => {
+      const filePath = res.tempFilePaths[0]
+
+      try {
+        isSending.value = true
+        await sendImageMessage(props.targetUserId, filePath)
+        await loadConversation()
+      } catch (e) {
+        uni.showToast({ title: '发送失败', icon: 'none' })
+      } finally {
+        isSending.value = false
+      }
+    }
+  })
+}
 
 
 // 处理图片URL，确保正确拼接
@@ -241,12 +263,6 @@ const handleImageUpload = async (event) => {
   }
 }
 
-// 触发文件选择
-const triggerFileSelect = () => {
-  if (!isSending.value) {
-    fileInputRef.value.click()
-  }
-}
 
 // 格式化时间 - 统一格式
 const formatTime = (timeString) => {
@@ -280,7 +296,6 @@ const formatTime = (timeString) => {
     return `${year}/${month}/${day} ${hours}:${minutes}`
   }
 }
-
 
 
 
