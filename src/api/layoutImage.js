@@ -1,29 +1,20 @@
-import request from '../utils/request'
+import {request, uploadRequest} from '../utils/request'
+
+import {BASE_URL} from "../config/apiConfig";
 
 /**
  * 上传布局图片
  */
-export function uploadLayoutImage(layoutId, options = {}) {
-    const formData = new FormData()
-
-    if (options.file) {
-        formData.append('file', options.file)
-    }
-
-    if (options.imageType) {
-        formData.append('imageType', options.imageType)
-    }
-
-    if (options.imageDesc) {
-        formData.append('imageDesc', options.imageDesc)
-    }
-
-    return request({
+export function uploadLayoutImage(layoutId, filePath) {
+    return uploadRequest({
         url: `/house-layout-image/${layoutId}/create`,
-        method: 'POST',
-        data: formData
+        filePath,
+        formData: {
+            imageType: "STRUCTURE",
+        }
     })
 }
+
 
 /**
  * 获取某个 layout 下的所有图片

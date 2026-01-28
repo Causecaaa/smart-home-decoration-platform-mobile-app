@@ -1,5 +1,6 @@
 // src/api/auth.js
-import request from '../utils/request'
+import { request } from '../utils/request'
+
 
 export function validateToken(token) {
   return request({

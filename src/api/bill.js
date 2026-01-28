@@ -1,4 +1,20 @@
-import request from '../utils/request'
+import { request } from '../utils/request'
+
+
+
+export function payDepositRequest(billId) {
+    return request({
+        url: `/bill/pay/deposit/${billId}`,
+        method: 'POST'
+    })
+}
+
+export function payFinalRequest(billId) {
+    return request({
+        url: `/bill/pay/final/${billId}`,
+        method: 'POST'
+    })
+}
 
 /**
  * 获取账单列表

@@ -1,4 +1,4 @@
-import request from "../utils/request";
+import {request, uploadRequest} from '../utils/request'
 import { BASE_URL } from "../config/apiConfig";
 
 export function registerUser(data) {
@@ -41,25 +41,8 @@ export function changeUserPassword(data) {
 }
 
 export function uploadUserAvatar(filePath) {
-    return new Promise((resolve, reject) => {
-        const token = uni.getStorageSync('token')
-
-        uni.uploadFile({
-            url: BASE_URL + '/user/upload-avatar',
-            filePath,
-            name: 'file',
-            header: {
-                Authorization: `Bearer ${token}`
-            },
-            success: (res) => {
-                const data = JSON.parse(res.data)
-                if (data.code === 200) {
-                    resolve(data.data)
-                } else {
-                    reject(data.message)
-                }
-            },
-            fail: reject
-        })
+    return uploadRequest({
+        url: '/user/upload-avatar',
+        filePath
     })
 }

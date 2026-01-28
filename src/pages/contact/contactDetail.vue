@@ -93,6 +93,8 @@ import {ref, onMounted, nextTick, computed, watch} from 'vue'
 import { getConversation, sendTextMessage, sendImageMessage } from '../../api/message'
 import { useUserStore } from '../../store/userStore'
 import {BASE_URL} from "../../config/apiConfig";
+import {onLoad} from '@dcloudio/uni-app'
+
 const defaultAvatar = ref('/static/default-avatar.png') // 或者使用 base64 图片
 
 
@@ -133,6 +135,17 @@ const getUserDisplayName = (userId) => {
   }
   return `${userId}`
 }
+
+// 在页面的 onLoad 钩子中获取参数并设置标题
+onLoad((options) => {
+  if (options.targetUserName) {
+    // 设置导航栏标题为传入的用户名
+    uni.setNavigationBarTitle({
+      title: options.targetUserName
+    })
+  }
+})
+
 
 // 获取对话记录
 const loadConversation = async () => {

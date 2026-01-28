@@ -1,4 +1,5 @@
-import request from '../utils/request'
+import { request } from '../utils/request'
+
 
 /**
  * REDESIGN：创建布局草稿（选择设计师）

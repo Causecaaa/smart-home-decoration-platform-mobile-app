@@ -1,5 +1,6 @@
 // src/api/designer.js
-import request from '../utils/request'
+import { request } from '../utils/request'
+
 
 // 获取设计师列表
 export function getDesignerList(params = {}) {

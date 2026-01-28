@@ -25,7 +25,8 @@
 		{ "path": "src/pages/profile/profile", "style": { "navigationBarTitleText": "我的" } },
 		{ "path": "src/pages/login/login", "style": { "navigationBarTitleText": "登录" }},
 		{ "path": "src/pages/register/register", "style": { "navigationBarTitleText": "注册"}},
-		{ "path": "src/pages/contact/contactDetail", "style": { "navigationBarTitleText": "聊天"}}
+		{ "path": "src/pages/contact/contactDetail", "style": { "navigationBarTitleText": "聊天"}},
+		{ "path": "src/pages/layout/layout", "style": { "navigationBarTitleText": "布局设计"}}
 
 	],
 	"globalStyle": {

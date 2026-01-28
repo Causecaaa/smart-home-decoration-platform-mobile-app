@@ -1,11 +1,10 @@
 import { useUserStore } from '../store/userStore'
 import { BASE_URL } from '../config/apiConfig'
 
-function request(options) {
+export function request(options) {
     return new Promise((resolve, reject) => {
         const userStore = useUserStore()
 
-        // 检查是否需要绕过全局 token
         const skipGlobalToken = options.skipGlobalToken || false
 
         uni.request({
@@ -43,4 +42,27 @@ function request(options) {
     })
 }
 
-export default request
+export function uploadRequest({ url, filePath, formData = {} }) {
+    return new Promise((resolve, reject) => {
+        const userStore = useUserStore()
+
+        uni.uploadFile({
+            url: BASE_URL + url,
+            filePath,
+            name: 'file',
+            formData,
+            header: userStore.token
+                ? { Authorization: `Bearer ${userStore.token}` }
+                : {},
+            success: (res) => {
+                const data = JSON.parse(res.data)
+                if (data.code === 200) {
+                    resolve(data.data)
+                } else {
+                    reject(data.message)
+                }
+            },
+            fail: reject
+        })
+    })
+}
