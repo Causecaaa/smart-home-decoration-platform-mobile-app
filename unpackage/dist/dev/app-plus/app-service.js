@@ -38,15 +38,15 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$e = {
+  const _sfc_main$g = {
     name: "IndexPage"
   };
-  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("text", null, "首页内容334")
     ]);
   }
-  const SrcPagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__scopeId", "data-v-83a5a03c"], ["__file", "D:/CODE/mobile-app/src/pages/index/index.vue"]]);
+  const SrcPagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-83a5a03c"], ["__file", "D:/CODE/mobile-app/src/pages/index/index.vue"]]);
   const ON_SHOW = "onShow";
   const ON_LAUNCH = "onLaunch";
   const ON_LOAD = "onLoad";
@@ -196,7 +196,7 @@ if (uni.restoreGlobal) {
     clearTimeout(_this.timer);
     return new MPAnimation(option, _this);
   }
-  const _sfc_main$d = {
+  const _sfc_main$f = {
     name: "uniTransition",
     emits: ["click", "change"],
     props: {
@@ -447,7 +447,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.withDirectives((vue.openBlock(), vue.createElementBlock("view", {
       ref: "ani",
       animation: $data.animationData,
@@ -460,8 +460,8 @@ if (uni.restoreGlobal) {
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "D:/CODE/mobile-app/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
-  const _sfc_main$c = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__file", "D:/CODE/mobile-app/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$e = {
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -814,7 +814,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$3);
     return $data.showPopup ? (vue.openBlock(), vue.createElementBlock(
       "view",
@@ -874,7 +874,7 @@ if (uni.restoreGlobal) {
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -1525,7 +1525,7 @@ if (uni.restoreGlobal) {
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$b = {
+  const _sfc_main$d = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -1579,7 +1579,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -1594,7 +1594,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -1613,7 +1613,7 @@ if (uni.restoreGlobal) {
     }
     return style;
   }
-  const _sfc_main$a = {
+  const _sfc_main$c = {
     name: "uni-easyinput",
     emits: [
       "click",
@@ -1970,7 +1970,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$1);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -2094,7 +2094,7 @@ if (uni.restoreGlobal) {
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   var isVue2 = false;
   function set(target, key, val) {
     if (Array.isArray(target)) {
@@ -3675,7 +3675,7 @@ This will fail in production.`);
       method: "DELETE"
     });
   }
-  const _sfc_main$9 = {
+  const _sfc_main$b = {
     name: "homeForm",
     props: { house: Object },
     emits: ["success"],
@@ -3813,7 +3813,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_0);
     return vue.openBlock(), vue.createElementBlock("view", { class: "house-form" }, [
       vue.createElementVNode("view", { class: "input-row" }, [
@@ -4023,8 +4023,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const homeForm = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__scopeId", "data-v-5f8d72f0"], ["__file", "D:/CODE/mobile-app/src/components/homeForm.vue"]]);
-  const _sfc_main$8 = {
+  const homeForm = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__scopeId", "data-v-5f8d72f0"], ["__file", "D:/CODE/mobile-app/src/components/homeForm.vue"]]);
+  const _sfc_main$a = {
     __name: "project",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -4158,7 +4158,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "houses-container" }, [
       vue.createElementVNode("view", { class: "header" }, [
@@ -4297,7 +4297,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const SrcPagesProjectProject = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "D:/CODE/mobile-app/src/pages/project/project.vue"]]);
+  const SrcPagesProjectProject = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__file", "D:/CODE/mobile-app/src/pages/project/project.vue"]]);
   const sendTextMessage = (data) => {
     return request({
       url: "/chat/text-create",
@@ -4323,7 +4323,7 @@ This will fail in production.`);
       method: "get"
     });
   };
-  const _sfc_main$7 = {
+  const _sfc_main$9 = {
     __name: "contact",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -4387,7 +4387,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "contact-container" }, [
       vue.createElementVNode("view", { class: "header" }, [
         vue.createElementVNode("text", { class: "title" }, "联系人")
@@ -4469,7 +4469,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesContactContact = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "D:/CODE/mobile-app/src/pages/contact/contact.vue"]]);
+  const SrcPagesContactContact = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__file", "D:/CODE/mobile-app/src/pages/contact/contact.vue"]]);
   function registerUser(data) {
     return request({
       url: "/user/create",
@@ -4510,7 +4510,7 @@ This will fail in production.`);
       filePath
     });
   }
-  const _sfc_main$6 = {
+  const _sfc_main$8 = {
     __name: "profile",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -4725,7 +4725,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       vue.Fragment,
       null,
@@ -4950,8 +4950,8 @@ This will fail in production.`);
       /* STABLE_FRAGMENT */
     );
   }
-  const SrcPagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "D:/CODE/mobile-app/src/pages/profile/profile.vue"]]);
-  const _sfc_main$5 = {
+  const SrcPagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__file", "D:/CODE/mobile-app/src/pages/profile/profile.vue"]]);
+  const _sfc_main$7 = {
     __name: "login",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -5035,7 +5035,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "login-container" }, [
       vue.createElementVNode("view", { class: "login-card" }, [
         vue.createElementVNode("view", { class: "login-header" }, [
@@ -5096,8 +5096,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "D:/CODE/mobile-app/src/pages/login/login.vue"]]);
-  const _sfc_main$4 = {
+  const SrcPagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "D:/CODE/mobile-app/src/pages/login/login.vue"]]);
+  const _sfc_main$6 = {
     __name: "register",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -5243,7 +5243,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "register-container" }, [
       vue.createElementVNode("view", { class: "register-card" }, [
         vue.createElementVNode("view", { class: "register-header" }, [
@@ -5362,8 +5362,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "D:/CODE/mobile-app/src/pages/register/register.vue"]]);
-  const _sfc_main$3 = {
+  const SrcPagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "D:/CODE/mobile-app/src/pages/register/register.vue"]]);
+  const _sfc_main$5 = {
     __name: "contactDetail",
     props: {
       targetUserId: {
@@ -5566,7 +5566,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", { class: "chat-container" }, [
       vue.createElementVNode(
         "div",
@@ -5683,7 +5683,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesContactContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__scopeId", "data-v-c8354b46"], ["__file", "D:/CODE/mobile-app/src/pages/contact/contactDetail.vue"]]);
+  const SrcPagesContactContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__scopeId", "data-v-c8354b46"], ["__file", "D:/CODE/mobile-app/src/pages/contact/contactDetail.vue"]]);
   function getDesignerList(params = {}) {
     return request({
       url: "/designer/list",
@@ -5773,7 +5773,7 @@ This will fail in production.`);
       method: "DELETE"
     });
   }
-  const _sfc_main$2 = {
+  const _sfc_main$4 = {
     __name: "LayoutForm",
     props: {
       houseId: {
@@ -5992,7 +5992,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: "layout-card",
       onClick: $setup.handleCardClickOutside
@@ -6231,22 +6231,37 @@ This will fail in production.`);
       ])
     ]);
   }
-  const LayoutForm = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-16bb0760"], ["__file", "D:/CODE/mobile-app/src/components/LayoutForm.vue"]]);
+  const LayoutForm = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__scopeId", "data-v-16bb0760"], ["__file", "D:/CODE/mobile-app/src/components/LayoutForm.vue"]]);
   const useLayoutImageStore = defineStore("layoutImage", {
     state: () => ({
       images: {}
-      // 直接存储图片，不使用缓存层
     }),
     actions: {
-      // 移除缓存相关的清理和恢复方法
       setImages(layoutId, images) {
+        if (!layoutId || !Array.isArray(images)) {
+          formatAppLog("warn", "at src/store/layoutImageStore.js:11", "Invalid parameters for setImages");
+          return;
+        }
         this.images[layoutId] = images;
       },
       addImage(layoutId, image) {
+        if (!layoutId || !image) {
+          formatAppLog("warn", "at src/store/layoutImageStore.js:19", "Invalid parameters for addImage");
+          return;
+        }
         if (!this.images[layoutId]) {
           this.images[layoutId] = [];
         }
         this.images[layoutId].push(image);
+      },
+      // 新增安全访问方法
+      getImages(layoutId) {
+        return this.images[layoutId] || [];
+      },
+      clearImages(layoutId) {
+        if (this.images[layoutId]) {
+          delete this.images[layoutId];
+        }
       }
     }
   });
@@ -6262,7 +6277,7 @@ This will fail in production.`);
       method: "POST"
     });
   }
-  const _sfc_main$1 = {
+  const _sfc_main$3 = {
     __name: "layout",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -6283,7 +6298,7 @@ This will fail in production.`);
         }
       });
       const imageStore = useLayoutImageStore();
-      const draftLayout = vue.ref(null);
+      const draftLayout2 = vue.ref(null);
       const designerLayouts = vue.ref([]);
       const keepOriginalLayout = vue.ref(null);
       const showLayoutDialog = vue.ref(false);
@@ -6362,7 +6377,7 @@ This will fail in production.`);
       const openChatWithDesigner = () => {
         formatAppLog("log", "at src/pages/layout/layout.vue:346", "openChatWithDesigner");
         uni.navigateTo({
-          url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout.value.designerId}&targetUserName=${draftLayout.value.designerUsername}&targetAvatarUrl=${draftLayout.value.avatarUrl}`
+          url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout2.value.designerId}&targetUserName=${draftLayout2.value.designerUsername}&targetAvatarUrl=${draftLayout2.value.avatarUrl}`
         });
       };
       const closeChatModal = () => {
@@ -6370,14 +6385,14 @@ This will fail in production.`);
       };
       const loadLayouts = async () => {
         try {
-          formatAppLog("log", "at src/pages/layout/layout.vue:361", houseId.value);
+          formatAppLog("log", "at src/pages/layout/layout.vue:360", houseId.value);
           const res = await getLayoutsByHouse(houseId.value);
-          draftLayout.value = res.draftLayout ? {
+          draftLayout2.value = res.draftLayout ? {
             ...res.draftLayout,
             layoutVersion: res.draftLayout.version ?? 0
           } : null;
-          if (draftLayout.value) {
-            resolveBillMeta(draftLayout.value);
+          if (draftLayout2.value) {
+            resolveBillMeta(draftLayout2.value);
           }
           designerLayouts.value = (res.designerLayouts || []).map((l) => ({
             ...l,
@@ -6389,7 +6404,7 @@ This will fail in production.`);
           } : null;
           await loadAllLayoutImages();
         } catch (err) {
-          draftLayout.value = null;
+          draftLayout2.value = null;
           designerLayouts.value = [];
           uni.showToast({
             title: "加载布局失败",
@@ -6399,8 +6414,8 @@ This will fail in production.`);
       };
       const loadAllLayoutImages = async () => {
         const ids = [];
-        if (draftLayout.value) {
-          ids.push(draftLayout.value.layoutId);
+        if (draftLayout2.value) {
+          ids.push(draftLayout2.value.layoutId);
         }
         designerLayouts.value.forEach((l) => ids.push(l.layoutId));
         if (keepOriginalLayout.value) {
@@ -6426,7 +6441,7 @@ This will fail in production.`);
         showPreview.value = false;
       };
       const openLayoutDialog = () => {
-        if (draftLayout.value) {
+        if (draftLayout2.value) {
           uni.showToast({
             title: "当前房屋已存在布局",
             icon: "none"
@@ -6468,7 +6483,7 @@ This will fail in production.`);
           });
           return;
         }
-        formatAppLog("log", "at src/pages/layout/layout.vue:491", "chooseImage", layout);
+        formatAppLog("log", "at src/pages/layout/layout.vue:486", "chooseImage", layout);
         uni.chooseImage({
           count: 1,
           sourceType: ["album", "camera"],
@@ -6485,9 +6500,9 @@ This will fail in production.`);
                 title: "上传成功",
                 icon: "success"
               });
-              formatAppLog("log", "at src/pages/layout/layout.vue:514", "上传成功", uploadRes);
+              formatAppLog("log", "at src/pages/layout/layout.vue:509", "上传成功", uploadRes);
             } catch (error) {
-              formatAppLog("error", "at src/pages/layout/layout.vue:516", "上传失败:", error);
+              formatAppLog("error", "at src/pages/layout/layout.vue:511", "上传失败:", error);
               uni.showToast({
                 title: typeof error === "string" ? error : (error == null ? void 0 : error.message) || "上传失败",
                 icon: "none"
@@ -6529,12 +6544,17 @@ This will fail in production.`);
             icon: "success"
           });
         } catch (error) {
-          formatAppLog("error", "at src/pages/layout/layout.vue:569", "删除图片失败:", error);
+          formatAppLog("error", "at src/pages/layout/layout.vue:561", "删除图片失败:", error);
           uni.showToast({
             title: "删除失败",
             icon: "none"
           });
         }
+      };
+      const goToFurnitureDesign = (layout) => {
+        uni.navigateTo({
+          url: `/src/pages/furniture/furniture?layoutId=${layout.confirmedLayoutId}`
+        });
       };
       const confirmLayout = async (layout) => {
         if (layout.layoutStatus === "CONFIRMED" || layout.layoutStatus === "ARCHIVED") {
@@ -6560,10 +6580,10 @@ This will fail in production.`);
         await loadLayouts();
       };
       const onAvatarError = (e) => {
-        formatAppLog("log", "at src/pages/layout/layout.vue:607", "头像加载失败", e);
+        formatAppLog("log", "at src/pages/layout/layout.vue:604", "头像加载失败", e);
       };
       vue.onMounted(loadLayouts);
-      const __returned__ = { LAYOUT_INTENT_MAP, LAYOUT_STATUS_MAP, houseId, imageStore, draftLayout, designerLayouts, keepOriginalLayout, showLayoutDialog, currentHouseId, activeDropdownId, showChatModal, chatTargetUserId, previewUrl, showPreview, toggleDropdown, resolveBillMeta, payDeposit, payFinal, openChatWithDesigner, closeChatModal, loadLayouts, loadAllLayoutImages, loadLayoutImages, previewImage, closePreview, openLayoutDialog, closeLayoutDialog, onLayoutCreated, confirmDelete, chooseImage, removeImage, confirmLayout, onAvatarError, ref: vue.ref, onMounted: vue.onMounted, getCurrentInstance: vue.getCurrentInstance, LayoutForm, get getLayoutsByHouse() {
+      const __returned__ = { LAYOUT_INTENT_MAP, LAYOUT_STATUS_MAP, houseId, imageStore, draftLayout: draftLayout2, designerLayouts, keepOriginalLayout, showLayoutDialog, currentHouseId, activeDropdownId, showChatModal, chatTargetUserId, previewUrl, showPreview, toggleDropdown, resolveBillMeta, payDeposit, payFinal, openChatWithDesigner, closeChatModal, loadLayouts, loadAllLayoutImages, loadLayoutImages, previewImage, closePreview, openLayoutDialog, closeLayoutDialog, onLayoutCreated, confirmDelete, chooseImage, removeImage, goToFurnitureDesign, confirmLayout, onAvatarError, ref: vue.ref, onMounted: vue.onMounted, getCurrentInstance: vue.getCurrentInstance, LayoutForm, get getLayoutsByHouse() {
         return getLayoutsByHouse;
       }, get deleteLayout() {
         return deleteLayout;
@@ -6590,7 +6610,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
     return vue.openBlock(), vue.createElementBlock("view", { class: "layouts-container" }, [
       vue.createElementVNode("view", { class: "layouts-content" }, [
@@ -6763,7 +6783,7 @@ This will fail in production.`);
                 vue.createElementVNode("text", { class: "bill-hint success" }, " ✅ 费用已全部结清\\n已完成房屋结构设计 "),
                 vue.createElementVNode("button", {
                   class: "btn",
-                  onClick: _cache[5] || (_cache[5] = ($event) => _ctx.goToFurnitureDesign($setup.draftLayout))
+                  onClick: _cache[5] || (_cache[5] = ($event) => $setup.goToFurnitureDesign($setup.draftLayout))
                 }, "前往家具设计")
               ])) : vue.createCommentVNode("v-if", true)
             ])
@@ -6968,7 +6988,849 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const SrcPagesLayoutLayout = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/layout/layout.vue"]]);
+  const SrcPagesLayoutLayout = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "D:/CODE/mobile-app/src/pages/layout/layout.vue"]]);
+  const _sfc_main$2 = {
+    __name: "DesignerSelector",
+    props: {
+      designers: { type: Array, default: () => [] },
+      modelValue: { type: [String, Number], default: null }
+    },
+    emits: ["update:modelValue", "select"],
+    setup(__props, { expose: __expose, emit: __emit }) {
+      __expose();
+      const emit = __emit;
+      const selectDesigner = (designer) => {
+        emit("update:modelValue", designer.userId);
+        emit("select", designer);
+      };
+      const __returned__ = { emit, selectDesigner, get BASE_URL() {
+        return BASE_URL;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "designer-list" }, [
+      (vue.openBlock(true), vue.createElementBlock(
+        vue.Fragment,
+        null,
+        vue.renderList($props.designers, (designer) => {
+          return vue.openBlock(), vue.createElementBlock("view", {
+            key: designer.userId,
+            class: vue.normalizeClass(["designer-item", { selected: designer.userId === $props.modelValue }]),
+            onClick: ($event) => $setup.selectDesigner(designer)
+          }, [
+            vue.createElementVNode("image", {
+              src: $setup.BASE_URL + designer.avatar,
+              class: "avatar",
+              mode: "aspectFill"
+            }, null, 8, ["src"]),
+            vue.createElementVNode("view", { class: "info" }, [
+              vue.createElementVNode("view", { class: "top-row" }, [
+                vue.createElementVNode(
+                  "view",
+                  { class: "name" },
+                  vue.toDisplayString(designer.name),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "view",
+                  { class: "rating-orders" },
+                  " ⭐ " + vue.toDisplayString(designer.rating) + " | 接单: " + vue.toDisplayString(designer.orderCount),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              vue.createElementVNode(
+                "view",
+                { class: "style" },
+                "风格: " + vue.toDisplayString(designer.style),
+                1
+                /* TEXT */
+              ),
+              vue.createElementVNode(
+                "view",
+                { class: "experience" },
+                "经验: " + vue.toDisplayString(designer.experienceYears) + " 年",
+                1
+                /* TEXT */
+              ),
+              vue.createElementVNode(
+                "view",
+                { class: "bio" },
+                vue.toDisplayString(designer.shortBio),
+                1
+                /* TEXT */
+              )
+            ]),
+            designer.userId === $props.modelValue ? (vue.openBlock(), vue.createElementBlock("view", {
+              key: 0,
+              class: "check"
+            }, "✔")) : vue.createCommentVNode("v-if", true)
+          ], 10, ["onClick"]);
+        }),
+        128
+        /* KEYED_FRAGMENT */
+      ))
+    ]);
+  }
+  const DesignerSelector = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-23bd4fad"], ["__file", "D:/CODE/mobile-app/src/components/DesignerSelector.vue"]]);
+  function getUserFurnitureLayoutById(layoutId) {
+    return request({
+      url: `/house-layout/user/furniture/${layoutId}`,
+      method: "GET"
+    });
+  }
+  function assignFurnitureDesigner(layoutId, designerId) {
+    return request({
+      url: `/house-layout/${layoutId}/confirm/furnitureDesigner`,
+      method: "PUT",
+      data: {
+        furnitureDesignerId: designerId
+      }
+    });
+  }
+  function getRoomsByLayout(layoutId) {
+    return request({
+      url: `/room/${layoutId}/get-all`,
+      method: "GET"
+    });
+  }
+  function getSchemesByRoom(roomId) {
+    return request({
+      url: `/furniture-scheme/${roomId}/get-all`,
+      method: "GET"
+    });
+  }
+  function confirmFurnitureScheme(schemeId) {
+    return request({
+      url: `/furniture-scheme/${schemeId}/confirm`,
+      method: "PUT"
+    });
+  }
+  const _sfc_main$1 = {
+    components: {
+      DesignerSelector
+    },
+    setup() {
+      const showChatModal = vue.ref(false);
+      const chatTargetUserId = vue.ref(null);
+      const layoutId = vue.ref(null);
+      onLoad((query) => {
+        if (query.layoutId) {
+          layoutId.value = Number(query.layoutId);
+        }
+      });
+      const layoutDetail = vue.ref(null);
+      const layoutImages = vue.ref([]);
+      const designers = vue.ref([]);
+      const selectedDesignerId = vue.ref(null);
+      const showDesignerDialog = vue.ref(false);
+      const rooms = vue.ref([]);
+      const showImagePreview = vue.ref(false);
+      const previewImageUrl = vue.ref("");
+      const showPreview = vue.ref(false);
+      const previewUrl = vue.ref(null);
+      const showSchemeModal = vue.ref(false);
+      const currentRoomSchemes = vue.ref([]);
+      const currentRoom = vue.ref(null);
+      const loadLayoutDetail = async () => {
+        try {
+          const res = await getUserFurnitureLayoutById(layoutId.value);
+          layoutDetail.value = res;
+          if (layoutDetail) {
+            formatAppLog("log", "at src/pages/furniture/furniture.vue:276", res);
+          } else {
+            formatAppLog("log", "at src/pages/furniture/furniture.vue:278", "没有数据");
+          }
+          if (!res.furnitureDesignerId) {
+            await loadDesigners();
+          } else {
+            selectedDesignerId.value = res.furnitureDesignerId;
+          }
+          if (res.furnitureDesignerId) {
+            await loadRooms();
+          }
+          await loadAllLayoutImages();
+        } catch (error) {
+          uni.showToast({
+            title: "加载布局详情失败",
+            icon: "none"
+          });
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:300", error);
+        }
+      };
+      const loadRooms = async () => {
+        try {
+          const res = await getRoomsByLayout(layoutId.value);
+          rooms.value = res;
+        } catch (error) {
+          uni.showToast({
+            title: "加载房间信息失败",
+            icon: "none"
+          });
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:314", error);
+        }
+      };
+      const loadDesigners = async () => {
+        try {
+          const res = await getDesignerList();
+          designers.value = res.map((d) => ({
+            userId: d.userId,
+            name: d.name,
+            avatar: d.avatar,
+            rating: d.rating,
+            orderCount: d.orderCount,
+            style: d.style,
+            experienceYears: d.experienceYears,
+            shortBio: d.shortBio
+          }));
+        } catch (error) {
+          uni.showToast({
+            title: "加载设计师列表失败",
+            icon: "none"
+          });
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:336", error);
+        }
+      };
+      const openChatWithDesigner = () => {
+        formatAppLog("log", "at src/pages/furniture/furniture.vue:342", "openChatWithDesigner");
+        uni.navigateTo({
+          url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout.value.designerId}&targetUserName=${draftLayout.value.designerUsername}&targetAvatarUrl=${draftLayout.value.avatarUrl}`
+        });
+      };
+      const closeChatModal = () => {
+        showChatModal.value = false;
+      };
+      const loadLayoutImages = async (layoutId2) => {
+        try {
+          const imgList = await getLayoutImages(layoutId2);
+          const formatted = imgList.map((img) => ({
+            id: img.imageId,
+            url: BASE_URL + img.imageUrl
+          }));
+          layoutImages.value = formatted;
+        } catch (error) {
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:365", "加载布局图片失败:", error);
+        }
+      };
+      const loadAllLayoutImages = async () => {
+        if (layoutDetail.value) {
+          await loadLayoutImages(layoutDetail.value.layoutId);
+        }
+      };
+      const previewImage = (imgObj) => {
+        uni.previewImage({
+          urls: [imgObj.url]
+        });
+      };
+      const viewSchemes = async (room) => {
+        try {
+          const schemes = await getSchemesByRoom(room.roomId);
+          currentRoomSchemes.value = schemes;
+          currentRoom.value = room;
+          showSchemeModal.value = true;
+        } catch (error) {
+          uni.showToast({
+            title: "加载方案失败",
+            icon: "none"
+          });
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:395", error);
+        }
+      };
+      const closeSchemeModal = () => {
+        showSchemeModal.value = false;
+        currentRoomSchemes.value = [];
+        currentRoom.value = null;
+      };
+      const previewImageFromCache = (scheme) => {
+        const imageUrl = scheme.imageUrl.startsWith("http") ? scheme.imageUrl : BASE_URL + scheme.imageUrl;
+        uni.previewImage({
+          urls: [imageUrl]
+        });
+      };
+      const getRoomStatus = (room) => {
+        if (room.hasConfirmedScheme) {
+          return { text: "已确定", class: "confirmed" };
+        } else if (room.hasFurnitureScheme) {
+          return { text: "有方案", class: "has-scheme" };
+        } else {
+          return { text: "无方案", class: "no-scheme" };
+        }
+      };
+      const handleSelectDesigner = async (designer) => {
+        try {
+          await assignFurnitureDesigner(layoutId.value, designer.userId);
+          selectedDesignerId.value = designer.userId;
+          layoutDetail.value.furnitureDesignerId = designer.userId;
+          uni.showToast({
+            title: `已成功选择${designer.name}`,
+            icon: "success"
+          });
+          closeDesignerDialog();
+          await loadLayoutDetail();
+        } catch (error) {
+          uni.showToast({
+            title: "分配设计师失败",
+            icon: "none"
+          });
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:451", error);
+        }
+      };
+      const payDeposit = async (billId) => {
+        uni.showModal({
+          title: "确认支付",
+          content: "确认支付定金吗？支付后将进入家具设计阶段",
+          success: (res) => {
+            if (res.confirm) {
+              performPayDeposit(billId);
+            }
+          }
+        });
+      };
+      const performPayDeposit = async (billId) => {
+        try {
+          await payDepositRequest(billId);
+          uni.showToast({
+            title: "定金支付成功",
+            icon: "success"
+          });
+          await loadLayoutDetail();
+        } catch (e) {
+          uni.showToast({
+            title: "支付失败，请稍后重试",
+            icon: "none"
+          });
+        }
+      };
+      const payFinalAmount = async (billId) => {
+        uni.showModal({
+          title: "确认支付",
+          content: "确认支付尾款吗？支付后家具设计环节将完成",
+          success: (res) => {
+            if (res.confirm) {
+              performPayFinalAmount(billId);
+            }
+          }
+        });
+      };
+      const performPayFinalAmount = async (billId) => {
+        try {
+          await payFinalRequest(billId);
+          uni.showToast({
+            title: "尾款支付成功",
+            icon: "success"
+          });
+          await loadLayoutDetail();
+        } catch (e) {
+          uni.showToast({
+            title: "支付失败，请稍后重试",
+            icon: "none"
+          });
+        }
+      };
+      const openDesignerDialog = () => {
+        showDesignerDialog.value = true;
+      };
+      const closeDesignerDialog = () => {
+        showDesignerDialog.value = false;
+      };
+      const confirmScheme = async (schemeId) => {
+        uni.showModal({
+          title: "确认方案",
+          content: "确认此方案吗？确认后将不能再修改",
+          success: (res) => {
+            if (res.confirm) {
+              performConfirmScheme(schemeId);
+            }
+          }
+        });
+      };
+      const performConfirmScheme = async (schemeId) => {
+        try {
+          await confirmFurnitureScheme(schemeId);
+          uni.showToast({
+            title: "方案确认成功",
+            icon: "success"
+          });
+          closeSchemeModal();
+          await loadLayoutDetail();
+        } catch (error) {
+          uni.showToast({
+            title: "确认失败",
+            icon: "none"
+          });
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:550", error);
+        }
+      };
+      const closeImagePreview = () => {
+        showImagePreview.value = false;
+        if (previewImageUrl.value) {
+          URL.revokeObjectURL(previewImageUrl.value);
+          previewImageUrl.value = "";
+        }
+      };
+      const closePreview = () => {
+        showPreview.value = false;
+        if (previewUrl.value) {
+          URL.revokeObjectURL(previewUrl.value);
+          previewUrl.value = "";
+        }
+      };
+      vue.onMounted(() => {
+        loadLayoutDetail();
+      });
+      return {
+        layoutDetail,
+        layoutImages,
+        // 返回布局图片数组
+        designers,
+        selectedDesignerId,
+        showDesignerDialog,
+        rooms,
+        showImagePreview,
+        previewImageUrl,
+        showPreview,
+        previewUrl,
+        showSchemeModal,
+        currentRoomSchemes,
+        currentRoom,
+        showChatModal,
+        chatTargetUserId,
+        // Methods
+        loadLayoutDetail,
+        loadRooms,
+        loadDesigners,
+        openChatWithDesigner,
+        closeChatModal,
+        previewImage,
+        viewSchemes,
+        closeSchemeModal,
+        previewImageFromCache,
+        getRoomStatus,
+        handleSelectDesigner,
+        payDeposit,
+        payFinalAmount,
+        openDesignerDialog,
+        closeDesignerDialog,
+        confirmScheme,
+        closeImagePreview,
+        closePreview,
+        onAvatarError: () => {
+        }
+        // Placeholder for avatar error handler
+      };
+    }
+  };
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    var _a;
+    const _component_DesignerSelector = vue.resolveComponent("DesignerSelector");
+    return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
+      vue.createElementVNode("view", { class: "furniture-design-container" }, [
+        vue.createElementVNode("view", { class: "furniture-design-content" }, [
+          vue.createElementVNode("view", { class: "header" }, [
+            vue.createElementVNode("text", { class: "title" }, "家具设计")
+          ]),
+          vue.createElementVNode("view", { class: "layout-and-rooms-container" }, [
+            $setup.layoutDetail ? (vue.openBlock(), vue.createElementBlock("view", {
+              key: 0,
+              class: "layout-item user-layout"
+            }, [
+              vue.createElementVNode("view", { class: "layout-header" }, [
+                vue.createElementVNode("text", { class: "subtitle" }, "家具设计方案")
+              ]),
+              $setup.layoutImages.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+                key: 0,
+                class: "images"
+              }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList($setup.layoutImages, (img, index) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      key: img.id ?? img.key ?? index,
+                      class: "image-wrapper"
+                    }, [
+                      vue.createElementVNode("image", {
+                        src: img.url,
+                        class: "image",
+                        onClick: ($event) => $setup.previewImage(img)
+                      }, null, 8, ["src", "onClick"])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])) : vue.createCommentVNode("v-if", true),
+              $setup.layoutDetail.furnitureDesignerId ? (vue.openBlock(), vue.createElementBlock("view", {
+                key: 1,
+                class: "designer-info"
+              }, [
+                $setup.layoutDetail.furnitureDesignerId ? (vue.openBlock(), vue.createElementBlock("view", {
+                  key: 0,
+                  class: "designer-info"
+                }, [
+                  vue.createElementVNode("view", { class: "designer-info-content" }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "designer-text" },
+                      "设计师：" + vue.toDisplayString($setup.layoutDetail.designerUsername) + "（" + vue.toDisplayString($setup.layoutDetail.designerEmail) + "）",
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  $setup.layoutDetail.furnitureDesignerId ? (vue.openBlock(), vue.createElementBlock("button", {
+                    key: 0,
+                    class: "chat-btn",
+                    onClick: _cache[0] || (_cache[0] = (...args) => $setup.openChatWithDesigner && $setup.openChatWithDesigner(...args))
+                  }, " 💬 联系设计师 ")) : vue.createCommentVNode("v-if", true)
+                ])) : vue.createCommentVNode("v-if", true),
+                vue.createElementVNode("text", { class: "status" }, "状态：设计师正在为您准备家具设计方案"),
+                vue.createElementVNode("view", { class: "bill-box" }, [
+                  vue.createElementVNode("text", { class: "bill-title" }, "💰 家具设计方案费用"),
+                  $setup.layoutDetail.payStatus === "UNPAID" ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "bill-text" },
+                      "总价：¥" + vue.toDisplayString($setup.layoutDetail.billAmount),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "text",
+                      { class: "bill-text" },
+                      "定金：¥" + vue.toDisplayString($setup.layoutDetail.depositAmount),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode("text", { class: "bill-hint" }, "支付定金后，设计师将开始家具方案设计"),
+                    vue.createElementVNode("button", {
+                      class: "btn",
+                      onClick: _cache[1] || (_cache[1] = ($event) => $setup.payDeposit($setup.layoutDetail.billId))
+                    }, "支付定金")
+                  ])) : $setup.layoutDetail.payStatus === "DEPOSIT_PAID" ? (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "bill-text" },
+                      "已支付定金：¥" + vue.toDisplayString($setup.layoutDetail.depositAmount),
+                      1
+                      /* TEXT */
+                    ),
+                    $setup.layoutDetail.furnitureStatus === "CONFIRMED" ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
+                      vue.createElementVNode("text", { class: "bill-hint" }, "✅ 所有方案已确认，可支付尾款"),
+                      vue.createElementVNode("button", {
+                        class: "btn btn-primary",
+                        onClick: _cache[2] || (_cache[2] = ($event) => $setup.payFinalAmount($setup.layoutDetail.billId))
+                      }, "支付尾款")
+                    ])) : (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
+                      vue.createElementVNode("text", { class: "bill-hint" }, "设计师正在出方案，确认所有方案后需支付尾款")
+                    ]))
+                  ])) : $setup.layoutDetail.payStatus === "PAID" ? (vue.openBlock(), vue.createElementBlock("view", { key: 2 }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "bill-text" },
+                      "总价：¥" + vue.toDisplayString($setup.layoutDetail.billAmount),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode("text", { class: "bill-hint success" }, " ✅ 费用已全部结清 已完成家具方案设计 ")
+                  ])) : vue.createCommentVNode("v-if", true)
+                ])
+              ])) : (vue.openBlock(), vue.createElementBlock("view", {
+                key: 2,
+                class: "no-designer-info"
+              }, [
+                vue.createElementVNode("text", { class: "warning-text" }, "⚠️ 尚未选择家具设计师"),
+                vue.createElementVNode("button", {
+                  class: "select-designer-btn",
+                  onClick: _cache[3] || (_cache[3] = (...args) => $setup.openDesignerDialog && $setup.openDesignerDialog(...args))
+                }, " 选择设计师 ")
+              ]))
+            ])) : vue.createCommentVNode("v-if", true),
+            $setup.rooms.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+              key: 1,
+              class: "rooms-container"
+            }, [
+              vue.createElementVNode("text", { class: "subtitle" }, "房间信息"),
+              vue.createElementVNode("view", { class: "room-list" }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList($setup.rooms, (room) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      key: room.roomId,
+                      class: "room-item"
+                    }, [
+                      vue.createElementVNode("view", { class: "room-header" }, [
+                        vue.createElementVNode(
+                          "text",
+                          { class: "room-name" },
+                          vue.toDisplayString(room.roomName) + " (" + vue.toDisplayString(room.roomType) + ")",
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode(
+                          "text",
+                          {
+                            class: vue.normalizeClass(["room-status", $setup.getRoomStatus(room).class])
+                          },
+                          vue.toDisplayString($setup.getRoomStatus(room).text),
+                          3
+                          /* TEXT, CLASS */
+                        )
+                      ]),
+                      vue.createElementVNode("view", { class: "room-details" }, [
+                        vue.createElementVNode(
+                          "text",
+                          { class: "room-detail" },
+                          "面积：" + vue.toDisplayString(room.area) + "㎡",
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "room-detail" },
+                          "楼层：" + vue.toDisplayString(room.floorNo),
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "room-detail" },
+                          "窗户：" + vue.toDisplayString(room.hasWindow ? "有" : "无"),
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "room-detail" },
+                          "阳台：" + vue.toDisplayString(room.hasBalcony ? "有" : "无"),
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode("view", { class: "detail-row" }, [
+                          room.hasFurnitureScheme ? (vue.openBlock(), vue.createElementBlock("button", {
+                            key: 0,
+                            class: "view-scheme-btn",
+                            onClick: ($event) => $setup.viewSchemes(room)
+                          }, "查看方案", 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
+                        ])
+                      ])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ])) : vue.createCommentVNode("v-if", true),
+            !$setup.layoutDetail ? (vue.openBlock(), vue.createElementBlock("text", {
+              key: 2,
+              class: "no-layout"
+            }, " 还没有家具设计信息 ")) : vue.createCommentVNode("v-if", true)
+          ]),
+          $setup.showDesignerDialog ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "overlay",
+            onClick: _cache[7] || (_cache[7] = (...args) => $setup.closeDesignerDialog && $setup.closeDesignerDialog(...args))
+          }, [
+            vue.createElementVNode("view", {
+              class: "modal",
+              onClick: _cache[6] || (_cache[6] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createElementVNode("view", { class: "modal-header" }, [
+                vue.createElementVNode("text", null, "选择家具设计师"),
+                vue.createElementVNode("text", {
+                  class: "close",
+                  onClick: _cache[4] || (_cache[4] = (...args) => $setup.closeDesignerDialog && $setup.closeDesignerDialog(...args))
+                }, "×")
+              ]),
+              vue.createElementVNode("view", { class: "modal-body" }, [
+                vue.createVNode(_component_DesignerSelector, {
+                  designers: $setup.designers,
+                  modelValue: $setup.selectedDesignerId,
+                  "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.selectedDesignerId = $event),
+                  onSelect: $setup.handleSelectDesigner
+                }, null, 8, ["designers", "modelValue", "onSelect"])
+              ])
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
+          $setup.showImagePreview ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 1,
+            class: "overlay image-preview-overlay",
+            onClick: _cache[9] || (_cache[9] = (...args) => $setup.closeImagePreview && $setup.closeImagePreview(...args))
+          }, [
+            vue.createElementVNode("view", {
+              class: "modal",
+              onClick: _cache[8] || (_cache[8] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createElementVNode("image", {
+                src: $setup.previewImageUrl,
+                class: "preview-image"
+              }, null, 8, ["src"])
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
+          $setup.showPreview ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 2,
+            class: "overlay",
+            onClick: _cache[11] || (_cache[11] = (...args) => $setup.closePreview && $setup.closePreview(...args))
+          }, [
+            vue.createElementVNode("view", {
+              class: "modal",
+              onClick: _cache[10] || (_cache[10] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createElementVNode("image", {
+                src: $setup.previewUrl,
+                class: "preview-image"
+              }, null, 8, ["src"])
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
+          $setup.showChatModal ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 3,
+            class: "chat-overlay",
+            onClick: _cache[16] || (_cache[16] = (...args) => $setup.closeChatModal && $setup.closeChatModal(...args))
+          }, [
+            vue.createElementVNode("view", {
+              class: "chat-modal",
+              onClick: _cache[15] || (_cache[15] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createElementVNode("view", { class: "chat-header" }, [
+                vue.createElementVNode("view", { class: "chat-header-info" }, [
+                  vue.createElementVNode("image", {
+                    src: `${_ctx.BASE_URL}${$setup.layoutDetail.avatarUrl || "/uploads/avatar/default.png"}`,
+                    class: "designer-avatar",
+                    onError: _cache[12] || (_cache[12] = (...args) => $setup.onAvatarError && $setup.onAvatarError(...args))
+                  }, null, 40, ["src"]),
+                  vue.createElementVNode(
+                    "text",
+                    null,
+                    "与设计师 " + vue.toDisplayString($setup.layoutDetail.designerUsername) + " 聊天",
+                    1
+                    /* TEXT */
+                  )
+                ]),
+                vue.createElementVNode("text", {
+                  class: "close-chat",
+                  onClick: _cache[13] || (_cache[13] = (...args) => $setup.closeChatModal && $setup.closeChatModal(...args))
+                }, "×")
+              ]),
+              vue.createElementVNode("view", { class: "chat-body" }, [
+                vue.createElementVNode("button", {
+                  class: "chat-btn",
+                  onClick: _cache[14] || (_cache[14] = (...args) => $setup.openChatWithDesigner && $setup.openChatWithDesigner(...args))
+                }, " 💬 联系设计师 ")
+              ])
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
+          $setup.showSchemeModal ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 4,
+            class: "overlay",
+            onClick: _cache[19] || (_cache[19] = (...args) => $setup.closeSchemeModal && $setup.closeSchemeModal(...args))
+          }, [
+            vue.createElementVNode("view", {
+              class: "modal scheme-modal",
+              onClick: _cache[18] || (_cache[18] = vue.withModifiers(() => {
+              }, ["stop"]))
+            }, [
+              vue.createElementVNode("view", { class: "modal-header" }, [
+                vue.createElementVNode(
+                  "text",
+                  null,
+                  vue.toDisplayString((_a = $setup.currentRoom) == null ? void 0 : _a.roomName) + " - 方案列表",
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode("text", {
+                  class: "close",
+                  onClick: _cache[17] || (_cache[17] = (...args) => $setup.closeSchemeModal && $setup.closeSchemeModal(...args))
+                }, "×")
+              ]),
+              vue.createElementVNode("view", { class: "modal-body scheme-modal-body" }, [
+                $setup.currentRoomSchemes.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+                  key: 0,
+                  class: "scheme-list"
+                }, [
+                  (vue.openBlock(true), vue.createElementBlock(
+                    vue.Fragment,
+                    null,
+                    vue.renderList($setup.currentRoomSchemes, (scheme) => {
+                      return vue.openBlock(), vue.createElementBlock("view", {
+                        key: scheme.schemeId,
+                        class: "scheme-item"
+                      }, [
+                        vue.createElementVNode("view", { class: "scheme-header" }, [
+                          vue.createElementVNode("view", { class: "scheme-info" }, [
+                            vue.createElementVNode(
+                              "text",
+                              { class: "scheme-info-text" },
+                              "版本: V" + vue.toDisplayString(scheme.schemeVersion),
+                              1
+                              /* TEXT */
+                            ),
+                            vue.createElementVNode(
+                              "text",
+                              { class: "scheme-info-text" },
+                              "状态: " + vue.toDisplayString(scheme.schemeStatus === "SUBMITTED" ? "已提交" : scheme.schemeStatus),
+                              1
+                              /* TEXT */
+                            ),
+                            vue.createElementVNode(
+                              "text",
+                              { class: "scheme-info-text" },
+                              "创建时间: " + vue.toDisplayString(new Date(scheme.createdAt).toLocaleString()),
+                              1
+                              /* TEXT */
+                            )
+                          ]),
+                          scheme.schemeStatus === "SUBMITTED" ? (vue.openBlock(), vue.createElementBlock("view", {
+                            key: 0,
+                            class: "scheme-actions"
+                          }, [
+                            vue.createElementVNode("button", {
+                              class: "confirm-btn",
+                              onClick: ($event) => $setup.confirmScheme(scheme.schemeId)
+                            }, "确认方案", 8, ["onClick"])
+                          ])) : vue.createCommentVNode("v-if", true)
+                        ]),
+                        scheme.imageUrl ? (vue.openBlock(), vue.createElementBlock("view", {
+                          key: 0,
+                          class: "scheme-image"
+                        }, [
+                          vue.createElementVNode("image", {
+                            src: scheme.imageUrl.startsWith("http") ? scheme.imageUrl : _ctx.BASE_URL + scheme.imageUrl,
+                            class: "scheme-image",
+                            onClick: ($event) => $setup.previewImageFromCache(scheme)
+                          }, null, 8, ["src", "onClick"])
+                        ])) : (vue.openBlock(), vue.createElementBlock("view", {
+                          key: 1,
+                          class: "no-image"
+                        }, [
+                          vue.createElementVNode("text", null, "暂无图片")
+                        ]))
+                      ]);
+                    }),
+                    128
+                    /* KEYED_FRAGMENT */
+                  ))
+                ])) : (vue.openBlock(), vue.createElementBlock("view", {
+                  key: 1,
+                  class: "no-schemes"
+                }, [
+                  vue.createElementVNode("text", null, "暂无方案")
+                ]))
+              ])
+            ])
+          ])) : vue.createCommentVNode("v-if", true)
+        ])
+      ])
+    ]);
+  }
+  const SrcPagesFurnitureFurniture = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/furniture/furniture.vue"]]);
   __definePage("src/pages/index/index", SrcPagesIndexIndex);
   __definePage("src/pages/project/project", SrcPagesProjectProject);
   __definePage("src/pages/contact/contact", SrcPagesContactContact);
@@ -6977,6 +7839,7 @@ This will fail in production.`);
   __definePage("src/pages/register/register", SrcPagesRegisterRegister);
   __definePage("src/pages/contact/contactDetail", SrcPagesContactContactDetail);
   __definePage("src/pages/layout/layout", SrcPagesLayoutLayout);
+  __definePage("src/pages/furniture/furniture", SrcPagesFurnitureFurniture);
   const _sfc_main = {
     __name: "App",
     setup(__props, { expose: __expose }) {

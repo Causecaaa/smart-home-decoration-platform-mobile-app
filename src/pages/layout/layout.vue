@@ -347,7 +347,6 @@ const openChatWithDesigner = () => {
     uni.navigateTo({
       url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout.value.designerId}&targetUserName=${draftLayout.value.designerUsername}&targetAvatarUrl=${draftLayout.value.avatarUrl}`
     })
-
 }
 
 // 关闭聊天窗口
@@ -394,10 +393,6 @@ const loadLayouts = async () => {
     })
   }
 }
-
-// const goToFurnitureDesign = (layout) => {
-//   router.push({ url: `/pages/furniture/FurniturePage?layoutId=${layout.confirmedLayoutId}` })
-// }
 
 /* -------------------- 加载图片 -------------------- */
 const loadAllLayoutImages = async () => {
@@ -525,9 +520,6 @@ const chooseImage = (layout, event) => {
 
 
 
-
-
-
 const removeImage = async (layout, keyOrId) => {
   if (layout.layoutStatus === 'CONFIRMED' || layout.layoutStatus === 'ARCHIVED') {
     uni.showToast({
@@ -574,6 +566,11 @@ const removeImage = async (layout, keyOrId) => {
   }
 }
 
+const goToFurnitureDesign = (layout) => {
+  uni.navigateTo({
+    url: `/src/pages/furniture/furniture?layoutId=${layout.confirmedLayoutId}`
+  })
+}
 
 /* -------------------- 确认布局 -------------------- */
 const confirmLayout = async (layout) => {
