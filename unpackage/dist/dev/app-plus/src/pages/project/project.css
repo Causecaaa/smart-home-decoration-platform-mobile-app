@@ -840,6 +840,15 @@
   padding-top: 0.625rem;
   border-top: 0.03125rem solid #eee;
 }
+.info-separator {
+  margin: 0 0.625rem;  /* 控制间距 */
+}
+
+/* 或者使用伪元素 */
+.house-info::after {
+  content: " ";
+  letter-spacing: 0.625rem;  /* 控制空隙大小 */
+}
 .actions uni-button {
   flex: 1;
   padding: 0.46875rem 0.625rem;

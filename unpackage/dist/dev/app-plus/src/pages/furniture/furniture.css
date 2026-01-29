@@ -431,18 +431,14 @@
 .scheme-image {
   text-align: center;
   margin: 0.5rem 0;
+  min-height: 6.25rem;
 }
-.scheme-image uni-image {
-  max-width: 100%;
-  max-height: 12.5rem;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 0.25rem;
-  border: 0.0625rem solid #eee;
-  cursor: pointer;
+.scheme-image-img {
+  width: 6.25rem;
+  /* 改小一点 */
+  max-height: 6.25rem;
 }
-.scheme-image uni-image:hover {
+.scheme-image-img:hover {
   opacity: 0.9;
 }
 .no-image {

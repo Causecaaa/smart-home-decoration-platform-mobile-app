@@ -5,7 +5,7 @@
     <view class="layouts-content">
       <view class="header">
         <text class="title">房屋布局</text>
-        <button @click="openLayoutDialog" class="add-btn">新增布局</button>
+        <button @tap="openLayoutDialog" class="add-btn">新增布局</button>
       </view>
 
       <view class="layout-and-rooms-container">
@@ -48,7 +48,7 @@
                 :key="img.id || img.key || index"
                 class="image-wrapper"
             >
-              <image :src="img.url" class="image" @tap="previewImage(img.url)" />
+              <image :src="img.url" class="image" @tap="previewImage(img)" />
 
               <button
                   class="delete-btn"
@@ -117,7 +117,7 @@
                     :key="img.id || img.key || index"
                     class="image-wrapper"
                 >
-                  <image :src="img.url" @error="onImageError" class="image" @tap="previewImage(img.url)" />
+                  <image :src="img.url" @error="onImageError" class="image" @tap="previewImage(img)" />
 
 
                 </view>
@@ -197,12 +197,13 @@
     </view>
 
 
-    <!-- 图片预览 -->
-    <view v-if="showPreview" class="overlay" @tap="closePreview">
-      <view class="modal">
-        <image :src="previewUrl" style="width: 90%; height: 80vh;" mode="aspectFit" />
+    <view v-if="showImagePreview" class="overlay image-preview-overlay" @tap="closeImagePreview">
+      <view class="modal" @tap.stop>
+        <image :src="previewImageUrl" class="preview-image" />
       </view>
     </view>
+
+
 
 
   </view>
@@ -262,8 +263,9 @@ const currentHouseId = ref(houseId)
 const activeDropdownId = ref(null)
 const showChatModal = ref(false)
 const chatTargetUserId = ref(null)
-const previewUrl = ref(null)
-const showPreview = ref(false)
+const showImagePreview = ref(false)
+const previewImageUrl = ref('')
+
 
 /* -------------------- 工具函数 -------------------- */
 
@@ -424,14 +426,23 @@ const loadLayoutImages = async (layoutId) => {
 }
 
 /* -------------------- 图片预览 -------------------- */
-const previewImage = (url) => {
-  previewUrl.value = url
-  showPreview.value = true
+// 图片预览
+const previewImage = (imgObj) => {
+  uni.previewImage({
+    urls: [imgObj.url]
+  })
 }
 
-const closePreview = () => {
-  showPreview.value = false
+// 关闭图片预览
+const closeImagePreview = () => {
+  showImagePreview.value = false
+  if (previewImageUrl.value) {
+    URL.revokeObjectURL(previewImageUrl.value)
+    previewImageUrl.value = ''
+  }
 }
+
+
 
 /* -------------------- 新增布局 -------------------- */
 const openLayoutDialog = () => {
@@ -1002,4 +1013,14 @@ page {
   font-size: 32rpx;
   color: #1e1e2f;
 }
+
+.image-preview-overlay {
+  z-index: 1001;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 80vh;
+}
+
 </style>

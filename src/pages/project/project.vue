@@ -14,8 +14,12 @@
 
         <text class="house-info"> {{ house.layoutType }} | {{ house.area }}㎡</text>
         <text class="house-info">{{ house.buildingNo }}栋 · {{ house.unitNo }}单元 · {{ house.roomNo }}</text>
-        <text class="house-info">装修类型：{{ DECORATION_MAP[house.decorationType] || house.decorationType }}</text>
-        <text class="house-info">楼层：{{ house.floorCount }}</text>
+        <text class="house-info">
+          装修类型：{{ DECORATION_MAP[house.decorationType] || house.decorationType }}
+          <text class="info-separator"></text>
+          楼层：{{ house.floorCount }}
+        </text>
+
 
         <!-- 主行动：跳转布局页面 -->
         <view class="design-buttons">
@@ -294,6 +298,17 @@ function onFormSuccess() {
   padding-top: 20rpx;
   border-top: 1rpx solid #eee;
 }
+
+.info-separator {
+  margin: 0 20rpx;  /* 控制间距 */
+}
+
+/* 或者使用伪元素 */
+.house-info::after {
+  content: " ";
+  letter-spacing: 20rpx;  /* 控制空隙大小 */
+}
+
 
 .actions button {
   flex: 1;

@@ -1,6 +1,6 @@
 <template>
   <view class="container">
-
+    <!-- 模板部分保持不变 -->
     <view class="furniture-design-container">
       <view class="furniture-design-content">
         <view class="header">
@@ -20,20 +20,19 @@
                   :key="img.id ?? img.key ?? index"
                   class="image-wrapper"
               >
-                <image :src="img.url" class="image" @click="previewImage(img)" />
+                <image :src="img.url" class="image" @tap="previewImage(img)" />
               </view>
             </view>
 
             <!-- 显示设计师信息或提示 -->
             <view v-if="layoutDetail.furnitureDesignerId" class="designer-info">
-              <!-- 显示设计师信息或提示 -->
               <view v-if="layoutDetail.furnitureDesignerId" class="designer-info">
                 <view class="designer-info-content">
                   <text class="designer-text">设计师：{{ layoutDetail.designerUsername }}（{{ layoutDetail.designerEmail }}）</text>
                 </view>
                 <button
                     class="chat-btn"
-                    @click="openChatWithDesigner"
+                    @tap="openChatWithDesigner"
                     v-if="layoutDetail.furnitureDesignerId"
                 >
                   💬 联系设计师
@@ -45,19 +44,17 @@
               <!-- 💰 订单状态区 -->
               <view class="bill-box">
                 <text class="bill-title">💰 家具设计方案费用</text>
-                <!-- 防止 _billMeta 为空 -->
                 <view v-if="layoutDetail.payStatus === 'UNPAID'">
                   <text class="bill-text">总价：¥{{ layoutDetail.billAmount }}</text>
                   <text class="bill-text">定金：¥{{ layoutDetail.depositAmount }}</text>
                   <text class="bill-hint">支付定金后，设计师将开始家具方案设计</text>
-                  <button class="btn" @click="payDeposit(layoutDetail.billId)">支付定金</button>
+                  <button class="btn" @tap="payDeposit(layoutDetail.billId)">支付定金</button>
                 </view>
                 <view v-else-if="layoutDetail.payStatus === 'DEPOSIT_PAID'">
                   <text class="bill-text">已支付定金：¥{{ layoutDetail.depositAmount }}</text>
-                  <!-- 检查是否所有方案都已确认 -->
                   <view v-if="layoutDetail.furnitureStatus === 'CONFIRMED'">
                     <text class="bill-hint">✅ 所有方案已确认，可支付尾款</text>
-                    <button class="btn btn-primary" @click="payFinalAmount(layoutDetail.billId)">支付尾款</button>
+                    <button class="btn btn-primary" @tap="payFinalAmount(layoutDetail.billId)">支付尾款</button>
                   </view>
                   <view v-else>
                     <text class="bill-hint">设计师正在出方案，确认所有方案后需支付尾款</text>
@@ -74,7 +71,7 @@
             </view>
             <view v-else class="no-designer-info">
               <text class="warning-text">⚠️ 尚未选择家具设计师</text>
-              <button class="select-designer-btn" @click="openDesignerDialog">
+              <button class="select-designer-btn" @tap="openDesignerDialog">
                 选择设计师
               </button>
             </view>
@@ -97,7 +94,7 @@
                   <text class="room-detail">窗户：{{ room.hasWindow ? '有' : '无' }}</text>
                   <text class="room-detail">阳台：{{ room.hasBalcony ? '有' : '无' }}</text>
                   <view class="detail-row">
-                    <button v-if="room.hasFurnitureScheme" class="view-scheme-btn" @click="viewSchemes(room)">查看方案</button>
+                    <button v-if="room.hasFurnitureScheme" class="view-scheme-btn" @tap="viewSchemes(room)">查看方案</button>
                   </view>
                 </view>
               </view>
@@ -111,11 +108,11 @@
         </view>
 
         <!-- 设计师选择弹窗 -->
-        <view v-if="showDesignerDialog" class="overlay" @click="closeDesignerDialog">
-          <view class="modal" @click.stop>
+        <view v-if="showDesignerDialog" class="overlay" @tap="closeDesignerDialog">
+          <view class="modal" @tap.stop>
             <view class="modal-header">
               <text>选择家具设计师</text>
-              <text class="close" @click="closeDesignerDialog">×</text>
+              <text class="close" @tap="closeDesignerDialog">×</text>
             </view>
             <view class="modal-body">
               <DesignerSelector
@@ -128,73 +125,46 @@
         </view>
 
         <!-- 图片预览弹窗使用更高的层级 -->
-        <view v-if="showImagePreview" class="overlay image-preview-overlay" @click="closeImagePreview">
-          <view class="modal" @click.stop>
+        <view v-if="showImagePreview" class="overlay image-preview-overlay" @tap="closeImagePreview">
+          <view class="modal" @tap.stop>
             <image :src="previewImageUrl" class="preview-image" />
           </view>
         </view>
 
         <!-- 布局图片预览弹窗 -->
-        <view v-if="showPreview" class="overlay" @click="closePreview">
-          <view class="modal" @click.stop>
+        <view v-if="showPreview" class="overlay" @tap="closePreview">
+          <view class="modal" @tap.stop>
             <image :src="previewUrl" class="preview-image" />
           </view>
         </view>
 
-        <!-- 聊天悬浮窗 -->
-        <view v-if="showChatModal" class="chat-overlay" @click="closeChatModal">
-          <view class="chat-modal" @click.stop>
-            <view class="chat-header">
-              <view class="chat-header-info">
-                <image
-                    :src="`${BASE_URL}${layoutDetail.avatarUrl || '/uploads/avatar/default.png'}`"
-                    class="designer-avatar"
-                    @error="onAvatarError"
-                />
-                <text>与设计师 {{ layoutDetail.designerUsername }} 聊天</text>
-              </view>
-              <text class="close-chat" @click="closeChatModal">×</text>
-            </view>
-            <view class="chat-body">
-              <button
-                  class="chat-btn"
-                  @tap="openChatWithDesigner"
-              >
-                💬 联系设计师
-              </button>
-            </view>
-          </view>
-        </view>
-
         <!-- 查看方案悬浮窗 -->
-        <view v-if="showSchemeModal" class="overlay" @click="closeSchemeModal">
-          <view class="modal scheme-modal" @click.stop>
+        <view v-if="showSchemeModal" class="overlay" @tap="closeSchemeModal">
+          <view class="modal scheme-modal" @tap.stop>
             <view class="modal-header">
               <text>{{ currentRoom?.roomName }} - 方案列表</text>
-              <text class="close" @click="closeSchemeModal">×</text>
+              <text class="close" @tap="closeSchemeModal">×</text>
             </view>
             <view class="modal-body scheme-modal-body">
               <view v-if="currentRoomSchemes.length > 0" class="scheme-list">
                 <view v-for="scheme in currentRoomSchemes" :key="scheme.schemeId" class="scheme-item">
-                  <!-- 第一行：信息和确认按钮 -->
                   <view class="scheme-header">
                     <view class="scheme-info">
                       <text class="scheme-info-text">版本: V{{ scheme.schemeVersion }}</text>
                       <text class="scheme-info-text">状态: {{ scheme.schemeStatus === 'SUBMITTED' ? '已提交' : scheme.schemeStatus }}</text>
                       <text class="scheme-info-text">创建时间: {{ new Date(scheme.createdAt).toLocaleString() }}</text>
                     </view>
-                    <!-- 确认按钮：仅在方案状态为SUBMITTED时显示 -->
                     <view class="scheme-actions" v-if="scheme.schemeStatus === 'SUBMITTED'">
-                      <button class="confirm-btn" @click="confirmScheme(scheme.schemeId)">确认方案</button>
+                      <button class="confirm-btn" @tap="confirmScheme(scheme.schemeId)">确认方案</button>
                     </view>
                   </view>
 
                   <!-- 图片区域 -->
                   <view v-if="scheme.imageUrl" class="scheme-image">
                     <image
-                        :src="scheme.imageUrl.startsWith('http') ? scheme.imageUrl : BASE_URL + scheme.imageUrl"
-                        class="scheme-image"
-                        @click="previewImageFromCache(scheme)"
+                        :src="BASE_URL + scheme.imageUrl"
+                        class="scheme-image-img"
+                        @tap="previewImageFromCache(scheme)"
                     />
                   </view>
 
@@ -214,7 +184,7 @@
   </view>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import DesignerSelector from '../../components/DesignerSelector.vue'
 import {getLayoutImages} from "../../api/layoutImage";
@@ -230,388 +200,369 @@ import {
   getSchemesByRoom
 } from '../../api/furniture'
 
-export default {
-  components: {
-    DesignerSelector,
-  },
-  setup() {
-    // 添加响应式数据
-    const showChatModal = ref(false)
-    const chatTargetUserId = ref(null)
+// 添加响应式数据
+const showChatModal = ref(false)
+const chatTargetUserId = ref(null)
 
-    const layoutId = ref(null)
-    // 处理页面加载参数
-    onLoad((query) => {
-      if (query.layoutId) {
-        layoutId.value = Number(query.layoutId)
-      }
-    })
+const layoutId = ref(null)
+// 处理页面加载参数
+onLoad((query) => {
+  if (query.layoutId) {
+    layoutId.value = Number(query.layoutId)
+  }
+})
 
-    // 页面状态
-    const layoutDetail = ref(null)
-    const layoutImages = ref([]) // 直接存储布局图片，不使用 store
-    const designers = ref([])
-    const selectedDesignerId = ref(null)
-    const showDesignerDialog = ref(false)
-    const rooms = ref([])  // 添加房间数组
+// 页面状态
+const layoutDetail = ref(null)
+const layoutImages = ref([]) // 直接存储布局图片，不使用 store
+const designers = ref([])
+const selectedDesignerId = ref(null)
+const showDesignerDialog = ref(false)
+const rooms = ref([])  // 添加房间数组
 
-    // 图片预览状态
-    const showImagePreview = ref(false)
-    const previewImageUrl = ref('')
+const designer = ref(null)
 
-    const showPreview = ref(false)
-    const previewUrl = ref(null)
+// 图片预览状态
+const showImagePreview = ref(false)
+const previewImageUrl = ref('')
 
-    // 添加悬浮窗状态
-    const showSchemeModal = ref(false)
-    const currentRoomSchemes = ref([])
-    const currentRoom = ref(null)
+const showPreview = ref(false)
+const previewUrl = ref(null)
 
-    // 加载布局详情
-    const loadLayoutDetail = async () => {
-      try {
-        const res = await getUserFurnitureLayoutById(layoutId.value)
-        layoutDetail.value = res
-        if(layoutDetail){
-          console.log(res)
-        } else {
-          console.log("没有数据")
-        }
+// 添加悬浮窗状态
+const showSchemeModal = ref(false)
+const currentRoomSchemes = ref([])
+const currentRoom = ref(null)
 
-        // 如果没有指定家具设计师，则加载设计师列表
-        if (!res.furnitureDesignerId) {
-          await loadDesigners()
-        } else {
-          selectedDesignerId.value = res.furnitureDesignerId
-        }
+// 加载布局详情
+const loadLayoutDetail = async () => {
+  try {
+    const res = await getUserFurnitureLayoutById(layoutId.value)
+    layoutDetail.value = res
+    if(layoutDetail.value){
+      console.log(res)
+    } else {
+      console.log("没有数据")
+    }
 
-        // 加载房间信息
-        if (res.furnitureDesignerId) {
-          await loadRooms()
-        }
-
-        // 加载布局图片
-        await loadAllLayoutImages()
-      } catch (error) {
-        uni.showToast({
-          title: '加载布局详情失败',
-          icon: 'none'
-        })
-        console.error(error)
-      }
+    // 如果没有指定家具设计师，则加载设计师列表
+    if (!res.furnitureDesignerId) {
+      await loadDesigners()
+    } else {
+      selectedDesignerId.value = res.furnitureDesignerId
     }
 
     // 加载房间信息
-    const loadRooms = async () => {
-      try {
-        const res = await getRoomsByLayout(layoutId.value)
-        rooms.value = res
-      } catch (error) {
-        uni.showToast({
-          title: '加载房间信息失败',
-          icon: 'none'
-        })
-        console.error(error)
+    if (res.furnitureDesignerId) {
+      await loadRooms()
+    }
+    if (res.furnitureDesignerId) {
+      designer.value = {
+        id: res.furnitureDesignerId,
+        username: res.designerUsername,
+        email: res.designerEmail,
+        avatar: res.designerAvatar
       }
-    }
-
-    const loadDesigners = async () => {
-      try {
-        const res = await getDesignerList()
-        designers.value = res.map(d => ({
-          userId: d.userId,
-          name: d.name,
-          avatar: d.avatar,
-          rating: d.rating,
-          orderCount: d.orderCount,
-          style: d.style,
-          experienceYears: d.experienceYears,
-          shortBio: d.shortBio
-        }))
-      } catch (error) {
-        uni.showToast({
-          title: '加载设计师列表失败',
-          icon: 'none'
-        })
-        console.error(error)
-      }
-    }
-
-    // 打开与设计师的聊天窗口
-    const openChatWithDesigner = () => {
-      console.log('openChatWithDesigner')
-      uni.navigateTo({
-        url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout.value.designerId}&targetUserName=${draftLayout.value.designerUsername}&targetAvatarUrl=${draftLayout.value.avatarUrl}`
-      })
-    }
-
-    // 关闭聊天窗口
-    const closeChatModal = () => {
-      showChatModal.value = false
     }
 
     // 加载布局图片
-    const loadLayoutImages = async (layoutId) => {
-      try {
-        const imgList = await getLayoutImages(layoutId)
+    await loadAllLayoutImages()
+  } catch (error) {
+    uni.showToast({
+      title: '加载布局详情失败',
+      icon: 'none'
+    })
+    console.error(error)
+  }
+}
 
-        const formatted = imgList.map(img => ({
-          id: img.imageId,
-          url: BASE_URL + img.imageUrl
-        }))
+// 加载房间信息
+const loadRooms = async () => {
+  try {
+    const res = await getRoomsByLayout(layoutId.value)
+    rooms.value = res
+  } catch (error) {
+    uni.showToast({
+      title: '加载房间信息失败',
+      icon: 'none'
+    })
+    console.error(error)
+  }
+}
 
-        layoutImages.value = formatted
-      } catch (error) {
-        console.error('加载布局图片失败:', error)
-      }
-    }
+const loadDesigners = async () => {
+  try {
+    const res = await getDesignerList()
+    designers.value = res.map(d => ({
+      userId: d.userId,
+      name: d.name,
+      avatar: d.avatar,
+      rating: d.rating,
+      orderCount: d.orderCount,
+      style: d.style,
+      experienceYears: d.experienceYears,
+      shortBio: d.shortBio
+    }))
+  } catch (error) {
+    uni.showToast({
+      title: '加载设计师列表失败',
+      icon: 'none'
+    })
+    console.error(error)
+  }
+}
 
-    const loadAllLayoutImages = async () => {
-      if (layoutDetail.value) {
-        await loadLayoutImages(layoutDetail.value.layoutId)
-      }
-    }
+// 打开与设计师的聊天窗口
+const openChatWithDesigner = () => {
+  console.log('openChatWithDesigner')
+  uni.navigateTo({
+    url: `/src/pages/contact/contactDetail?targetUserId=${designer.value.id}
+    &targetUserName=${designer.value.username}&targetAvatarUrl=${designer.value.avatar}`
+  })
+}
 
-    // 图片预览
-    const previewImage = (imgObj) => {
-      uni.previewImage({
-        urls: [imgObj.url]
-      })
-    }
+// 关闭聊天窗口
+const closeChatModal = () => {
+  showChatModal.value = false
+}
 
-    // 查看方案方法
-    const viewSchemes = async (room) => {
-      try {
-        // 调用API获取房间的所有方案
-        const schemes = await getSchemesByRoom(room.roomId)
-        currentRoomSchemes.value = schemes
-        currentRoom.value = room
-        showSchemeModal.value = true
-      } catch (error) {
-        uni.showToast({
-          title: '加载方案失败',
-          icon: 'none'
-        })
-        console.error(error)
-      }
-    }
+// 加载布局图片
+const loadLayoutImages = async (layoutId) => {
+  try {
+    const imgList = await getLayoutImages(layoutId)
 
-    // 关闭方案悬浮窗
-    const closeSchemeModal = () => {
-      showSchemeModal.value = false
-      currentRoomSchemes.value = []
-      currentRoom.value = null
-    }
+    const formatted = imgList.map(img => ({
+      id: img.imageId,
+      url: BASE_URL + img.imageUrl
+    }))
 
-    // 预览方案图片
-    const previewImageFromCache = (scheme) => {
-      const imageUrl = scheme.imageUrl.startsWith('http') ? scheme.imageUrl : BASE_URL + scheme.imageUrl
-      uni.previewImage({
-        urls: [imageUrl]
-      })
-    }
+    layoutImages.value = formatted
+  } catch (error) {
+    console.error('加载布局图片失败:', error)
+  }
+}
 
-    // 辅助函数：获取房间状态
-    const getRoomStatus = (room) => {
-      if (room.hasConfirmedScheme) {
-        return { text: '已确定', class: 'confirmed' }
-      } else if (room.hasFurnitureScheme) {
-        return { text: '有方案', class: 'has-scheme' }
-      } else {
-        return { text: '无方案', class: 'no-scheme' }
-      }
-    }
+const loadAllLayoutImages = async () => {
+  if (layoutDetail.value) {
+    await loadLayoutImages(layoutDetail.value.layoutId)
+  }
+}
 
-    // 选择设计师
-    const handleSelectDesigner = async (designer) => {
-      try {
-        // 调用后端接口分配家具设计师
-        await assignFurnitureDesigner(layoutId.value, designer.userId)
+// 图片预览
+const previewImage = (imgObj) => {
+  uni.previewImage({
+    urls: [imgObj.url]
+  })
+}
 
-        // 更新本地状态
-        selectedDesignerId.value = designer.userId
-        layoutDetail.value.furnitureDesignerId = designer.userId
 
-        // 显示成功提示
-        uni.showToast({
-          title: `已成功选择${designer.name}`,
-          icon: 'success'
-        })
 
-        // 关闭弹窗
-        closeDesignerDialog()
+const onImageError = (e) => {
+  console.error('Image load error:', e)
+}
 
-        // 重新加载布局详情以获取最新数据
-        await loadLayoutDetail()
-      } catch (error) {
-        uni.showToast({
-          title: '分配设计师失败',
-          icon: 'none'
-        })
-        console.error(error)
-      }
-    }
+const onImageLoad = (e) => {
+  console.log('Image loaded successfully:', e)
+}
 
-    // 支付定金
-    const payDeposit = async (billId) => {
-      uni.showModal({
-        title: '确认支付',
-        content: '确认支付定金吗？支付后将进入家具设计阶段',
-        success: (res) => {
-          if (res.confirm) {
-            performPayDeposit(billId);
-          }
-        }
-      })
-    }
+// 查看方案方法
+const viewSchemes = async (room) => {
+  try {
+    // 调用API获取房间的所有方案
+    const schemes = await getSchemesByRoom(room.roomId)
+    currentRoomSchemes.value = schemes
+    currentRoom.value = room
+    showSchemeModal.value = true
+  } catch (error) {
+    uni.showToast({
+      title: '加载方案失败',
+      icon: 'none'
+    })
+    console.error(error)
+  }
+}
 
-    const performPayDeposit = async (billId) => {
-      try {
-        await payDepositRequest(billId)
-        uni.showToast({
-          title: '定金支付成功',
-          icon: 'success'
-        })
-        await loadLayoutDetail()  // 重新加载数据
-      } catch (e) {
-        uni.showToast({
-          title: '支付失败，请稍后重试',
-          icon: 'none'
-        })
-      }
-    }
+// 关闭方案悬浮窗
+const closeSchemeModal = () => {
+  showSchemeModal.value = false
+  currentRoomSchemes.value = []
+  currentRoom.value = null
+}
 
-    // 支付尾款
-    const payFinalAmount = async (billId) => {
-      uni.showModal({
-        title: '确认支付',
-        content: '确认支付尾款吗？支付后家具设计环节将完成',
-        success: (res) => {
-          if (res.confirm) {
-            performPayFinalAmount(billId);
-          }
-        }
-      })
-    }
+// 预览方案图片
+const previewImageFromCache = (scheme) => {
+  const imageUrl = BASE_URL + scheme.imageUrl
+  uni.previewImage({
+    urls: [imageUrl]
+  })
+}
 
-    const performPayFinalAmount = async (billId) => {
-      try {
-        await payFinalRequest(billId)  // 使用现有的支付API（假设它能处理尾款）
-        uni.showToast({
-          title: '尾款支付成功',
-          icon: 'success'
-        })
-        await loadLayoutDetail()  // 重新加载数据
-      } catch (e) {
-        uni.showToast({
-          title: '支付失败，请稍后重试',
-          icon: 'none'
-        })
-      }
-    }
+// 辅助函数：获取房间状态
+const getRoomStatus = (room) => {
+  if (room.hasConfirmedScheme) {
+    return { text: '已确定', class: 'confirmed' }
+  } else if (room.hasFurnitureScheme) {
+    return { text: '有方案', class: 'has-scheme' }
+  } else {
+    return { text: '无方案', class: 'no-scheme' }
+  }
+}
 
-    // 打开设计师选择弹窗
-    const openDesignerDialog = () => {
-      showDesignerDialog.value = true
-    }
+// 选择设计师
+const handleSelectDesigner = async (designer) => {
+  try {
+    // 调用后端接口分配家具设计师
+    await assignFurnitureDesigner(layoutId.value, designer.userId)
 
-    // 关闭设计师选择弹窗
-    const closeDesignerDialog = () => {
-      showDesignerDialog.value = false
-    }
+    // 更新本地状态
+    selectedDesignerId.value = designer.userId
+    layoutDetail.value.furnitureDesignerId = designer.userId
 
-    // 确认方案方法
-    const confirmScheme = async (schemeId) => {
-      uni.showModal({
-        title: '确认方案',
-        content: '确认此方案吗？确认后将不能再修改',
-        success: (res) => {
-          if (res.confirm) {
-            performConfirmScheme(schemeId);
-          }
-        }
-      })
-    }
-
-    const performConfirmScheme = async (schemeId) => {
-      try {
-        await confirmFurnitureScheme(schemeId)
-        uni.showToast({
-          title: '方案确认成功',
-          icon: 'success'
-        })
-        closeSchemeModal()  // 关闭模态框
-        await loadLayoutDetail()  // 重新加载数据以更新状态
-      } catch (error) {
-        uni.showToast({
-          title: '确认失败',
-          icon: 'none'
-        })
-        console.error(error)
-      }
-    }
-
-    // 关闭图片预览
-    const closeImagePreview = () => {
-      showImagePreview.value = false
-      if (previewImageUrl.value) {
-        URL.revokeObjectURL(previewImageUrl.value)
-        previewImageUrl.value = ''
-      }
-    }
-
-    // 关闭预览
-    const closePreview = () => {
-      showPreview.value = false
-      if (previewUrl.value) {
-        URL.revokeObjectURL(previewUrl.value)
-        previewUrl.value = ''
-      }
-    }
-
-    onMounted(() => {
-      loadLayoutDetail()
+    // 显示成功提示
+    uni.showToast({
+      title: `已成功选择${designer.name}`,
+      icon: 'success'
     })
 
-    return {
-      layoutDetail,
-      layoutImages, // 返回布局图片数组
-      designers,
-      selectedDesignerId,
-      showDesignerDialog,
-      rooms,
-      showImagePreview,
-      previewImageUrl,
-      showPreview,
-      previewUrl,
-      showSchemeModal,
-      currentRoomSchemes,
-      currentRoom,
-      showChatModal,
-      chatTargetUserId,
+    // 关闭弹窗
+    closeDesignerDialog()
 
-      // Methods
-      loadLayoutDetail,
-      loadRooms,
-      loadDesigners,
-      openChatWithDesigner,
-      closeChatModal,
-      previewImage,
-      viewSchemes,
-      closeSchemeModal,
-      previewImageFromCache,
-      getRoomStatus,
-      handleSelectDesigner,
-      payDeposit,
-      payFinalAmount,
-      openDesignerDialog,
-      closeDesignerDialog,
-      confirmScheme,
-      closeImagePreview,
-      closePreview,
-      onAvatarError: () => {} // Placeholder for avatar error handler
+    // 重新加载布局详情以获取最新数据
+    await loadLayoutDetail()
+  } catch (error) {
+    uni.showToast({
+      title: '分配设计师失败',
+      icon: 'none'
+    })
+    console.error(error)
+  }
+}
+
+// 支付定金
+const payDeposit = async (billId) => {
+  uni.showModal({
+    title: '确认支付',
+    content: '确认支付定金吗？支付后将进入家具设计阶段',
+    success: (res) => {
+      if (res.confirm) {
+        performPayDeposit(billId);
+      }
     }
-  },
+  })
+}
+
+const performPayDeposit = async (billId) => {
+  try {
+    await payDepositRequest(billId)
+    uni.showToast({
+      title: '定金支付成功',
+      icon: 'success'
+    })
+    await loadLayoutDetail()  // 重新加载数据
+  } catch (e) {
+    uni.showToast({
+      title: '支付失败，请稍后重试',
+      icon: 'none'
+    })
+  }
+}
+
+// 支付尾款
+const payFinalAmount = async (billId) => {
+  uni.showModal({
+    title: '确认支付',
+    content: '确认支付尾款吗？支付后家具设计环节将完成',
+    success: (res) => {
+      if (res.confirm) {
+        performPayFinalAmount(billId);
+      }
+    }
+  })
+}
+
+const performPayFinalAmount = async (billId) => {
+  try {
+    await payFinalRequest(billId)  // 使用现有的支付API（假设它能处理尾款）
+    uni.showToast({
+      title: '尾款支付成功',
+      icon: 'success'
+    })
+    await loadLayoutDetail()  // 重新加载数据
+  } catch (e) {
+    uni.showToast({
+      title: '支付失败，请稍后重试',
+      icon: 'none'
+    })
+  }
+}
+
+// 打开设计师选择弹窗
+const openDesignerDialog = () => {
+  showDesignerDialog.value = true
+}
+
+// 关闭设计师选择弹窗
+const closeDesignerDialog = () => {
+  showDesignerDialog.value = false
+}
+
+// 确认方案方法
+const confirmScheme = async (schemeId) => {
+  uni.showModal({
+    title: '确认方案',
+    content: '确认此方案吗？确认后将不能再修改',
+    success: (res) => {
+      if (res.confirm) {
+        performConfirmScheme(schemeId);
+      }
+    }
+  })
+}
+
+const performConfirmScheme = async (schemeId) => {
+  try {
+    await confirmFurnitureScheme(schemeId)
+    uni.showToast({
+      title: '方案确认成功',
+      icon: 'success'
+    })
+    closeSchemeModal()  // 关闭模态框
+    await loadLayoutDetail()  // 重新加载数据以更新状态
+  } catch (error) {
+    uni.showToast({
+      title: '确认失败',
+      icon: 'none'
+    })
+    console.error(error)
+  }
+}
+
+// 关闭图片预览
+const closeImagePreview = () => {
+  showImagePreview.value = false
+  if (previewImageUrl.value) {
+    URL.revokeObjectURL(previewImageUrl.value)
+    previewImageUrl.value = ''
+  }
+}
+
+// 关闭预览
+const closePreview = () => {
+  showPreview.value = false
+  if (previewUrl.value) {
+    URL.revokeObjectURL(previewUrl.value)
+    previewUrl.value = ''
+  }
+}
+
+onMounted(() => {
+  loadLayoutDetail()
+})
+
+// 注册组件
+import { defineAsyncComponent } from 'vue'
+const components = {
+  DesignerSelector: defineAsyncComponent(() => import('../../components/DesignerSelector.vue'))
 }
 </script>
 
@@ -743,8 +694,6 @@ export default {
   margin-bottom: 12rpx;
 }
 
-
-
 .room-item:hover {
   border-color: #409eff;
   box-shadow: 0 4rpx 16rpx rgba(64, 158, 255, 0.1);
@@ -790,32 +739,27 @@ export default {
 
 .room-details {
   display: flex;
-  flex-wrap: wrap;           // 允许换行
-  gap: 12rpx;               // 设置间距
-  margin-bottom: 12rpx;     // 与按钮保持距离
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
 }
 
-
 .room-detail {
-  flex: 0 0 calc(50% - 6rpx);  // 每行显示两个，考虑gap的影响
+  flex: 0 0 calc(50% - 6rpx);
   margin: 0;
   color: #666;
   font-size: 24rpx;
-  word-break: break-all;       // 防止文字溢出
+  word-break: break-all;
 }
-
 
 .detail-row {
   display: flex;
-  justify-content: flex-end;  // 右对齐
+  justify-content: flex-end;
   align-items: center;
   align-self: stretch;
   margin-top: 8rpx;
-  width: 100%;  // 确保占据整行宽度
+  width: 100%;
 }
-
-
-
 
 .overlay {
   position: fixed;
@@ -1006,20 +950,18 @@ export default {
 .scheme-image {
   text-align: center;
   margin: 16rpx 0;
+  min-height: 200rpx;  // 确保有足够的显示空间
 }
 
-.scheme-image image {
-  max-width: 100%;
-  max-height: 400rpx;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  border-radius: 8rpx;
-  border: 2rpx solid #eee;
-  cursor: pointer;
+.scheme-image-img {
+  width: 200rpx;      /* 改小一点 */
+  max-height: 200rpx;
 }
 
-.scheme-image image:hover {
+
+
+
+.scheme-image-img:hover {
   opacity: 0.9;
 }
 
@@ -1184,7 +1126,6 @@ export default {
   .room-item {
     flex-basis: 100%;
   }
-
 }
 
 @media (max-width: 1536rpx) {
@@ -1195,7 +1136,6 @@ export default {
   .layout-and-rooms-container {
     flex-direction: column;
   }
-
 
   .header {
     flex-direction: column;

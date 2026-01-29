@@ -576,3 +576,10 @@ body {
   font-size: 1rem;
   color: #1e1e2f;
 }
+.image-preview-overlay {
+  z-index: 1001;
+}
+.preview-image {
+  max-width: 100%;
+  max-height: 80vh;
+}

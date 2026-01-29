@@ -4040,11 +4040,11 @@ This will fail in production.`);
       const houseMenuPopup = vue.ref(null);
       const selectedHouse = vue.ref(null);
       onLoad(() => {
-        formatAppLog("log", "at src/pages/project/project.vue:83", "加载房屋列表");
+        formatAppLog("log", "at src/pages/project/project.vue:87", "加载房屋列表");
         loadHouses();
       });
       onNavigationBarButtonTap((event) => {
-        formatAppLog("log", "at src/pages/project/project.vue:89", "导航栏按钮被点击", event);
+        formatAppLog("log", "at src/pages/project/project.vue:93", "导航栏按钮被点击", event);
         uni.showActionSheet({
           itemList: ["新增房屋", "其他功能1", "其他功能2"],
           success(res) {
@@ -4200,20 +4200,19 @@ This will fail in production.`);
                 1
                 /* TEXT */
               ),
-              vue.createElementVNode(
-                "text",
-                { class: "house-info" },
-                "装修类型：" + vue.toDisplayString($setup.DECORATION_MAP[house.decorationType] || house.decorationType),
-                1
-                /* TEXT */
-              ),
-              vue.createElementVNode(
-                "text",
-                { class: "house-info" },
-                "楼层：" + vue.toDisplayString(house.floorCount),
-                1
-                /* TEXT */
-              ),
+              vue.createElementVNode("text", { class: "house-info" }, [
+                vue.createTextVNode(
+                  " 装修类型：" + vue.toDisplayString($setup.DECORATION_MAP[house.decorationType] || house.decorationType) + " ",
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode("text", { class: "info-separator" }),
+                vue.createTextVNode(
+                  " 楼层：" + vue.toDisplayString(house.floorCount),
+                  1
+                  /* TEXT */
+                )
+              ]),
               vue.createElementVNode("view", { class: "design-buttons" }, [
                 vue.createElementVNode("button", {
                   class: "design-btn",
@@ -6298,7 +6297,7 @@ This will fail in production.`);
         }
       });
       const imageStore = useLayoutImageStore();
-      const draftLayout2 = vue.ref(null);
+      const draftLayout = vue.ref(null);
       const designerLayouts = vue.ref([]);
       const keepOriginalLayout = vue.ref(null);
       const showLayoutDialog = vue.ref(false);
@@ -6306,19 +6305,19 @@ This will fail in production.`);
       const activeDropdownId = vue.ref(null);
       const showChatModal = vue.ref(false);
       const chatTargetUserId = vue.ref(null);
-      const previewUrl = vue.ref(null);
-      const showPreview = vue.ref(false);
+      const showImagePreview = vue.ref(false);
+      const previewImageUrl = vue.ref("");
       const toggleDropdown = (layoutId) => {
         activeDropdownId.value = activeDropdownId.value === layoutId ? null : layoutId;
       };
       function resolveBillMeta(layout) {
         if (!layout.billId) {
-          formatAppLog("error", "at src/pages/layout/layout.vue:276", "No bill meta data available");
+          formatAppLog("error", "at src/pages/layout/layout.vue:278", "No bill meta data available");
           layout._billMeta = { visible: false };
           return;
         }
         const payStatus = layout.payStatus;
-        formatAppLog("log", "at src/pages/layout/layout.vue:282", payStatus);
+        formatAppLog("log", "at src/pages/layout/layout.vue:284", payStatus);
         layout._billMeta = {
           billId: layout.billId,
           payStatus,
@@ -6375,9 +6374,9 @@ This will fail in production.`);
         }
       };
       const openChatWithDesigner = () => {
-        formatAppLog("log", "at src/pages/layout/layout.vue:346", "openChatWithDesigner");
+        formatAppLog("log", "at src/pages/layout/layout.vue:348", "openChatWithDesigner");
         uni.navigateTo({
-          url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout2.value.designerId}&targetUserName=${draftLayout2.value.designerUsername}&targetAvatarUrl=${draftLayout2.value.avatarUrl}`
+          url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout.value.designerId}&targetUserName=${draftLayout.value.designerUsername}&targetAvatarUrl=${draftLayout.value.avatarUrl}`
         });
       };
       const closeChatModal = () => {
@@ -6385,14 +6384,14 @@ This will fail in production.`);
       };
       const loadLayouts = async () => {
         try {
-          formatAppLog("log", "at src/pages/layout/layout.vue:360", houseId.value);
+          formatAppLog("log", "at src/pages/layout/layout.vue:362", houseId.value);
           const res = await getLayoutsByHouse(houseId.value);
-          draftLayout2.value = res.draftLayout ? {
+          draftLayout.value = res.draftLayout ? {
             ...res.draftLayout,
             layoutVersion: res.draftLayout.version ?? 0
           } : null;
-          if (draftLayout2.value) {
-            resolveBillMeta(draftLayout2.value);
+          if (draftLayout.value) {
+            resolveBillMeta(draftLayout.value);
           }
           designerLayouts.value = (res.designerLayouts || []).map((l) => ({
             ...l,
@@ -6404,7 +6403,7 @@ This will fail in production.`);
           } : null;
           await loadAllLayoutImages();
         } catch (err) {
-          draftLayout2.value = null;
+          draftLayout.value = null;
           designerLayouts.value = [];
           uni.showToast({
             title: "加载布局失败",
@@ -6414,8 +6413,8 @@ This will fail in production.`);
       };
       const loadAllLayoutImages = async () => {
         const ids = [];
-        if (draftLayout2.value) {
-          ids.push(draftLayout2.value.layoutId);
+        if (draftLayout.value) {
+          ids.push(draftLayout.value.layoutId);
         }
         designerLayouts.value.forEach((l) => ids.push(l.layoutId));
         if (keepOriginalLayout.value) {
@@ -6433,15 +6432,20 @@ This will fail in production.`);
         );
         imageStore.setImages(layoutId, formatted);
       };
-      const previewImage = (url) => {
-        previewUrl.value = url;
-        showPreview.value = true;
+      const previewImage = (imgObj) => {
+        uni.previewImage({
+          urls: [imgObj.url]
+        });
       };
-      const closePreview = () => {
-        showPreview.value = false;
+      const closeImagePreview = () => {
+        showImagePreview.value = false;
+        if (previewImageUrl.value) {
+          URL.revokeObjectURL(previewImageUrl.value);
+          previewImageUrl.value = "";
+        }
       };
       const openLayoutDialog = () => {
-        if (draftLayout2.value) {
+        if (draftLayout.value) {
           uni.showToast({
             title: "当前房屋已存在布局",
             icon: "none"
@@ -6483,7 +6487,7 @@ This will fail in production.`);
           });
           return;
         }
-        formatAppLog("log", "at src/pages/layout/layout.vue:486", "chooseImage", layout);
+        formatAppLog("log", "at src/pages/layout/layout.vue:497", "chooseImage", layout);
         uni.chooseImage({
           count: 1,
           sourceType: ["album", "camera"],
@@ -6500,9 +6504,9 @@ This will fail in production.`);
                 title: "上传成功",
                 icon: "success"
               });
-              formatAppLog("log", "at src/pages/layout/layout.vue:509", "上传成功", uploadRes);
+              formatAppLog("log", "at src/pages/layout/layout.vue:520", "上传成功", uploadRes);
             } catch (error) {
-              formatAppLog("error", "at src/pages/layout/layout.vue:511", "上传失败:", error);
+              formatAppLog("error", "at src/pages/layout/layout.vue:522", "上传失败:", error);
               uni.showToast({
                 title: typeof error === "string" ? error : (error == null ? void 0 : error.message) || "上传失败",
                 icon: "none"
@@ -6544,7 +6548,7 @@ This will fail in production.`);
             icon: "success"
           });
         } catch (error) {
-          formatAppLog("error", "at src/pages/layout/layout.vue:561", "删除图片失败:", error);
+          formatAppLog("error", "at src/pages/layout/layout.vue:572", "删除图片失败:", error);
           uni.showToast({
             title: "删除失败",
             icon: "none"
@@ -6580,10 +6584,10 @@ This will fail in production.`);
         await loadLayouts();
       };
       const onAvatarError = (e) => {
-        formatAppLog("log", "at src/pages/layout/layout.vue:604", "头像加载失败", e);
+        formatAppLog("log", "at src/pages/layout/layout.vue:615", "头像加载失败", e);
       };
       vue.onMounted(loadLayouts);
-      const __returned__ = { LAYOUT_INTENT_MAP, LAYOUT_STATUS_MAP, houseId, imageStore, draftLayout: draftLayout2, designerLayouts, keepOriginalLayout, showLayoutDialog, currentHouseId, activeDropdownId, showChatModal, chatTargetUserId, previewUrl, showPreview, toggleDropdown, resolveBillMeta, payDeposit, payFinal, openChatWithDesigner, closeChatModal, loadLayouts, loadAllLayoutImages, loadLayoutImages, previewImage, closePreview, openLayoutDialog, closeLayoutDialog, onLayoutCreated, confirmDelete, chooseImage, removeImage, goToFurnitureDesign, confirmLayout, onAvatarError, ref: vue.ref, onMounted: vue.onMounted, getCurrentInstance: vue.getCurrentInstance, LayoutForm, get getLayoutsByHouse() {
+      const __returned__ = { LAYOUT_INTENT_MAP, LAYOUT_STATUS_MAP, houseId, imageStore, draftLayout, designerLayouts, keepOriginalLayout, showLayoutDialog, currentHouseId, activeDropdownId, showChatModal, chatTargetUserId, showImagePreview, previewImageUrl, toggleDropdown, resolveBillMeta, payDeposit, payFinal, openChatWithDesigner, closeChatModal, loadLayouts, loadAllLayoutImages, loadLayoutImages, previewImage, closeImagePreview, openLayoutDialog, closeLayoutDialog, onLayoutCreated, confirmDelete, chooseImage, removeImage, goToFurnitureDesign, confirmLayout, onAvatarError, ref: vue.ref, onMounted: vue.onMounted, getCurrentInstance: vue.getCurrentInstance, LayoutForm, get getLayoutsByHouse() {
         return getLayoutsByHouse;
       }, get deleteLayout() {
         return deleteLayout;
@@ -6692,7 +6696,7 @@ This will fail in production.`);
                     vue.createElementVNode("image", {
                       src: img.url,
                       class: "image",
-                      onClick: ($event) => $setup.previewImage(img.url)
+                      onClick: ($event) => $setup.previewImage(img)
                     }, null, 8, ["src", "onClick"]),
                     vue.createElementVNode("button", {
                       class: "delete-btn",
@@ -6848,7 +6852,7 @@ This will fail in production.`);
                               src: img.url,
                               onError: _cache[6] || (_cache[6] = (...args) => _ctx.onImageError && _ctx.onImageError(...args)),
                               class: "image",
-                              onClick: ($event) => $setup.previewImage(img.url)
+                              onClick: ($event) => $setup.previewImage(img)
                             }, null, 40, ["src", "onClick"])
                           ]);
                         }),
@@ -6973,22 +6977,82 @@ This will fail in production.`);
           ])
         ])
       ])) : vue.createCommentVNode("v-if", true),
-      $setup.showPreview ? (vue.openBlock(), vue.createElementBlock("view", {
+      $setup.showImagePreview ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
-        class: "overlay",
-        onClick: $setup.closePreview
+        class: "overlay image-preview-overlay",
+        onClick: $setup.closeImagePreview
       }, [
-        vue.createElementVNode("view", { class: "modal" }, [
+        vue.createElementVNode("view", {
+          class: "modal",
+          onClick: _cache[12] || (_cache[12] = vue.withModifiers(() => {
+          }, ["stop"]))
+        }, [
           vue.createElementVNode("image", {
-            src: $setup.previewUrl,
-            style: { "width": "90%", "height": "80vh" },
-            mode: "aspectFit"
+            src: $setup.previewImageUrl,
+            class: "preview-image"
           }, null, 8, ["src"])
         ])
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
   const SrcPagesLayoutLayout = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__file", "D:/CODE/mobile-app/src/pages/layout/layout.vue"]]);
+  const scriptRel = "modulepreload";
+  const assetsURL = function(dep) {
+    return "/" + dep;
+  };
+  const seen = {};
+  const __vitePreload = function preload(baseModule, deps, importerUrl) {
+    let promise = Promise.resolve();
+    if (false) {
+      const links = document.getElementsByTagName("link");
+      const cspNonceMeta = document.querySelector("meta[property=csp-nonce]");
+      const cspNonce = (cspNonceMeta == null ? void 0 : cspNonceMeta.nonce) || (cspNonceMeta == null ? void 0 : cspNonceMeta.getAttribute("nonce"));
+      promise = Promise.all(deps.map((dep) => {
+        dep = assetsURL(dep);
+        if (dep in seen)
+          return;
+        seen[dep] = true;
+        const isCss = dep.endsWith(".css");
+        const cssSelector = isCss ? '[rel="stylesheet"]' : "";
+        const isBaseRelative = !!importerUrl;
+        if (isBaseRelative) {
+          for (let i = links.length - 1; i >= 0; i--) {
+            const link2 = links[i];
+            if (link2.href === dep && (!isCss || link2.rel === "stylesheet")) {
+              return;
+            }
+          }
+        } else if (document.querySelector(`link[href="${dep}"]${cssSelector}`)) {
+          return;
+        }
+        const link = document.createElement("link");
+        link.rel = isCss ? "stylesheet" : scriptRel;
+        if (!isCss) {
+          link.as = "script";
+          link.crossOrigin = "";
+        }
+        link.href = dep;
+        if (cspNonce) {
+          link.setAttribute("nonce", cspNonce);
+        }
+        document.head.appendChild(link);
+        if (isCss) {
+          return new Promise((res, rej) => {
+            link.addEventListener("load", res);
+            link.addEventListener("error", () => rej(new Error(`Unable to preload CSS for ${dep}`)));
+          });
+        }
+      }));
+    }
+    return promise.then(() => baseModule()).catch((err) => {
+      const e = new Event("vite:preloadError", { cancelable: true });
+      e.payload = err;
+      window.dispatchEvent(e);
+      if (!e.defaultPrevented) {
+        throw err;
+      }
+    });
+  };
   const _sfc_main$2 = {
     __name: "DesignerSelector",
     props: {
@@ -7077,6 +7141,10 @@ This will fail in production.`);
     ]);
   }
   const DesignerSelector = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-23bd4fad"], ["__file", "D:/CODE/mobile-app/src/components/DesignerSelector.vue"]]);
+  const DesignerSelector$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    default: DesignerSelector
+  }, Symbol.toStringTag, { value: "Module" }));
   function getUserFurnitureLayoutById(layoutId) {
     return request({
       url: `/house-layout/user/furniture/${layoutId}`,
@@ -7111,10 +7179,9 @@ This will fail in production.`);
     });
   }
   const _sfc_main$1 = {
-    components: {
-      DesignerSelector
-    },
-    setup() {
+    __name: "furniture",
+    setup(__props, { expose: __expose }) {
+      __expose();
       const showChatModal = vue.ref(false);
       const chatTargetUserId = vue.ref(null);
       const layoutId = vue.ref(null);
@@ -7129,6 +7196,7 @@ This will fail in production.`);
       const selectedDesignerId = vue.ref(null);
       const showDesignerDialog = vue.ref(false);
       const rooms = vue.ref([]);
+      const designer = vue.ref(null);
       const showImagePreview = vue.ref(false);
       const previewImageUrl = vue.ref("");
       const showPreview = vue.ref(false);
@@ -7140,10 +7208,10 @@ This will fail in production.`);
         try {
           const res = await getUserFurnitureLayoutById(layoutId.value);
           layoutDetail.value = res;
-          if (layoutDetail) {
-            formatAppLog("log", "at src/pages/furniture/furniture.vue:276", res);
+          if (layoutDetail.value) {
+            formatAppLog("log", "at src/pages/furniture/furniture.vue:243", res);
           } else {
-            formatAppLog("log", "at src/pages/furniture/furniture.vue:278", "没有数据");
+            formatAppLog("log", "at src/pages/furniture/furniture.vue:245", "没有数据");
           }
           if (!res.furnitureDesignerId) {
             await loadDesigners();
@@ -7153,13 +7221,21 @@ This will fail in production.`);
           if (res.furnitureDesignerId) {
             await loadRooms();
           }
+          if (res.furnitureDesignerId) {
+            designer.value = {
+              id: res.furnitureDesignerId,
+              username: res.designerUsername,
+              email: res.designerEmail,
+              avatar: res.designerAvatar
+            };
+          }
           await loadAllLayoutImages();
         } catch (error) {
           uni.showToast({
             title: "加载布局详情失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:300", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:275", error);
         }
       };
       const loadRooms = async () => {
@@ -7171,7 +7247,7 @@ This will fail in production.`);
             title: "加载房间信息失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:314", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:289", error);
         }
       };
       const loadDesigners = async () => {
@@ -7192,13 +7268,14 @@ This will fail in production.`);
             title: "加载设计师列表失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:336", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:311", error);
         }
       };
       const openChatWithDesigner = () => {
-        formatAppLog("log", "at src/pages/furniture/furniture.vue:342", "openChatWithDesigner");
+        formatAppLog("log", "at src/pages/furniture/furniture.vue:317", "openChatWithDesigner");
         uni.navigateTo({
-          url: `/src/pages/contact/contactDetail?targetUserId=${draftLayout.value.designerId}&targetUserName=${draftLayout.value.designerUsername}&targetAvatarUrl=${draftLayout.value.avatarUrl}`
+          url: `/src/pages/contact/contactDetail?targetUserId=${designer.value.id}
+    &targetUserName=${designer.value.username}&targetAvatarUrl=${designer.value.avatar}`
         });
       };
       const closeChatModal = () => {
@@ -7213,7 +7290,7 @@ This will fail in production.`);
           }));
           layoutImages.value = formatted;
         } catch (error) {
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:365", "加载布局图片失败:", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:341", "加载布局图片失败:", error);
         }
       };
       const loadAllLayoutImages = async () => {
@@ -7226,6 +7303,12 @@ This will fail in production.`);
           urls: [imgObj.url]
         });
       };
+      const onImageError = (e) => {
+        formatAppLog("error", "at src/pages/furniture/furniture.vue:361", "Image load error:", e);
+      };
+      const onImageLoad = (e) => {
+        formatAppLog("log", "at src/pages/furniture/furniture.vue:365", "Image loaded successfully:", e);
+      };
       const viewSchemes = async (room) => {
         try {
           const schemes = await getSchemesByRoom(room.roomId);
@@ -7237,7 +7320,7 @@ This will fail in production.`);
             title: "加载方案失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:395", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:381", error);
         }
       };
       const closeSchemeModal = () => {
@@ -7246,7 +7329,7 @@ This will fail in production.`);
         currentRoom.value = null;
       };
       const previewImageFromCache = (scheme) => {
-        const imageUrl = scheme.imageUrl.startsWith("http") ? scheme.imageUrl : BASE_URL + scheme.imageUrl;
+        const imageUrl = BASE_URL + scheme.imageUrl;
         uni.previewImage({
           urls: [imageUrl]
         });
@@ -7260,13 +7343,13 @@ This will fail in production.`);
           return { text: "无方案", class: "no-scheme" };
         }
       };
-      const handleSelectDesigner = async (designer) => {
+      const handleSelectDesigner = async (designer2) => {
         try {
-          await assignFurnitureDesigner(layoutId.value, designer.userId);
-          selectedDesignerId.value = designer.userId;
-          layoutDetail.value.furnitureDesignerId = designer.userId;
+          await assignFurnitureDesigner(layoutId.value, designer2.userId);
+          selectedDesignerId.value = designer2.userId;
+          layoutDetail.value.furnitureDesignerId = designer2.userId;
           uni.showToast({
-            title: `已成功选择${designer.name}`,
+            title: `已成功选择${designer2.name}`,
             icon: "success"
           });
           closeDesignerDialog();
@@ -7276,7 +7359,7 @@ This will fail in production.`);
             title: "分配设计师失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:451", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:437", error);
         }
       };
       const payDeposit = async (billId) => {
@@ -7362,7 +7445,7 @@ This will fail in production.`);
             title: "确认失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:550", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:536", error);
         }
       };
       const closeImagePreview = () => {
@@ -7382,51 +7465,38 @@ This will fail in production.`);
       vue.onMounted(() => {
         loadLayoutDetail();
       });
-      return {
-        layoutDetail,
-        layoutImages,
-        // 返回布局图片数组
-        designers,
-        selectedDesignerId,
-        showDesignerDialog,
-        rooms,
-        showImagePreview,
-        previewImageUrl,
-        showPreview,
-        previewUrl,
-        showSchemeModal,
-        currentRoomSchemes,
-        currentRoom,
-        showChatModal,
-        chatTargetUserId,
-        // Methods
-        loadLayoutDetail,
-        loadRooms,
-        loadDesigners,
-        openChatWithDesigner,
-        closeChatModal,
-        previewImage,
-        viewSchemes,
-        closeSchemeModal,
-        previewImageFromCache,
-        getRoomStatus,
-        handleSelectDesigner,
-        payDeposit,
-        payFinalAmount,
-        openDesignerDialog,
-        closeDesignerDialog,
-        confirmScheme,
-        closeImagePreview,
-        closePreview,
-        onAvatarError: () => {
-        }
-        // Placeholder for avatar error handler
+      const components = {
+        DesignerSelector: vue.defineAsyncComponent(() => __vitePreload(() => Promise.resolve().then(() => DesignerSelector$1), false ? "__VITE_PRELOAD__" : void 0))
       };
+      const __returned__ = { showChatModal, chatTargetUserId, layoutId, layoutDetail, layoutImages, designers, selectedDesignerId, showDesignerDialog, rooms, designer, showImagePreview, previewImageUrl, showPreview, previewUrl, showSchemeModal, currentRoomSchemes, currentRoom, loadLayoutDetail, loadRooms, loadDesigners, openChatWithDesigner, closeChatModal, loadLayoutImages, loadAllLayoutImages, previewImage, onImageError, onImageLoad, viewSchemes, closeSchemeModal, previewImageFromCache, getRoomStatus, handleSelectDesigner, payDeposit, performPayDeposit, payFinalAmount, performPayFinalAmount, openDesignerDialog, closeDesignerDialog, confirmScheme, performConfirmScheme, closeImagePreview, closePreview, components, ref: vue.ref, onMounted: vue.onMounted, DesignerSelector, get getLayoutImages() {
+        return getLayoutImages;
+      }, get getDesignerList() {
+        return getDesignerList;
+      }, get payDepositRequest() {
+        return payDepositRequest;
+      }, get payFinalRequest() {
+        return payFinalRequest;
+      }, get BASE_URL() {
+        return BASE_URL;
+      }, get onLoad() {
+        return onLoad;
+      }, get assignFurnitureDesigner() {
+        return assignFurnitureDesigner;
+      }, get confirmFurnitureScheme() {
+        return confirmFurnitureScheme;
+      }, get getUserFurnitureLayoutById() {
+        return getUserFurnitureLayoutById;
+      }, get getRoomsByLayout() {
+        return getRoomsByLayout;
+      }, get getSchemesByRoom() {
+        return getSchemesByRoom;
+      }, defineAsyncComponent: vue.defineAsyncComponent };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
     }
   };
   function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     var _a;
-    const _component_DesignerSelector = vue.resolveComponent("DesignerSelector");
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("view", { class: "furniture-design-container" }, [
         vue.createElementVNode("view", { class: "furniture-design-content" }, [
@@ -7484,7 +7554,7 @@ This will fail in production.`);
                   $setup.layoutDetail.furnitureDesignerId ? (vue.openBlock(), vue.createElementBlock("button", {
                     key: 0,
                     class: "chat-btn",
-                    onClick: _cache[0] || (_cache[0] = (...args) => $setup.openChatWithDesigner && $setup.openChatWithDesigner(...args))
+                    onClick: $setup.openChatWithDesigner
                   }, " 💬 联系设计师 ")) : vue.createCommentVNode("v-if", true)
                 ])) : vue.createCommentVNode("v-if", true),
                 vue.createElementVNode("text", { class: "status" }, "状态：设计师正在为您准备家具设计方案"),
@@ -7508,7 +7578,7 @@ This will fail in production.`);
                     vue.createElementVNode("text", { class: "bill-hint" }, "支付定金后，设计师将开始家具方案设计"),
                     vue.createElementVNode("button", {
                       class: "btn",
-                      onClick: _cache[1] || (_cache[1] = ($event) => $setup.payDeposit($setup.layoutDetail.billId))
+                      onClick: _cache[0] || (_cache[0] = ($event) => $setup.payDeposit($setup.layoutDetail.billId))
                     }, "支付定金")
                   ])) : $setup.layoutDetail.payStatus === "DEPOSIT_PAID" ? (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
                     vue.createElementVNode(
@@ -7522,7 +7592,7 @@ This will fail in production.`);
                       vue.createElementVNode("text", { class: "bill-hint" }, "✅ 所有方案已确认，可支付尾款"),
                       vue.createElementVNode("button", {
                         class: "btn btn-primary",
-                        onClick: _cache[2] || (_cache[2] = ($event) => $setup.payFinalAmount($setup.layoutDetail.billId))
+                        onClick: _cache[1] || (_cache[1] = ($event) => $setup.payFinalAmount($setup.layoutDetail.billId))
                       }, "支付尾款")
                     ])) : (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
                       vue.createElementVNode("text", { class: "bill-hint" }, "设计师正在出方案，确认所有方案后需支付尾款")
@@ -7545,7 +7615,7 @@ This will fail in production.`);
                 vue.createElementVNode("text", { class: "warning-text" }, "⚠️ 尚未选择家具设计师"),
                 vue.createElementVNode("button", {
                   class: "select-designer-btn",
-                  onClick: _cache[3] || (_cache[3] = (...args) => $setup.openDesignerDialog && $setup.openDesignerDialog(...args))
+                  onClick: $setup.openDesignerDialog
                 }, " 选择设计师 ")
               ]))
             ])) : vue.createCommentVNode("v-if", true),
@@ -7633,38 +7703,38 @@ This will fail in production.`);
           $setup.showDesignerDialog ? (vue.openBlock(), vue.createElementBlock("view", {
             key: 0,
             class: "overlay",
-            onClick: _cache[7] || (_cache[7] = (...args) => $setup.closeDesignerDialog && $setup.closeDesignerDialog(...args))
+            onClick: $setup.closeDesignerDialog
           }, [
             vue.createElementVNode("view", {
               class: "modal",
-              onClick: _cache[6] || (_cache[6] = vue.withModifiers(() => {
+              onClick: _cache[3] || (_cache[3] = vue.withModifiers(() => {
               }, ["stop"]))
             }, [
               vue.createElementVNode("view", { class: "modal-header" }, [
                 vue.createElementVNode("text", null, "选择家具设计师"),
                 vue.createElementVNode("text", {
                   class: "close",
-                  onClick: _cache[4] || (_cache[4] = (...args) => $setup.closeDesignerDialog && $setup.closeDesignerDialog(...args))
+                  onClick: $setup.closeDesignerDialog
                 }, "×")
               ]),
               vue.createElementVNode("view", { class: "modal-body" }, [
-                vue.createVNode(_component_DesignerSelector, {
+                vue.createVNode($setup["DesignerSelector"], {
                   designers: $setup.designers,
                   modelValue: $setup.selectedDesignerId,
-                  "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => $setup.selectedDesignerId = $event),
+                  "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => $setup.selectedDesignerId = $event),
                   onSelect: $setup.handleSelectDesigner
-                }, null, 8, ["designers", "modelValue", "onSelect"])
+                }, null, 8, ["designers", "modelValue"])
               ])
             ])
           ])) : vue.createCommentVNode("v-if", true),
           $setup.showImagePreview ? (vue.openBlock(), vue.createElementBlock("view", {
             key: 1,
             class: "overlay image-preview-overlay",
-            onClick: _cache[9] || (_cache[9] = (...args) => $setup.closeImagePreview && $setup.closeImagePreview(...args))
+            onClick: $setup.closeImagePreview
           }, [
             vue.createElementVNode("view", {
               class: "modal",
-              onClick: _cache[8] || (_cache[8] = vue.withModifiers(() => {
+              onClick: _cache[4] || (_cache[4] = vue.withModifiers(() => {
               }, ["stop"]))
             }, [
               vue.createElementVNode("image", {
@@ -7676,11 +7746,11 @@ This will fail in production.`);
           $setup.showPreview ? (vue.openBlock(), vue.createElementBlock("view", {
             key: 2,
             class: "overlay",
-            onClick: _cache[11] || (_cache[11] = (...args) => $setup.closePreview && $setup.closePreview(...args))
+            onClick: $setup.closePreview
           }, [
             vue.createElementVNode("view", {
               class: "modal",
-              onClick: _cache[10] || (_cache[10] = vue.withModifiers(() => {
+              onClick: _cache[5] || (_cache[5] = vue.withModifiers(() => {
               }, ["stop"]))
             }, [
               vue.createElementVNode("image", {
@@ -7689,52 +7759,14 @@ This will fail in production.`);
               }, null, 8, ["src"])
             ])
           ])) : vue.createCommentVNode("v-if", true),
-          $setup.showChatModal ? (vue.openBlock(), vue.createElementBlock("view", {
-            key: 3,
-            class: "chat-overlay",
-            onClick: _cache[16] || (_cache[16] = (...args) => $setup.closeChatModal && $setup.closeChatModal(...args))
-          }, [
-            vue.createElementVNode("view", {
-              class: "chat-modal",
-              onClick: _cache[15] || (_cache[15] = vue.withModifiers(() => {
-              }, ["stop"]))
-            }, [
-              vue.createElementVNode("view", { class: "chat-header" }, [
-                vue.createElementVNode("view", { class: "chat-header-info" }, [
-                  vue.createElementVNode("image", {
-                    src: `${_ctx.BASE_URL}${$setup.layoutDetail.avatarUrl || "/uploads/avatar/default.png"}`,
-                    class: "designer-avatar",
-                    onError: _cache[12] || (_cache[12] = (...args) => $setup.onAvatarError && $setup.onAvatarError(...args))
-                  }, null, 40, ["src"]),
-                  vue.createElementVNode(
-                    "text",
-                    null,
-                    "与设计师 " + vue.toDisplayString($setup.layoutDetail.designerUsername) + " 聊天",
-                    1
-                    /* TEXT */
-                  )
-                ]),
-                vue.createElementVNode("text", {
-                  class: "close-chat",
-                  onClick: _cache[13] || (_cache[13] = (...args) => $setup.closeChatModal && $setup.closeChatModal(...args))
-                }, "×")
-              ]),
-              vue.createElementVNode("view", { class: "chat-body" }, [
-                vue.createElementVNode("button", {
-                  class: "chat-btn",
-                  onClick: _cache[14] || (_cache[14] = (...args) => $setup.openChatWithDesigner && $setup.openChatWithDesigner(...args))
-                }, " 💬 联系设计师 ")
-              ])
-            ])
-          ])) : vue.createCommentVNode("v-if", true),
           $setup.showSchemeModal ? (vue.openBlock(), vue.createElementBlock("view", {
-            key: 4,
+            key: 3,
             class: "overlay",
-            onClick: _cache[19] || (_cache[19] = (...args) => $setup.closeSchemeModal && $setup.closeSchemeModal(...args))
+            onClick: $setup.closeSchemeModal
           }, [
             vue.createElementVNode("view", {
               class: "modal scheme-modal",
-              onClick: _cache[18] || (_cache[18] = vue.withModifiers(() => {
+              onClick: _cache[6] || (_cache[6] = vue.withModifiers(() => {
               }, ["stop"]))
             }, [
               vue.createElementVNode("view", { class: "modal-header" }, [
@@ -7747,7 +7779,7 @@ This will fail in production.`);
                 ),
                 vue.createElementVNode("text", {
                   class: "close",
-                  onClick: _cache[17] || (_cache[17] = (...args) => $setup.closeSchemeModal && $setup.closeSchemeModal(...args))
+                  onClick: $setup.closeSchemeModal
                 }, "×")
               ]),
               vue.createElementVNode("view", { class: "modal-body scheme-modal-body" }, [
@@ -7802,8 +7834,8 @@ This will fail in production.`);
                           class: "scheme-image"
                         }, [
                           vue.createElementVNode("image", {
-                            src: scheme.imageUrl.startsWith("http") ? scheme.imageUrl : _ctx.BASE_URL + scheme.imageUrl,
-                            class: "scheme-image",
+                            src: $setup.BASE_URL + scheme.imageUrl,
+                            class: "scheme-image-img",
                             onClick: ($event) => $setup.previewImageFromCache(scheme)
                           }, null, 8, ["src", "onClick"])
                         ])) : (vue.openBlock(), vue.createElementBlock("view", {
