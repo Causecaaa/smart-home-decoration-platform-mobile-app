@@ -1,7 +1,5 @@
 import {request, uploadRequest} from '../utils/request'
 
-import {BASE_URL} from "../config/apiConfig";
-
 // 发送文本消息
 export const sendTextMessage = (data) => {
     return request({

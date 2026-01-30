@@ -89,7 +89,7 @@
       "height": "50px",
       "list": [
         {
-          "pagePath": "src/pages/index/index",
+          "pagePath": "src/pages/post/index",
           "text": "首页",
           "iconPath": "/static/tabbar/home.png",
           "selectedIconPath": "/static/tabbar/home.png"
