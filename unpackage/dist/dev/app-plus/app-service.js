@@ -8308,9 +8308,9 @@ This will fail in production.`);
           const res = await getUserFurnitureLayoutById(layoutId.value);
           layoutDetail.value = res;
           if (layoutDetail.value) {
-            formatAppLog("log", "at src/pages/furniture/furniture.vue:243", res);
+            formatAppLog("log", "at src/pages/furniture/furniture.vue:276", res);
           } else {
-            formatAppLog("log", "at src/pages/furniture/furniture.vue:245", "没有数据");
+            formatAppLog("log", "at src/pages/furniture/furniture.vue:278", "没有数据");
           }
           if (!res.furnitureDesignerId) {
             await loadDesigners();
@@ -8334,7 +8334,7 @@ This will fail in production.`);
             title: "加载布局详情失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:275", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:308", error);
         }
       };
       const loadRooms = async () => {
@@ -8346,8 +8346,19 @@ This will fail in production.`);
             title: "加载房间信息失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:289", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:322", error);
         }
+      };
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("zh-CN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
       };
       const loadDesigners = async () => {
         try {
@@ -8367,11 +8378,11 @@ This will fail in production.`);
             title: "加载设计师列表失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:311", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:358", error);
         }
       };
       const openChatWithDesigner = () => {
-        formatAppLog("log", "at src/pages/furniture/furniture.vue:317", "openChatWithDesigner");
+        formatAppLog("log", "at src/pages/furniture/furniture.vue:364", "openChatWithDesigner");
         uni.navigateTo({
           url: `/src/pages/contact/contactDetail?targetUserId=${designer.value.id}
     &targetUserName=${designer.value.username}&targetAvatarUrl=${designer.value.avatar}`
@@ -8389,7 +8400,7 @@ This will fail in production.`);
           }));
           layoutImages.value = formatted;
         } catch (error) {
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:341", "加载布局图片失败:", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:388", "加载布局图片失败:", error);
         }
       };
       const loadAllLayoutImages = async () => {
@@ -8403,10 +8414,10 @@ This will fail in production.`);
         });
       };
       const onImageError = (e) => {
-        formatAppLog("error", "at src/pages/furniture/furniture.vue:361", "Image load error:", e);
+        formatAppLog("error", "at src/pages/furniture/furniture.vue:408", "Image load error:", e);
       };
       const onImageLoad = (e) => {
-        formatAppLog("log", "at src/pages/furniture/furniture.vue:365", "Image loaded successfully:", e);
+        formatAppLog("log", "at src/pages/furniture/furniture.vue:412", "Image loaded successfully:", e);
       };
       const viewSchemes = async (room) => {
         try {
@@ -8419,7 +8430,7 @@ This will fail in production.`);
             title: "加载方案失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:381", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:428", error);
         }
       };
       const closeSchemeModal = () => {
@@ -8458,7 +8469,7 @@ This will fail in production.`);
             title: "分配设计师失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:437", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:484", error);
         }
       };
       const payDeposit = async (billId) => {
@@ -8544,7 +8555,7 @@ This will fail in production.`);
             title: "确认失败",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/furniture/furniture.vue:536", error);
+          formatAppLog("error", "at src/pages/furniture/furniture.vue:583", error);
         }
       };
       const closeImagePreview = () => {
@@ -8567,7 +8578,7 @@ This will fail in production.`);
       const components = {
         DesignerSelector: vue.defineAsyncComponent(() => __vitePreload(() => Promise.resolve().then(() => DesignerSelector$1), false ? "__VITE_PRELOAD__" : void 0))
       };
-      const __returned__ = { showChatModal, chatTargetUserId, layoutId, layoutDetail, layoutImages, designers, selectedDesignerId, showDesignerDialog, rooms, designer, showImagePreview, previewImageUrl, showPreview, previewUrl, showSchemeModal, currentRoomSchemes, currentRoom, loadLayoutDetail, loadRooms, loadDesigners, openChatWithDesigner, closeChatModal, loadLayoutImages, loadAllLayoutImages, previewImage, onImageError, onImageLoad, viewSchemes, closeSchemeModal, previewImageFromCache, getRoomStatus, handleSelectDesigner, payDeposit, performPayDeposit, payFinalAmount, performPayFinalAmount, openDesignerDialog, closeDesignerDialog, confirmScheme, performConfirmScheme, closeImagePreview, closePreview, components, ref: vue.ref, onMounted: vue.onMounted, DesignerSelector, get getLayoutImages() {
+      const __returned__ = { showChatModal, chatTargetUserId, layoutId, layoutDetail, layoutImages, designers, selectedDesignerId, showDesignerDialog, rooms, designer, showImagePreview, previewImageUrl, showPreview, previewUrl, showSchemeModal, currentRoomSchemes, currentRoom, loadLayoutDetail, loadRooms, formatDate, loadDesigners, openChatWithDesigner, closeChatModal, loadLayoutImages, loadAllLayoutImages, previewImage, onImageError, onImageLoad, viewSchemes, closeSchemeModal, previewImageFromCache, getRoomStatus, handleSelectDesigner, payDeposit, performPayDeposit, payFinalAmount, performPayFinalAmount, openDesignerDialog, closeDesignerDialog, confirmScheme, performConfirmScheme, closeImagePreview, closePreview, components, ref: vue.ref, onMounted: vue.onMounted, DesignerSelector, get getLayoutImages() {
         return getLayoutImages;
       }, get getDesignerList() {
         return getDesignerList;
@@ -8913,7 +8924,7 @@ This will fail in production.`);
                             vue.createElementVNode(
                               "text",
                               { class: "scheme-info-text" },
-                              "创建时间: " + vue.toDisplayString(new Date(scheme.createdAt).toLocaleString()),
+                              "创建时间: " + vue.toDisplayString($setup.formatDate(scheme.createdAt)),
                               1
                               /* TEXT */
                             )
@@ -8927,6 +8938,86 @@ This will fail in production.`);
                               onClick: ($event) => $setup.confirmScheme(scheme.schemeId)
                             }, "确认方案", 8, ["onClick"])
                           ])) : vue.createCommentVNode("v-if", true)
+                        ]),
+                        vue.createElementVNode("view", { class: "scheme-materials" }, [
+                          vue.createElementVNode("view", { class: "material-item" }, [
+                            vue.createElementVNode("text", { class: "material-label" }, "地面材料:"),
+                            vue.createElementVNode("text", { class: "material-value" }, [
+                              vue.createTextVNode(
+                                vue.toDisplayString(scheme.floorMaterial || "未设置") + " ",
+                                1
+                                /* TEXT */
+                              ),
+                              scheme.floorArea ? (vue.openBlock(), vue.createElementBlock(
+                                "text",
+                                { key: 0 },
+                                "(" + vue.toDisplayString(scheme.floorArea) + "㎡)",
+                                1
+                                /* TEXT */
+                              )) : vue.createCommentVNode("v-if", true)
+                            ])
+                          ]),
+                          vue.createElementVNode("view", { class: "material-item" }, [
+                            vue.createElementVNode("text", { class: "material-label" }, "墙面材料:"),
+                            vue.createElementVNode("text", { class: "material-value" }, [
+                              vue.createTextVNode(
+                                vue.toDisplayString(scheme.wallMaterial || "未设置") + " ",
+                                1
+                                /* TEXT */
+                              ),
+                              scheme.wallArea ? (vue.openBlock(), vue.createElementBlock(
+                                "text",
+                                { key: 0 },
+                                "(" + vue.toDisplayString(scheme.wallArea) + "㎡)",
+                                1
+                                /* TEXT */
+                              )) : vue.createCommentVNode("v-if", true)
+                            ])
+                          ]),
+                          vue.createElementVNode("view", { class: "material-item" }, [
+                            vue.createElementVNode("text", { class: "material-label" }, "天花板材料:"),
+                            vue.createElementVNode("text", { class: "material-value" }, [
+                              vue.createTextVNode(
+                                vue.toDisplayString(scheme.ceilingMaterial || "未设置") + " ",
+                                1
+                                /* TEXT */
+                              ),
+                              scheme.ceilingArea ? (vue.openBlock(), vue.createElementBlock(
+                                "text",
+                                { key: 0 },
+                                "(" + vue.toDisplayString(scheme.ceilingArea) + "㎡)",
+                                1
+                                /* TEXT */
+                              )) : vue.createCommentVNode("v-if", true)
+                            ])
+                          ]),
+                          vue.createElementVNode("view", { class: "material-item" }, [
+                            vue.createElementVNode("text", { class: "material-label" }, "柜体材料:"),
+                            vue.createElementVNode("text", { class: "material-value" }, [
+                              vue.createTextVNode(
+                                vue.toDisplayString(scheme.cabinetMaterial || "未设置") + " ",
+                                1
+                                /* TEXT */
+                              ),
+                              scheme.cabinetArea ? (vue.openBlock(), vue.createElementBlock(
+                                "text",
+                                { key: 0 },
+                                "(" + vue.toDisplayString(scheme.cabinetArea) + "㎡)",
+                                1
+                                /* TEXT */
+                              )) : vue.createCommentVNode("v-if", true)
+                            ])
+                          ]),
+                          vue.createElementVNode("view", { class: "material-item" }, [
+                            vue.createElementVNode("text", { class: "material-label" }, "备注:"),
+                            vue.createElementVNode(
+                              "text",
+                              { class: "material-value" },
+                              vue.toDisplayString(scheme.remark || "无"),
+                              1
+                              /* TEXT */
+                            )
+                          ])
                         ]),
                         scheme.imageUrl ? (vue.openBlock(), vue.createElementBlock("view", {
                           key: 0,

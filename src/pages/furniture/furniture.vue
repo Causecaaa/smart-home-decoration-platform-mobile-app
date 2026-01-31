@@ -152,12 +152,45 @@
                     <view class="scheme-info">
                       <text class="scheme-info-text">版本: V{{ scheme.schemeVersion }}</text>
                       <text class="scheme-info-text">状态: {{ scheme.schemeStatus === 'SUBMITTED' ? '已提交' : scheme.schemeStatus }}</text>
-                      <text class="scheme-info-text">创建时间: {{ new Date(scheme.createdAt).toLocaleString() }}</text>
+                      <text class="scheme-info-text">创建时间: {{ formatDate(scheme.createdAt) }}</text>
                     </view>
                     <view class="scheme-actions" v-if="scheme.schemeStatus === 'SUBMITTED'">
                       <button class="confirm-btn" @tap="confirmScheme(scheme.schemeId)">确认方案</button>
                     </view>
                   </view>
+
+                  <!-- 材料信息展示 -->
+                  <view class="scheme-materials">
+                    <view class="material-item">
+                      <text class="material-label">地面材料:</text>
+                      <text class="material-value">{{ scheme.floorMaterial || '未设置' }}
+                        <text v-if="scheme.floorArea">({{ scheme.floorArea }}㎡)</text>
+                      </text>
+                    </view>
+                    <view class="material-item">
+                      <text class="material-label">墙面材料:</text>
+                      <text class="material-value">{{ scheme.wallMaterial || '未设置' }}
+                        <text v-if="scheme.wallArea">({{ scheme.wallArea }}㎡)</text>
+                      </text>
+                    </view>
+                    <view class="material-item">
+                      <text class="material-label">天花板材料:</text>
+                      <text class="material-value">{{ scheme.ceilingMaterial || '未设置' }}
+                        <text v-if="scheme.ceilingArea">({{ scheme.ceilingArea }}㎡)</text>
+                      </text>
+                    </view>
+                    <view class="material-item">
+                      <text class="material-label">柜体材料:</text>
+                      <text class="material-value">{{ scheme.cabinetMaterial || '未设置' }}
+                        <text v-if="scheme.cabinetArea">({{ scheme.cabinetArea }}㎡)</text>
+                      </text>
+                    </view>
+                    <view class="material-item">
+                      <text class="material-label">备注:</text>
+                      <text class="material-value">{{ scheme.remark || '无' }}</text>
+                    </view>
+                  </view>
+
 
                   <!-- 图片区域 -->
                   <view v-if="scheme.imageUrl" class="scheme-image">
@@ -289,6 +322,20 @@ const loadRooms = async () => {
     console.error(error)
   }
 }
+
+// 添加时间格式化函数
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
+  });
+};
+
 
 const loadDesigners = async () => {
   try {
@@ -1141,5 +1188,33 @@ const components = {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+.scheme-materials {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250rpx, 1fr));
+  gap: 16rpx;
+  margin: 16rpx 0;
+  padding: 16rpx;
+  background-color: #f8f9fa;
+  border-radius: 12rpx;
+}
+
+.material-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.material-label {
+  font-size: 22rpx;
+  color: #888;
+  font-weight: normal;
+}
+
+.material-value {
+  font-size: 24rpx;
+  color: #333;
+  font-weight: 500;
 }
 </style>
