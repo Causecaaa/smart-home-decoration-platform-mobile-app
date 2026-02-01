@@ -16,6 +16,13 @@ export function payFinalRequest(billId) {
     })
 }
 
+export function payFullRequest(billId) {
+    return request({
+        url: `/bill/pay/full/${billId}`,
+        method: 'POST'
+    })
+}
+
 /**
  * 获取账单列表
  */

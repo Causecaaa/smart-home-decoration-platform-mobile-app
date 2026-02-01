@@ -42,3 +42,10 @@ export function deleteHouse(houseId) {
         method: 'DELETE'
     })
 }
+
+export function getHouseQuotation(houseId){
+    return request({
+        url: `/house/quotation/${houseId}`,
+        method: 'GET'
+    })
+}

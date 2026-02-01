@@ -20,11 +20,28 @@
           楼层：{{ house.floorCount }}
         </text>
 
-
         <!-- 主行动：跳转布局页面 -->
         <view class="design-buttons">
           <button class="design-btn" @click="goLayoutPage(house.houseId)">布局设计</button>
           <button class="design-btn furniture-btn" @click="goFurniturePage(house)">家具设计</button>
+        </view>
+
+        <!-- 报价和施工按钮 -->
+        <view class="construction-buttons" v-if="house.canStartQuotation || house.canStartConstruction">
+          <button
+            class="construction-btn quotation-btn"
+            v-if="house.canStartQuotation"
+            @click="startQuotation(house)"
+          >
+            报价
+          </button>
+          <button
+            class="construction-btn construction-btn-only"
+            v-if="house.canStartConstruction"
+            @click="startConstruction(house)"
+          >
+            进入施工
+          </button>
         </view>
       </view>
 
@@ -62,7 +79,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { onLoad, onNavigationBarButtonTap } from '@dcloudio/uni-app'
+import { onLoad, onNavigationBarButtonTap, onShow } from '@dcloudio/uni-app'
 
 import homeForm from '../../components/homeForm.vue'
 import { getHousesByUser, deleteHouse } from '../../api/house'
@@ -99,6 +116,12 @@ onNavigationBarButtonTap((event) => {
       }
     }
   })
+})
+
+/* ⭐ 页面显示时重新加载数据 */
+onShow(() => {
+  console.log('页面显示，重新加载房屋列表')
+  loadHouses()
 })
 
 /* ---------------- 方法 ---------------- */
@@ -138,6 +161,20 @@ function goFurniturePage(house) {
   }
   uni.navigateTo({
     url: `/src/pages/furniture/furniture?layoutId=${house.confirmedLayoutId}`
+  })
+}
+
+// 开始报价功能
+function startQuotation(house) {
+  uni.navigateTo({
+    url: `/src/pages/quotation/quotation?houseId=${house.houseId}`
+  })
+}
+
+// 开始施工功能
+function startConstruction(house) {
+  uni.navigateTo({
+    url: `/src/pages/construction/construction?houseId=${house.houseId}`
   })
 }
 
@@ -208,7 +245,6 @@ function onFormSuccess() {
   })
 }
 </script>
-
 
 
 <style>
@@ -289,6 +325,30 @@ function onFormSuccess() {
 
 .design-btn.furniture-btn {
   background: #52c41a;
+}
+
+.construction-buttons {
+  display: flex;
+  gap: 20rpx;
+  margin-top: 15rpx;
+}
+
+.construction-btn {
+  flex: 1;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  border: none;
+  color: #fff;
+  font-weight: 500;
+  font-size: 28rpx;
+}
+
+.quotation-btn {
+  background: #ff9500; /* 橙色背景表示报价 */
+}
+
+.construction-btn-only {
+  background: #007aff; /* 蓝色背景表示施工 */
 }
 
 .actions {
@@ -411,6 +471,4 @@ function onFormSuccess() {
   border: none;
   z-index: 1; /* 确保在最顶层 */
 }
-
-
 </style>

@@ -67,7 +67,9 @@
 		{ "path": "src/pages/contact/contactDetail", "style": { "navigationBarTitleText": "聊天"}},
 		{ "path": "src/pages/layout/layout", "style": { "navigationBarTitleText": "布局设计"}},
 		{ "path": "src/pages/furniture/furniture", "style": { "navigationBarTitleText": "家具设计"}},
-		{ "path": "src/pages/post/edit", "style": { "navigationBarTitleText": "编辑"}}
+		{ "path": "src/pages/post/edit", "style": { "navigationBarTitleText": "编辑"}},
+		{ "path": "src/pages/quotation/quotation", "style": { "navigationBarTitleText": "报价"}},
+		{ "path": "src/pages/construction/construction", "style": { "navigationBarTitleText": "施工"}}
 
 
 	],
