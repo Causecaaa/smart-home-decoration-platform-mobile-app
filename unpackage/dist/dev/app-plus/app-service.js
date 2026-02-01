@@ -187,7 +187,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$l = {
+  const _sfc_main$m = {
     name: "uniTransition",
     emits: ["click", "change"],
     props: {
@@ -438,7 +438,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.withDirectives((vue.openBlock(), vue.createElementBlock("view", {
       ref: "ani",
       animation: $data.animationData,
@@ -451,8 +451,8 @@ if (uni.restoreGlobal) {
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__file", "D:/CODE/mobile-app/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
-  const _sfc_main$k = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__file", "D:/CODE/mobile-app/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$l = {
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -805,7 +805,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$3);
     return $data.showPopup ? (vue.openBlock(), vue.createElementBlock(
       "view",
@@ -865,7 +865,7 @@ if (uni.restoreGlobal) {
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   const BASE_URL = "http://192.168.31.47:8181";
   var isVue2 = false;
   function set(target, key, val) {
@@ -2530,7 +2530,7 @@ This will fail in production.`);
       resetForm
     };
   });
-  const _sfc_main$j = {
+  const _sfc_main$k = {
     __name: "PostCreateForm",
     props: {
       initialData: {
@@ -2635,7 +2635,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "form-container" }, [
       vue.createElementVNode(
         "form",
@@ -2746,10 +2746,10 @@ This will fail in production.`);
       )
     ]);
   }
-  const PostCreateForm = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-0f3d7bb4"], ["__file", "D:/CODE/mobile-app/src/components/PostCreateForm.vue"]]);
+  const PostCreateForm = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-0f3d7bb4"], ["__file", "D:/CODE/mobile-app/src/components/PostCreateForm.vue"]]);
   const _imports_0$1 = "/static/post/like.png";
   const _imports_1 = "/static/post/comment.png";
-  const _sfc_main$i = {
+  const _sfc_main$j = {
     __name: "index",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -2907,7 +2907,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("scroll-view", {
@@ -3057,7 +3057,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const SrcPagesPostIndex = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-28671761"], ["__file", "D:/CODE/mobile-app/src/pages/post/index.vue"]]);
+  const SrcPagesPostIndex = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-28671761"], ["__file", "D:/CODE/mobile-app/src/pages/post/index.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -3708,7 +3708,7 @@ This will fail in production.`);
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$h = {
+  const _sfc_main$i = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -3762,7 +3762,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -3777,7 +3777,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -3796,7 +3796,7 @@ This will fail in production.`);
     }
     return style;
   }
-  const _sfc_main$g = {
+  const _sfc_main$h = {
     name: "uni-easyinput",
     emits: [
       "click",
@@ -4153,7 +4153,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$1);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -4277,7 +4277,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   function getHousesByUser() {
     return request({
       url: "/house/get-all",
@@ -4310,7 +4310,7 @@ This will fail in production.`);
       method: "GET"
     });
   }
-  const _sfc_main$f = {
+  const _sfc_main$g = {
     name: "homeForm",
     props: { house: Object },
     emits: ["success"],
@@ -4448,7 +4448,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$g(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_0);
     return vue.openBlock(), vue.createElementBlock("view", { class: "house-form" }, [
       vue.createElementVNode("view", { class: "input-row" }, [
@@ -4658,8 +4658,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const homeForm = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__scopeId", "data-v-5f8d72f0"], ["__file", "D:/CODE/mobile-app/src/components/homeForm.vue"]]);
-  const _sfc_main$e = {
+  const homeForm = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$g], ["__scopeId", "data-v-5f8d72f0"], ["__file", "D:/CODE/mobile-app/src/components/homeForm.vue"]]);
+  const _sfc_main$f = {
     __name: "project",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -4809,7 +4809,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "houses-container" }, [
       vue.createElementVNode("view", { class: "header" }, [
@@ -4962,9 +4962,9 @@ This will fail in production.`);
       )
     ]);
   }
-  const SrcPagesProjectProject = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__file", "D:/CODE/mobile-app/src/pages/project/project.vue"]]);
+  const SrcPagesProjectProject = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$f], ["__file", "D:/CODE/mobile-app/src/pages/project/project.vue"]]);
   const _imports_0 = "/static/post/share.png";
-  const _sfc_main$d = {
+  const _sfc_main$e = {
     __name: "detail",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -5208,7 +5208,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$e(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "post-detail" }, [
       vue.createElementVNode("view", { class: "main-content" }, [
         vue.createElementVNode("scroll-view", {
@@ -5432,7 +5432,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesPostDetail = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__scopeId", "data-v-1a2d8da8"], ["__file", "D:/CODE/mobile-app/src/pages/post/detail.vue"]]);
+  const SrcPagesPostDetail = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$e], ["__scopeId", "data-v-1a2d8da8"], ["__file", "D:/CODE/mobile-app/src/pages/post/detail.vue"]]);
   const sendTextMessage = (data) => {
     return request({
       url: "/chat/text-create",
@@ -5458,7 +5458,7 @@ This will fail in production.`);
       method: "get"
     });
   };
-  const _sfc_main$c = {
+  const _sfc_main$d = {
     __name: "contact",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -5522,7 +5522,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$d(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "contact-container" }, [
       vue.createElementVNode("view", { class: "header" }, [
         vue.createElementVNode("text", { class: "title" }, "联系人")
@@ -5604,7 +5604,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesContactContact = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__file", "D:/CODE/mobile-app/src/pages/contact/contact.vue"]]);
+  const SrcPagesContactContact = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$d], ["__file", "D:/CODE/mobile-app/src/pages/contact/contact.vue"]]);
   function registerUser(data) {
     return request({
       url: "/user/create",
@@ -5645,7 +5645,7 @@ This will fail in production.`);
       filePath
     });
   }
-  const _sfc_main$b = {
+  const _sfc_main$c = {
     __name: "profile",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -5860,7 +5860,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       vue.Fragment,
       null,
@@ -6085,8 +6085,8 @@ This will fail in production.`);
       /* STABLE_FRAGMENT */
     );
   }
-  const SrcPagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__file", "D:/CODE/mobile-app/src/pages/profile/profile.vue"]]);
-  const _sfc_main$a = {
+  const SrcPagesProfileProfile = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__file", "D:/CODE/mobile-app/src/pages/profile/profile.vue"]]);
+  const _sfc_main$b = {
     __name: "login",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -6170,7 +6170,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$b(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "login-container" }, [
       vue.createElementVNode("view", { class: "login-card" }, [
         vue.createElementVNode("view", { class: "login-header" }, [
@@ -6231,8 +6231,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__file", "D:/CODE/mobile-app/src/pages/login/login.vue"]]);
-  const _sfc_main$9 = {
+  const SrcPagesLoginLogin = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$b], ["__file", "D:/CODE/mobile-app/src/pages/login/login.vue"]]);
+  const _sfc_main$a = {
     __name: "register",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -6378,7 +6378,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "register-container" }, [
       vue.createElementVNode("view", { class: "register-card" }, [
         vue.createElementVNode("view", { class: "register-header" }, [
@@ -6497,8 +6497,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__file", "D:/CODE/mobile-app/src/pages/register/register.vue"]]);
-  const _sfc_main$8 = {
+  const SrcPagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$a], ["__file", "D:/CODE/mobile-app/src/pages/register/register.vue"]]);
+  const _sfc_main$9 = {
     __name: "contactDetail",
     props: {
       targetUserId: {
@@ -6701,7 +6701,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("div", { class: "chat-container" }, [
       vue.createElementVNode(
         "div",
@@ -6818,7 +6818,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesContactContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__scopeId", "data-v-c8354b46"], ["__file", "D:/CODE/mobile-app/src/pages/contact/contactDetail.vue"]]);
+  const SrcPagesContactContactDetail = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$9], ["__scopeId", "data-v-c8354b46"], ["__file", "D:/CODE/mobile-app/src/pages/contact/contactDetail.vue"]]);
   function getDesignerList(params = {}) {
     return request({
       url: "/designer/list",
@@ -6908,7 +6908,7 @@ This will fail in production.`);
       method: "DELETE"
     });
   }
-  const _sfc_main$7 = {
+  const _sfc_main$8 = {
     __name: "LayoutForm",
     props: {
       houseId: {
@@ -7127,7 +7127,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", {
       class: "layout-card",
       onClick: $setup.handleCardClickOutside
@@ -7366,7 +7366,7 @@ This will fail in production.`);
       ])
     ]);
   }
-  const LayoutForm = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__scopeId", "data-v-16bb0760"], ["__file", "D:/CODE/mobile-app/src/components/LayoutForm.vue"]]);
+  const LayoutForm = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$8], ["__scopeId", "data-v-16bb0760"], ["__file", "D:/CODE/mobile-app/src/components/LayoutForm.vue"]]);
   const useLayoutImageStore = defineStore("layoutImage", {
     state: () => ({
       images: {}
@@ -7418,7 +7418,7 @@ This will fail in production.`);
       method: "POST"
     });
   }
-  const _sfc_main$6 = {
+  const _sfc_main$7 = {
     __name: "layout",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -7756,7 +7756,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
     return vue.openBlock(), vue.createElementBlock("view", { class: "layouts-container" }, [
       vue.createElementVNode("view", { class: "layouts-content" }, [
@@ -8137,7 +8137,7 @@ This will fail in production.`);
       ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
-  const SrcPagesLayoutLayout = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__file", "D:/CODE/mobile-app/src/pages/layout/layout.vue"]]);
+  const SrcPagesLayoutLayout = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$7], ["__file", "D:/CODE/mobile-app/src/pages/layout/layout.vue"]]);
   const scriptRel = "modulepreload";
   const assetsURL = function(dep) {
     return "/" + dep;
@@ -8195,7 +8195,7 @@ This will fail in production.`);
       }
     });
   };
-  const _sfc_main$5 = {
+  const _sfc_main$6 = {
     __name: "DesignerSelector",
     props: {
       designers: { type: Array, default: () => [] },
@@ -8216,7 +8216,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "designer-list" }, [
       (vue.openBlock(true), vue.createElementBlock(
         vue.Fragment,
@@ -8282,7 +8282,7 @@ This will fail in production.`);
       ))
     ]);
   }
-  const DesignerSelector = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__scopeId", "data-v-23bd4fad"], ["__file", "D:/CODE/mobile-app/src/components/DesignerSelector.vue"]]);
+  const DesignerSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render$6], ["__scopeId", "data-v-23bd4fad"], ["__file", "D:/CODE/mobile-app/src/components/DesignerSelector.vue"]]);
   const DesignerSelector$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: DesignerSelector
@@ -8320,7 +8320,7 @@ This will fail in production.`);
       method: "PUT"
     });
   }
-  const _sfc_main$4 = {
+  const _sfc_main$5 = {
     __name: "furniture",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -8648,7 +8648,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     var _a;
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("view", { class: "furniture-design-container" }, [
@@ -9095,8 +9095,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesFurnitureFurniture = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "D:/CODE/mobile-app/src/pages/furniture/furniture.vue"]]);
-  const _sfc_main$3 = {
+  const SrcPagesFurnitureFurniture = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render$5], ["__file", "D:/CODE/mobile-app/src/pages/furniture/furniture.vue"]]);
+  const _sfc_main$4 = {
     __name: "PostEditForm",
     props: {
       initialData: {
@@ -9244,7 +9244,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "form-container" }, [
       vue.createElementVNode(
         "form",
@@ -9378,8 +9378,8 @@ This will fail in production.`);
       )
     ]);
   }
-  const PostEditForm = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__scopeId", "data-v-1a86f8fb"], ["__file", "D:/CODE/mobile-app/src/components/PostEditForm.vue"]]);
-  const _sfc_main$2 = {
+  const PostEditForm = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__scopeId", "data-v-1a86f8fb"], ["__file", "D:/CODE/mobile-app/src/components/PostEditForm.vue"]]);
+  const _sfc_main$3 = {
     __name: "edit",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -9442,7 +9442,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "edit-post-page" }, [
       vue.createElementVNode("view", { class: "header" }, [
         vue.createElementVNode("view", {
@@ -9468,8 +9468,8 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesPostEdit = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__scopeId", "data-v-b7f7c7b6"], ["__file", "D:/CODE/mobile-app/src/pages/post/edit.vue"]]);
-  const _sfc_main$1 = {
+  const SrcPagesPostEdit = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__scopeId", "data-v-b7f7c7b6"], ["__file", "D:/CODE/mobile-app/src/pages/post/edit.vue"]]);
+  const _sfc_main$2 = {
     __name: "quotation",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -9566,7 +9566,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "quotation-container" }, [
       vue.createElementVNode("view", { class: "quotation-header" }, [
         vue.createElementVNode("text", { class: "title" }, "装修报价单")
@@ -9794,7 +9794,223 @@ This will fail in production.`);
       ])
     ]);
   }
-  const SrcPagesQuotationQuotation = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/quotation/quotation.vue"]]);
+  const SrcPagesQuotationQuotation = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render$2], ["__file", "D:/CODE/mobile-app/src/pages/quotation/quotation.vue"]]);
+  function getStage(houseId) {
+    return request({
+      url: `/stage/${houseId}`,
+      // 修改为正确的路径
+      method: "GET"
+    });
+  }
+  const _sfc_main$1 = {
+    __name: "construction",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const stagesData = vue.ref({ stages: [] });
+      const houseId = vue.ref(null);
+      const CATEGORY_MAP = {
+        CEMENT: "水泥建材",
+        PIPE: "管道",
+        WIRE: "电线",
+        ETC: "其他辅材"
+      };
+      const MAIN_MATERIAL_TYPE_MAP = {
+        FLOOR: "地面",
+        WALL: "墙面",
+        CEILING: "天花板",
+        CABINET: "柜体"
+      };
+      onLoad((query) => {
+        if (query.houseId) {
+          houseId.value = Number(query.houseId);
+        }
+      });
+      const loadStages = async () => {
+        try {
+          const res = await getStage(houseId.value);
+          stagesData.value = res;
+          formatAppLog("log", "at src/pages/construction/construction.vue:98", "施工阶段数据加载成功", res);
+        } catch (error) {
+          formatAppLog("error", "at src/pages/construction/construction.vue:100", "加载施工阶段失败:", error);
+          uni.showToast({
+            title: "加载施工阶段失败",
+            icon: "none"
+          });
+        }
+      };
+      const getCategoryText = (category) => {
+        return CATEGORY_MAP[category] || category;
+      };
+      const getMainMaterialTypeText = (type) => {
+        return MAIN_MATERIAL_TYPE_MAP[type] || type;
+      };
+      vue.onMounted(() => {
+        loadStages();
+      });
+      const __returned__ = { stagesData, houseId, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, loadStages, getCategoryText, getMainMaterialTypeText, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
+        return onLoad;
+      }, get getStage() {
+        return getStage;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "construction-container" }, [
+      vue.createElementVNode("view", { class: "construction-header" }, [
+        vue.createElementVNode("text", { class: "title" }, "施工阶段详情")
+      ]),
+      vue.createElementVNode("view", { class: "stages-section" }, [
+        vue.createElementVNode("text", { class: "section-title" }, "装修施工阶段"),
+        (vue.openBlock(true), vue.createElementBlock(
+          vue.Fragment,
+          null,
+          vue.renderList($setup.stagesData.stages, (stageItem) => {
+            return vue.openBlock(), vue.createElementBlock("view", {
+              key: stageItem.stage,
+              class: "stage-card"
+            }, [
+              vue.createElementVNode("view", { class: "stage-header" }, [
+                vue.createElementVNode(
+                  "text",
+                  { class: "stage-name" },
+                  vue.toDisplayString(stageItem.stageName),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "text",
+                  { class: "stage-number" },
+                  "第 " + vue.toDisplayString(stageItem.stage) + " 阶段",
+                  1
+                  /* TEXT */
+                )
+              ]),
+              stageItem.mainMaterials && stageItem.mainMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+                key: 0,
+                class: "materials-section"
+              }, [
+                vue.createElementVNode("text", { class: "materials-title" }, "主材清单"),
+                vue.createElementVNode("view", { class: "materials-list" }, [
+                  (vue.openBlock(true), vue.createElementBlock(
+                    vue.Fragment,
+                    null,
+                    vue.renderList(stageItem.mainMaterials, (item, index) => {
+                      return vue.openBlock(), vue.createElementBlock("view", {
+                        key: index,
+                        class: "material-item"
+                      }, [
+                        vue.createElementVNode("view", { class: "material-info" }, [
+                          vue.createElementVNode(
+                            "text",
+                            { class: "material-type" },
+                            vue.toDisplayString($setup.getMainMaterialTypeText(item.type)),
+                            1
+                            /* TEXT */
+                          ),
+                          vue.createElementVNode(
+                            "text",
+                            { class: "material-display-name" },
+                            vue.toDisplayString(item.displayName),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        vue.createElementVNode("view", { class: "material-specs" }, [
+                          vue.createElementVNode(
+                            "text",
+                            { class: "spec-item" },
+                            "面积：" + vue.toDisplayString(item.area) + "㎡",
+                            1
+                            /* TEXT */
+                          )
+                        ])
+                      ]);
+                    }),
+                    128
+                    /* KEYED_FRAGMENT */
+                  ))
+                ])
+              ])) : vue.createCommentVNode("v-if", true),
+              stageItem.auxiliaryMaterials && stageItem.auxiliaryMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+                key: 1,
+                class: "materials-section"
+              }, [
+                vue.createElementVNode("text", { class: "materials-title" }, "辅材清单"),
+                vue.createElementVNode("view", { class: "aux-materials-list" }, [
+                  (vue.openBlock(true), vue.createElementBlock(
+                    vue.Fragment,
+                    null,
+                    vue.renderList(stageItem.auxiliaryMaterials, (material, index) => {
+                      return vue.openBlock(), vue.createElementBlock("view", {
+                        key: index,
+                        class: "aux-material-card"
+                      }, [
+                        vue.createElementVNode("view", { class: "material-header" }, [
+                          vue.createElementVNode(
+                            "text",
+                            { class: "material-name" },
+                            vue.toDisplayString(material.name),
+                            1
+                            /* TEXT */
+                          ),
+                          vue.createElementVNode(
+                            "text",
+                            { class: "material-category" },
+                            vue.toDisplayString($setup.getCategoryText(material.category)),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        vue.createElementVNode("view", { class: "material-details" }, [
+                          vue.createElementVNode(
+                            "text",
+                            { class: "detail-item" },
+                            "单位：" + vue.toDisplayString(material.unit),
+                            1
+                            /* TEXT */
+                          ),
+                          vue.createElementVNode(
+                            "text",
+                            { class: "detail-item" },
+                            "数量：" + vue.toDisplayString(material.quantity) + vue.toDisplayString(material.unit),
+                            1
+                            /* TEXT */
+                          )
+                        ]),
+                        material.remark ? (vue.openBlock(), vue.createElementBlock(
+                          "text",
+                          {
+                            key: 0,
+                            class: "material-remark"
+                          },
+                          vue.toDisplayString(material.remark),
+                          1
+                          /* TEXT */
+                        )) : vue.createCommentVNode("v-if", true)
+                      ]);
+                    }),
+                    128
+                    /* KEYED_FRAGMENT */
+                  ))
+                ])
+              ])) : vue.createCommentVNode("v-if", true),
+              (!stageItem.mainMaterials || stageItem.mainMaterials.length === 0) && (!stageItem.auxiliaryMaterials || stageItem.auxiliaryMaterials.length === 0) ? (vue.openBlock(), vue.createElementBlock("view", {
+                key: 2,
+                class: "no-materials"
+              }, [
+                vue.createElementVNode("text", { class: "no-materials-text" }, "此阶段暂无材料清单")
+              ])) : vue.createCommentVNode("v-if", true)
+            ]);
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ])
+    ]);
+  }
+  const SrcPagesConstructionConstruction = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/construction/construction.vue"]]);
   __definePage("src/pages/post/index", SrcPagesPostIndex);
   __definePage("src/pages/project/project", SrcPagesProjectProject);
   __definePage("src/pages/post/detail", SrcPagesPostDetail);
@@ -9807,6 +10023,7 @@ This will fail in production.`);
   __definePage("src/pages/furniture/furniture", SrcPagesFurnitureFurniture);
   __definePage("src/pages/post/edit", SrcPagesPostEdit);
   __definePage("src/pages/quotation/quotation", SrcPagesQuotationQuotation);
+  __definePage("src/pages/construction/construction", SrcPagesConstructionConstruction);
   const _sfc_main = {
     __name: "App",
     setup(__props, { expose: __expose }) {
