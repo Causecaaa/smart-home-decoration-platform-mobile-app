@@ -257,3 +257,11 @@
   color: #f56c6c;
   font-weight: bold;
 }
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 0.875rem;
+  color: #666;
+}

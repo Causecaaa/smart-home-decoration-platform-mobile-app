@@ -23,151 +23,192 @@
 /* 垂直间距 */
 /* 透明度 */
 /* 文章场景相关 */
-.construction-container {
+.stage-detail-container {
   padding: 1.5rem;
   background-color: #f5f5f5;
   min-height: 100vh;
 }
-.construction-header {
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 0.875rem;
+  color: #666;
+}
+.stage-header {
   background: #fff;
   border-radius: 0.5rem;
   padding: 1rem;
   margin-bottom: 1rem;
   box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08);
 }
-.construction-header .title {
+.stage-header .title {
   font-size: 1.25rem;
   font-weight: bold;
   color: #1e1e2f;
+  display: block;
+  margin-bottom: 0.5rem;
 }
-.stages-section {
-  background: #fff;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08);
-}
-.stage-card {
-  border: 0.0625rem solid #e0e0e0;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
-  background-color: #fafafa;
-}
-.stage-card:last-child {
-  margin-bottom: 0;
-}
-.stage-card .stage-header {
+.stage-header .stage-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
-  padding-bottom: 0.375rem;
-  border-bottom: 0.03125rem solid #eee;
 }
-.stage-card .stage-header .stage-name {
-  font-size: 0.9375rem;
-  font-weight: bold;
-  color: #1e1e2f;
-}
-.stage-card .stage-header .stage-number {
-  font-size: 0.8125rem;
+.stage-header .stage-info .stage-order {
+  font-size: 0.875rem;
   color: #409eff;
   font-weight: bold;
 }
-.stage-card .materials-section {
+.stage-header .stage-info .stage-status {
+  font-size: 0.75rem;
+  padding: 0.1875rem 0.375rem;
+  border-radius: 0.375rem;
+  font-weight: bold;
+}
+.stage-header .stage-info .stage-status.status-pending {
+  background-color: #f0f9ff;
+  color: #409eff;
+  border: 0.03125rem solid #b3d8ff;
+}
+.stage-header .stage-info .stage-status.status-progress {
+  background-color: #f4f9ff;
+  color: #e6a23c;
+  border: 0.03125rem solid #e6cf9f;
+}
+.stage-header .stage-info .stage-status.status-completed {
+  background-color: #f0f9ec;
+  color: #67c23a;
+  border: 0.03125rem solid #b3e19d;
+}
+.stage-header .stage-info .stage-status.status-accepted {
+  background-color: #f0f0f9;
+  color: #909399;
+  border: 0.03125rem solid #d3d4e2;
+}
+.basic-info-section {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+.basic-info-section .info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.625rem;
   margin-top: 0.5rem;
 }
-.stage-card .materials-section .materials-title {
-  font-size: 0.875rem;
+.basic-info-section .info-grid .info-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+}
+.basic-info-section .info-grid .info-item .label {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+  margin-bottom: 0.125rem;
+}
+.basic-info-section .info-grid .info-item .value {
+  font-size: 0.8125rem;
+  color: #333;
+}
+.basic-info-section .info-grid .info-item .value.worker-type {
+  color: #e6a23c;
   font-weight: bold;
-  color: #409eff;
-  display: block;
-  margin-bottom: 0.375rem;
 }
-.stage-card .materials-section .materials-list {
+.materials-section {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+.materials-section .materials-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.stage-card .materials-section .aux-materials-list {
+.materials-section .aux-materials-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
-.stage-card .material-item {
+.material-item {
   border: 0.03125rem solid #dcdcdc;
   border-radius: 0.375rem;
   padding: 0.5rem;
   background-color: #fff;
 }
-.stage-card .material-item .material-info {
+.material-item .material-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.375rem;
 }
-.stage-card .material-item .material-info .material-type {
+.material-item .material-info .material-type {
   font-size: 0.8125rem;
   font-weight: bold;
   color: #e6a23c;
 }
-.stage-card .material-item .material-info .material-display-name {
+.material-item .material-info .material-display-name {
   font-size: 0.8125rem;
   color: #666;
 }
-.stage-card .material-item .material-specs {
+.material-item .material-specs {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
-.stage-card .material-item .material-specs .spec-item {
+.material-item .material-specs .spec-item {
   font-size: 0.75rem;
   color: #666;
 }
-.stage-card .aux-material-card {
+.aux-material-card {
   border: 0.03125rem solid #dcdcdc;
   border-radius: 0.375rem;
   padding: 0.5rem;
   background-color: #fff;
 }
-.stage-card .aux-material-card .material-header {
+.aux-material-card .material-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.25rem;
 }
-.stage-card .aux-material-card .material-header .material-name {
+.aux-material-card .material-header .material-name {
   font-size: 0.8125rem;
   font-weight: bold;
   color: #666;
 }
-.stage-card .aux-material-card .material-header .material-category {
+.aux-material-card .material-header .material-category {
   font-size: 0.6875rem;
   padding: 0.125rem 0.375rem;
   border-radius: 0.375rem;
   background-color: #e6f7ff;
   color: #fa6616;
 }
-.stage-card .aux-material-card .material-details {
+.aux-material-card .material-details {
   display: flex;
   flex-direction: column;
   gap: 0.1875rem;
 }
-.stage-card .aux-material-card .material-details .detail-item {
+.aux-material-card .material-details .detail-item {
   font-size: 0.75rem;
   color: #666;
 }
-.stage-card .aux-material-card .material-remark {
-  font-size: 0.6875rem;
-  color: #999;
-  margin-top: 0.25rem;
-  display: block;
-}
-.stage-card .no-materials {
+.no-materials {
   text-align: center;
   padding: 1rem 0;
+  background: #fff;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08);
 }
-.stage-card .no-materials .no-materials-text {
+.no-materials .no-materials-text {
   font-size: 0.75rem;
   color: #999;
 }

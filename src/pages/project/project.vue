@@ -174,7 +174,7 @@ function startQuotation(house) {
 // 开始施工功能
 function startConstruction(house) {
   uni.navigateTo({
-    url: `/src/pages/construction/construction?houseId=${house.houseId}`
+    url: `/src/pages/stage/stage?houseId=${house.houseId}`
   })
 }
 

@@ -3,85 +3,95 @@
     <view class="quotation-header">
       <text class="title">装修报价单</text>
     </view>
-    <!-- 房间主材列表 -->
-    <view class="rooms-section">
-      <text class="section-title">房间主材明细</text>
-      <view v-for="room in quotationData.rooms" :key="room.roomId" class="room-card">
-        <view class="room-header">
-          <text class="room-name">{{ room.roomName }}</text>
-          <text class="room-total">小计：¥{{ formatNumber(room.totalCost) }}</text>
-        </view>
 
-        <view class="materials-list">
-          <view v-for="(item, materialType) in room.mainMaterials" :key="materialType" v-if="materialType !== 'totalCost'" class="material-item">
-            <view class="material-info">
-              <text class="material-type">{{ getMaterialTypeText(materialType) }}</text>
-              <text class="material-display-name">{{ item.displayName }}</text>
+    <!-- 添加条件渲染保护 -->
+    <view v-if="quotationData">
+      <!-- 房间主材列表 -->
+      <view class="rooms-section">
+        <text class="section-title">房间主材明细</text>
+        <view v-for="room in quotationData.rooms" :key="room.roomId" class="room-card">
+          <view class="room-header">
+            <text class="room-name">{{ room.roomName }}</text>
+            <text class="room-total">小计：¥{{ formatNumber(room.totalCost) }}</text>
+          </view>
+
+          <view class="materials-list">
+            <!-- 修改：先过滤出非null的项目，再进行渲染 -->
+            <view v-for="[materialType, item] in Object.entries(room.mainMaterials || {}).filter(([key, value]) => key !== 'totalCost' && value !== null)"
+                  :key="`${room.roomId}-${materialType}`"
+                  class="material-item">
+              <view class="material-info">
+                <text class="material-type">{{ getMaterialTypeText(materialType) }}</text>
+                <text class="material-display-name">{{ item.displayName }}</text>
+              </view>
+              <view class="material-specs">
+                <text class="spec-item">面积：{{ item.area }}㎡</text>
+                <text class="spec-item">单价：¥{{ item.unitPrice }}/㎡</text>
+                <text class="spec-item total">小计：¥{{ formatNumber(item.cost) }}</text>
+              </view>
             </view>
-            <view class="material-specs">
-              <text class="spec-item">面积：{{ item.area }}㎡</text>
-              <text class="spec-item">单价：¥{{ item.unitPrice }}/㎡</text>
-              <text class="spec-item total">小计：¥{{ formatNumber(item.cost) }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 辅材列表 -->
+      <view class="auxiliary-materials-section">
+        <text class="section-title">辅材明细</text>
+        <view class="materials-grid">
+          <view v-for="material in quotationData.auxiliaryMaterials" :key="material.name" class="material-card">
+            <view class="material-header">
+              <text class="material-name">{{ material.name }}</text>
+              <text class="material-category">{{ getCategoryText(material.category) }}</text>
             </view>
+            <view class="material-details">
+              <text class="detail-item">单价：¥{{ material.unitPrice }}/{{ material.unit }}</text>
+              <text class="detail-item">数量：{{ material.quantity }}{{ material.unit }}</text>
+              <text class="detail-item total-cost">小计：¥{{ formatNumber(material.cost) }}</text>
+            </view>
+            <text v-if="material.remark" class="material-remark">{{ material.remark }}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 报价摘要区域 -->
+      <view class="quotation-summary">
+        <view class="summary-item">
+          <text class="summary-label">主材费用：</text>
+          <text class="summary-value main-cost">¥{{ formatNumber(quotationData.mainMaterialsCost) }}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-label">辅材费用：</text>
+          <text class="summary-value aux-cost">¥{{ formatNumber(quotationData.auxiliaryMaterialsCost) }}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-label">人工费用：</text>
+          <text class="summary-value labor-cost">¥{{ formatNumber(quotationData.laborCost) }}</text>
+        </view>
+        <view class="summary-item">
+          <text class="summary-label">总费用：</text>
+          <text class="summary-value total-cost">¥{{ formatNumber(quotationData.totalCost) }}</text>
+        </view>
+
+        <view class="payment-info">
+          <text class="payment-status">状态：{{ getPaymentStatusText(quotationData.payStatus) }}</text>
+          <view v-if="quotationData.payStatus === 'UNPAID'">
+            <text class="payment-hint">您可以一次性支付全款完成报价确认</text>
+            <button class="pay-btn" @click="payFull(quotationData.billId)">立即支付全款</button>
+          </view>
+          <view v-else-if="quotationData.payStatus === 'PAID'">
+            <text class="payment-hint success">✅ 您已完成支付，报价已确认</text>
+          </view>
+          <view v-else>
+            <text class="payment-hint">当前支付状态：{{ getPaymentStatusText(quotationData.payStatus) }}</text>
           </view>
         </view>
       </view>
     </view>
 
-    <!-- 辅材列表 -->
-    <view class="auxiliary-materials-section">
-      <text class="section-title">辅材明细</text>
-      <view class="materials-grid">
-        <view v-for="material in quotationData.auxiliaryMaterials" :key="material.name" class="material-card">
-          <view class="material-header">
-            <text class="material-name">{{ material.name }}</text>
-            <text class="material-category">{{ getCategoryText(material.category) }}</text>
-          </view>
-          <view class="material-details">
-            <text class="detail-item">单价：¥{{ material.unitPrice }}/{{ material.unit }}</text>
-            <text class="detail-item">数量：{{ material.quantity }}{{ material.unit }}</text>
-            <text class="detail-item total-cost">小计：¥{{ formatNumber(material.cost) }}</text>
-          </view>
-          <text v-if="material.remark" class="material-remark">{{ material.remark }}</text>
-        </view>
-      </view>
+    <!-- 数据加载中提示 -->
+    <view v-else class="loading-container">
+      <text>正在加载报价数据...</text>
     </view>
-    <!-- 报价摘要区域 -->
-    <view class="quotation-summary">
-      <view class="summary-item">
-        <text class="summary-label">主材费用：</text>
-        <text class="summary-value main-cost">¥{{ formatNumber(quotationData.mainMaterialsCost) }}</text>
-      </view>
-      <view class="summary-item">
-        <text class="summary-label">辅材费用：</text>
-        <text class="summary-value aux-cost">¥{{ formatNumber(quotationData.auxiliaryMaterialsCost) }}</text>
-      </view>
-      <view class="summary-item">
-        <text class="summary-label">人工费用：</text>
-        <text class="summary-value labor-cost">¥{{ formatNumber(quotationData.laborCost) }}</text>
-      </view>
-      <view class="summary-item">
-        <text class="summary-label">总费用：</text>
-        <text class="summary-value total-cost">¥{{ formatNumber(quotationData.totalCost) }}</text>
-      </view>
-
-      <view class="payment-info">
-        <text class="payment-status">状态：{{ getPaymentStatusText(quotationData.payStatus) }}</text>
-        <view v-if="quotationData.payStatus === 'UNPAID'">
-          <text class="payment-hint">您可以一次性支付全款完成报价确认</text>
-          <button class="pay-btn" @click="payFull(quotationData.billId)">立即支付全款</button>
-        </view>
-        <view v-else-if="quotationData.payStatus === 'PAID'">
-          <text class="payment-hint success">✅ 您已完成支付，报价已确认</text>
-        </view>
-        <view v-else>
-          <text class="payment-hint">当前支付状态：{{ getPaymentStatusText(quotationData.payStatus) }}</text>
-        </view>
-      </view>
-    </view>
-
-
-
   </view>
 </template>
 
@@ -94,6 +104,7 @@ import { payFullRequest } from '../../api/bill'; // 导入支付全款API
 // 页面状态
 const quotationData = ref(null);
 const houseId = ref(null);
+const isLoading = ref(true); // 添加加载状态
 
 // 材料类别映射
 const CATEGORY_MAP = {
@@ -128,6 +139,8 @@ onLoad((query) => {
 
 // 加载报价数据
 const loadQuotation = async () => {
+  isLoading.value = true; // 开始加载
+
   try {
     const res = await getHouseQuotation(houseId.value);
     quotationData.value = res;
@@ -138,6 +151,8 @@ const loadQuotation = async () => {
       title: '加载报价失败',
       icon: 'none'
     });
+  } finally {
+    isLoading.value = false; // 结束加载
   }
 };
 
@@ -476,5 +491,14 @@ onMounted(() => {
       }
     }
   }
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 28rpx;
+  color: #666;
 }
 </style>
