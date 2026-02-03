@@ -1,0 +1,248 @@
+
+.post-detail[data-v-1a2d8da8] {
+  height: 100vh;
+}
+.header[data-v-1a2d8da8] {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  position: relative;
+  z-index: 10;
+}
+.main-content[data-v-1a2d8da8] {
+  height: calc(100vh - 60px); /* 减去底部输入栏 */
+}
+.content[data-v-1a2d8da8] {
+  height: 100%;
+}
+.back-btn[data-v-1a2d8da8] {
+  padding: 5px;
+}
+.back-icon[data-v-1a2d8da8] {
+  font-size: 18px;
+  color: #333;
+}
+.image-carousel[data-v-1a2d8da8] {
+  width: 100%;
+  height: 520px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;  /* 只在图片区域下方添加分割线 */
+}
+.image-swiper[data-v-1a2d8da8] {
+  width: 100%;
+  height: 100%;
+}
+.carousel-image[data-v-1a2d8da8] {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #fff;
+}
+.user-section[data-v-1a2d8da8] {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  /* 移除 border-bottom */
+}
+.avatar[data-v-1a2d8da8] {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.user-info[data-v-1a2d8da8] {
+  flex: 1;
+}
+.username[data-v-1a2d8da8] {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+.create-time[data-v-1a2d8da8] {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+.action-buttons[data-v-1a2d8da8] {
+  display: flex;
+  align-items: center;
+}
+.follow-btn[data-v-1a2d8da8] {
+  background-color: #1296db;
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 5px 15px;
+  font-size: 12px;
+}
+.title-section[data-v-1a2d8da8] {
+  padding-left: 20px;
+}
+.title[data-v-1a2d8da8] {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.4;
+}
+.content-section[data-v-1a2d8da8] {
+  padding-left: 20px;
+  padding-top: 10px;
+}
+.content-text[data-v-1a2d8da8] {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+}
+.interaction-section[data-v-1a2d8da8] {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 15px 0;
+  border-top: 1px solid #eee;  /* 在互动区域上方添加分割线 */
+}
+.like-section[data-v-1a2d8da8] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.like-icon[data-v-1a2d8da8] {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+.like-count[data-v-1a2d8da8] {
+  font-size: 14px;
+  color: #666;
+}
+.share-section[data-v-1a2d8da8] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.share-icon[data-v-1a2d8da8] {
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+}
+.share-text[data-v-1a2d8da8] {
+  font-size: 14px;
+  color: #666;
+}
+.comments-section[data-v-1a2d8da8] {
+  padding: 15px;
+  border-top: 1px solid #eee;  /* 在评论区域上方添加分割线 */
+}
+.section-header[data-v-1a2d8da8] {
+  margin-bottom: 15px;
+}
+.section-title[data-v-1a2d8da8] {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+.comments-list[data-v-1a2d8da8] {
+  margin-top: 10px;
+}
+.comment-item[data-v-1a2d8da8] {
+  display: flex;
+  padding-top: 15px;
+  margin-bottom: 15px;
+  border-top: 1px solid #f2f2f2;
+}
+.comment-item[data-v-1a2d8da8]:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.comment-avatar[data-v-1a2d8da8] {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.comment-content[data-v-1a2d8da8] {
+  flex: 1;
+}
+.comment-header[data-v-1a2d8da8] {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+.comment-author[data-v-1a2d8da8] {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+.comment-time[data-v-1a2d8da8] {
+  font-size: 12px;
+  color: #999;
+}
+.comment-text[data-v-1a2d8da8] {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 5px;
+}
+.comment-actions[data-v-1a2d8da8] {
+  display: flex;
+}
+.reply-btn[data-v-1a2d8da8] {
+  font-size: 12px;
+  color: #1296db;
+  margin-right: 15px;
+}
+.no-comments[data-v-1a2d8da8] {
+  text-align: center;
+  padding: 30px 0;
+  color: #999;
+}
+.bottom-input[data-v-1a2d8da8] {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  position: fixed;  /* 使用固定定位 */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 60px;  /* 设置固定高度 */
+}
+.comment-input[data-v-1a2d8da8] {
+  flex: 1;
+  height: 35px;
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  padding: 0 15px;
+  font-size: 14px;
+}
+.send-btn[data-v-1a2d8da8] {
+  margin-left: 10px;
+  background-color: #1296db;
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 0 15px;
+  font-size: 14px;
+  height: 35px;
+}
+.image-container[data-v-1a2d8da8] {
+  position: relative;
+}
+.image-indicator[data-v-1a2d8da8] {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+.indicator-text[data-v-1a2d8da8] {
+  color: #fff;
+  font-size: 12px;
+}
