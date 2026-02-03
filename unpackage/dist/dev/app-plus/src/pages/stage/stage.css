@@ -249,6 +249,11 @@
   margin-bottom: 0.625rem;
   color: #333;
 }
+.day.today[data-v-efe352fa] {
+  border: 0.0625rem solid #ff4d4f;   /* 红色边框 */
+  background-color: #fff0f0;     /* 可选浅红底 */
+}
+
 
 
 /**

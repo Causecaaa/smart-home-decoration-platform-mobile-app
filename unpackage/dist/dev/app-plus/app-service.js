@@ -5458,6 +5458,7 @@ This will fail in production.`);
       method: "get"
     });
   };
+  const DEFAULT_AVATAR$1 = "/static/default-avatar.png";
   const _sfc_main$f = {
     __name: "contact",
     setup(__props, { expose: __expose }) {
@@ -5479,9 +5480,8 @@ This will fail in production.`);
         }
       };
       const goToChat = (partner) => {
-        formatAppLog("log", "at src/pages/contact/contact.vue:32", "点击了联系人:", partner);
         uni.navigateTo({
-          url: `/src/pages/contact/contactDetail?targetUserId=${partner.partnerId}&targetUserName=${partner.partnerName}&targetAvatarUrl=${partner.partnerAvatar}`
+          url: `/src/pages/contact/contactDetail?targetUserId=${Number(partner.partnerId)}&targetUserName=${encodeURIComponent(partner.partnerName)}&targetAvatarUrl=${partner.partnerAvatar || ""}`
         });
       };
       const formatTime = (timeString) => {
@@ -5506,10 +5506,20 @@ This will fail in production.`);
           return `${year}/${month}/${day} ${hours}:${minutes}`;
         }
       };
+      const resolveAvatar = (avatar) => {
+        if (!avatar)
+          return DEFAULT_AVATAR$1;
+        if (avatar.startsWith("http"))
+          return avatar;
+        if (avatar.startsWith("/uploads")) {
+          return BASE_URL + avatar;
+        }
+        return DEFAULT_AVATAR$1;
+      };
       onShow(() => {
         loadChatPartners();
       });
-      const __returned__ = { chatPartners, isLoading, loadChatPartners, goToChat, formatTime, onMounted: vue.onMounted, ref: vue.ref, get getChatPartners() {
+      const __returned__ = { chatPartners, isLoading, loadChatPartners, goToChat, formatTime, DEFAULT_AVATAR: DEFAULT_AVATAR$1, resolveAvatar, onMounted: vue.onMounted, ref: vue.ref, get getChatPartners() {
         return getChatPartners;
       }, get BASE_URL() {
         return BASE_URL;
@@ -5543,22 +5553,12 @@ This will fail in production.`);
               onClick: ($event) => $setup.goToChat(partner)
             }, [
               vue.createElementVNode("view", { class: "partner-avatar" }, [
-                partner.partnerAvatar ? (vue.openBlock(), vue.createElementBlock("image", {
-                  key: 0,
-                  src: $setup.BASE_URL + partner.partnerAvatar,
+                vue.createElementVNode("image", {
+                  src: $setup.resolveAvatar(partner.partnerAvatar),
                   class: "avatar-img"
-                }, null, 8, ["src"])) : (vue.openBlock(), vue.createElementBlock(
-                  "view",
-                  {
-                    key: 1,
-                    class: "default-avatar"
-                  },
-                  vue.toDisplayString(partner.partnerName.charAt(0)),
-                  1
-                  /* TEXT */
-                )),
+                }, null, 8, ["src"]),
                 partner.unread ? (vue.openBlock(), vue.createElementBlock("view", {
-                  key: 2,
+                  key: 0,
                   class: "unread-dot"
                 })) : vue.createCommentVNode("v-if", true)
               ]),
@@ -6498,6 +6498,7 @@ This will fail in production.`);
     ]);
   }
   const SrcPagesRegisterRegister = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$c], ["__file", "D:/CODE/mobile-app/src/pages/register/register.vue"]]);
+  const DEFAULT_AVATAR = "/static/default-avatar.png";
   const _sfc_main$b = {
     __name: "contactDetail",
     props: {
@@ -6516,12 +6517,21 @@ This will fail in production.`);
     },
     setup(__props, { expose: __expose }) {
       __expose();
-      const defaultAvatar = vue.ref("/static/default-avatar.png");
       const messages = vue.ref([]);
       const inputText = vue.ref("");
       const isSending = vue.ref(false);
       const messagesContainer = vue.ref(null);
       const fileInputRef = vue.ref(null);
+      const resolveAvatar = (avatar) => {
+        if (!avatar)
+          return DEFAULT_AVATAR;
+        if (avatar.startsWith("http"))
+          return avatar;
+        if (avatar.startsWith("/uploads")) {
+          return BASE_URL + avatar;
+        }
+        return DEFAULT_AVATAR;
+      };
       const props = __props;
       const userStore = useUserStore();
       const currentUserInfo = vue.computed(() => ({
@@ -6545,7 +6555,7 @@ This will fail in production.`);
       const loadConversation = async () => {
         try {
           const response = await getConversation(props.targetUserId);
-          formatAppLog("log", "at src/pages/contact/contactDetail.vue:154", "对话记录:", response);
+          formatAppLog("log", "at src/pages/contact/contactDetail.vue:168", "对话记录:", response);
           let conversationData = [];
           if (response && typeof response === "object") {
             if (response.data && Array.isArray(response.data)) {
@@ -6553,12 +6563,12 @@ This will fail in production.`);
             } else if (Array.isArray(response)) {
               conversationData = response;
             } else {
-              formatAppLog("warn", "at src/pages/contact/contactDetail.vue:165", "API 返回数据格式不符合预期:", response);
+              formatAppLog("warn", "at src/pages/contact/contactDetail.vue:179", "API 返回数据格式不符合预期:", response);
               messages.value = [];
               return;
             }
           } else {
-            formatAppLog("warn", "at src/pages/contact/contactDetail.vue:170", "API 返回数据格式错误:", response);
+            formatAppLog("warn", "at src/pages/contact/contactDetail.vue:184", "API 返回数据格式错误:", response);
             messages.value = [];
             return;
           }
@@ -6572,13 +6582,13 @@ This will fail in production.`);
           await vue.nextTick();
           await scrollToBottom();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contactDetail.vue:187", "获取对话失败:", error);
+          formatAppLog("error", "at src/pages/contact/contactDetail.vue:201", "获取对话失败:", error);
           if (error.response) {
-            formatAppLog("error", "at src/pages/contact/contactDetail.vue:190", "服务器错误:", error.response.status, error.response.data);
+            formatAppLog("error", "at src/pages/contact/contactDetail.vue:204", "服务器错误:", error.response.status, error.response.data);
           } else if (error.request) {
-            formatAppLog("error", "at src/pages/contact/contactDetail.vue:192", "网络错误:", error.request);
+            formatAppLog("error", "at src/pages/contact/contactDetail.vue:206", "网络错误:", error.request);
           } else {
-            formatAppLog("error", "at src/pages/contact/contactDetail.vue:194", "请求配置错误:", error.message);
+            formatAppLog("error", "at src/pages/contact/contactDetail.vue:208", "请求配置错误:", error.message);
           }
         }
       };
@@ -6626,7 +6636,7 @@ This will fail in production.`);
           inputText.value = "";
           await loadConversation();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contactDetail.vue:252", "发送消息失败:", error);
+          formatAppLog("error", "at src/pages/contact/contactDetail.vue:266", "发送消息失败:", error);
           alert("发送消息失败，请稍后重试");
         } finally {
           isSending.value = false;
@@ -6642,7 +6652,7 @@ This will fail in production.`);
           event.target.value = "";
           await loadConversation();
         } catch (error) {
-          formatAppLog("error", "at src/pages/contact/contactDetail.vue:271", "发送图片失败:", error);
+          formatAppLog("error", "at src/pages/contact/contactDetail.vue:285", "发送图片失败:", error);
           alert("发送图片失败，请稍后重试");
         } finally {
           isSending.value = false;
@@ -6684,7 +6694,7 @@ This will fail in production.`);
       vue.onMounted(() => {
         loadConversation();
       });
-      const __returned__ = { defaultAvatar, messages, inputText, isSending, messagesContainer, fileInputRef, props, userStore, currentUserInfo, getUserDisplayName, loadConversation, chooseChatImage, getImageUrl, scrollToBottom, sendTextMessageHandler, handleImageUpload, formatTime, previewImage, ref: vue.ref, onMounted: vue.onMounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get getConversation() {
+      const __returned__ = { messages, inputText, isSending, messagesContainer, fileInputRef, DEFAULT_AVATAR, resolveAvatar, props, userStore, currentUserInfo, getUserDisplayName, loadConversation, chooseChatImage, getImageUrl, scrollToBottom, sendTextMessageHandler, handleImageUpload, formatTime, previewImage, ref: vue.ref, onMounted: vue.onMounted, nextTick: vue.nextTick, computed: vue.computed, watch: vue.watch, get getConversation() {
         return getConversation;
       }, get sendTextMessage() {
         return sendTextMessage;
@@ -6725,17 +6735,11 @@ This will fail in production.`);
                 },
                 [
                   vue.createElementVNode("div", { class: "message-avatar" }, [
-                    message.senderId === $setup.currentUserInfo.userId ? (vue.openBlock(), vue.createElementBlock("img", {
-                      key: 0,
-                      src: $setup.userStore.user.avatar_url ? $setup.BASE_URL + $setup.userStore.user.avatar_url : $setup.defaultAvatar,
-                      alt: "用户头像",
-                      class: "avatar-img"
-                    }, null, 8, ["src"])) : (vue.openBlock(), vue.createElementBlock("img", {
-                      key: 1,
-                      src: $props.targetAvatarUrl ? $setup.BASE_URL + $props.targetAvatarUrl : $setup.defaultAvatar,
-                      alt: "联系人头像",
-                      class: "avatar-img"
-                    }, null, 8, ["src"]))
+                    vue.createElementVNode("image", {
+                      src: message.senderId === $setup.currentUserInfo.userId ? $setup.resolveAvatar($setup.userStore.user.avatar_url) : $setup.resolveAvatar($props.targetAvatarUrl),
+                      class: "avatar-img",
+                      mode: "aspectFill"
+                    }, null, 8, ["src"])
                   ]),
                   vue.createElementVNode("div", { class: "message-content-wrapper" }, [
                     vue.createElementVNode("div", { class: "message-content" }, [
@@ -9878,6 +9882,7 @@ This will fail in production.`);
           return null;
         return new Date(dateStr);
       }
+      const todayStr = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
       const days = vue.computed(() => {
         if (!currentMonth.value || !stages.value || !Array.isArray(stages.value))
           return [];
@@ -9912,7 +9917,8 @@ This will fail in production.`);
             day: i,
             date,
             expectedStage,
-            actualStage
+            actualStage,
+            isToday: date === todayStr
           });
         }
         return result;
@@ -9963,14 +9969,14 @@ This will fail in production.`);
           uni.showToast({ title: "更新成功", icon: "success" });
           closeDatePicker();
         } catch (error) {
-          formatAppLog("error", "at src/components/StageGantt.vue:293", "更新阶段计划失败:", error);
+          formatAppLog("error", "at src/components/StageGantt.vue:292", "更新阶段计划失败:", error);
           uni.showToast({ title: "更新失败", icon: "error" });
         }
       };
       const closeDatePicker = () => {
         datePickerPopup.value.close();
       };
-      const __returned__ = { houseId, emit, weeks, currentMonth, stages, selectedStage, selectedDate, datePickerPopup, onDateChange, onMonthChange, addDays, parseDate, days, getStageShortName, formatDate, getStatusClass, showDatePicker, onDateConfirm, closeDatePicker, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed, watch: vue.watch, get getStage() {
+      const __returned__ = { houseId, emit, weeks, currentMonth, stages, selectedStage, selectedDate, datePickerPopup, onDateChange, onMonthChange, addDays, parseDate, todayStr, days, getStageShortName, formatDate, getStatusClass, showDatePicker, onDateConfirm, closeDatePicker, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed, watch: vue.watch, get getStage() {
         return getStage;
       }, get updateStageSchedule() {
         return updateStageSchedule;
@@ -10027,7 +10033,7 @@ This will fail in production.`);
           vue.renderList($setup.days, (day) => {
             return vue.openBlock(), vue.createElementBlock("view", {
               key: day.date || `empty-${day.day}`,
-              class: vue.normalizeClass(["day", { active: day.expectedStage || day.actualStage }]),
+              class: vue.normalizeClass(["day", { active: day.expectedStage || day.actualStage, today: day.isToday }]),
               onClick: ($event) => day.expectedStage && $setup.showDatePicker(day.expectedStage)
             }, [
               vue.createElementVNode(
@@ -10421,16 +10427,22 @@ This will fail in production.`);
       const houseId = vue.ref(null);
       const stageId = vue.ref(null);
       const isLoading = vue.ref(true);
+      const workers = vue.ref([]);
       const loadStageDetail = async () => {
+        var _a;
         try {
           const res = await getStageDetail(houseId.value, stageId.value);
           stageData.value = {
             ...stageData.value,
-            ...res
+            ...res.stageInfo
           };
-          formatAppLog("log", "at src/pages/stage/stage-detail.vue:120", "阶段详情数据加载成功", stageData.value);
+          workers.value = (((_a = res.workerResponse) == null ? void 0 : _a.workers) || []).map((worker) => ({
+            ...worker,
+            avatarUrl: worker.avatarUrl ? `${BASE_URL}${worker.avatarUrl}` : null
+          }));
+          formatAppLog("log", "at src/pages/stage/stage-detail.vue:158", "阶段详情数据加载成功", stageData.value, "工人列表:", workers.value);
         } catch (error) {
-          formatAppLog("error", "at src/pages/stage/stage-detail.vue:122", "加载阶段详情失败:", error);
+          formatAppLog("error", "at src/pages/stage/stage-detail.vue:160", "加载阶段详情失败:", error);
           uni.showToast({
             title: "加载阶段详情失败",
             icon: "none"
@@ -10438,6 +10450,13 @@ This will fail in production.`);
         } finally {
           isLoading.value = false;
         }
+      };
+      const handleChatClick = (worker) => {
+        formatAppLog("log", "at src/pages/stage/stage-detail.vue:171", "与工人聊天:", worker.realName);
+        uni.navigateTo({
+          url: `/src/pages/contact/contactDetail?targetUserId=
+    ${Number(worker.workerId)}&targetUserName=${worker.realName}&targetAvatarUrl=${worker.avatarUrl}`
+        });
       };
       const CATEGORY_MAP = {
         CEMENT: "水泥建材",
@@ -10471,6 +10490,15 @@ This will fail in production.`);
             return "status-pending";
         }
       };
+      const SKILL_LEVEL_MAP = {
+        BEGINNER: "初级",
+        INTERMEDIATE: "中级",
+        SKILLED: "高级",
+        EXPERT: "专家"
+      };
+      const getSkillLevelText = (level) => {
+        return SKILL_LEVEL_MAP[level] || level;
+      };
       const getCategoryText = (category) => {
         return CATEGORY_MAP[category] || category;
       };
@@ -10486,12 +10514,14 @@ This will fail in production.`);
       vue.onMounted(() => {
         loadStageDetail();
       });
-      const __returned__ = { stageData, houseId, stageId, isLoading, loadStageDetail, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, getStatusClass, getCategoryText, getMainMaterialTypeText, formatDate, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
+      const __returned__ = { stageData, houseId, stageId, isLoading, workers, loadStageDetail, handleChatClick, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, getStatusClass, SKILL_LEVEL_MAP, getSkillLevelText, getCategoryText, getMainMaterialTypeText, formatDate, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
         return onLoad;
       }, get getStage() {
         return getStage;
       }, get getStageDetail() {
         return getStageDetail;
+      }, get BASE_URL() {
+        return BASE_URL;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -10556,6 +10586,16 @@ This will fail in production.`);
               )
             ]),
             vue.createElementVNode("view", { class: "info-item" }, [
+              vue.createElementVNode("text", { class: "label" }, "预定开始时间"),
+              vue.createElementVNode(
+                "text",
+                { class: "value" },
+                vue.toDisplayString($setup.stageData.expectedStartAt),
+                1
+                /* TEXT */
+              )
+            ]),
+            vue.createElementVNode("view", { class: "info-item" }, [
               vue.createElementVNode("text", { class: "label" }, "预计天数"),
               vue.createElementVNode(
                 "text",
@@ -10593,8 +10633,77 @@ This will fail in production.`);
             ])) : vue.createCommentVNode("v-if", true)
           ])
         ]),
-        $setup.stageData.mainMaterials && $setup.stageData.mainMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+        $setup.workers && $setup.workers.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
           key: 0,
+          class: "workers-section"
+        }, [
+          vue.createElementVNode("text", { class: "section-title" }, "施工人员"),
+          vue.createElementVNode("view", { class: "workers-list" }, [
+            (vue.openBlock(true), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList($setup.workers, (worker) => {
+                return vue.openBlock(), vue.createElementBlock("view", {
+                  key: worker.workerId,
+                  class: "worker-row"
+                }, [
+                  vue.createElementVNode("view", { class: "worker-info-container" }, [
+                    vue.createElementVNode("image", {
+                      src: worker.avatarUrl || "/static/default-avatar.png",
+                      class: "worker-avatar",
+                      mode: "aspectFill"
+                    }, null, 8, ["src"]),
+                    vue.createElementVNode("view", { class: "worker-details" }, [
+                      vue.createElementVNode(
+                        "text",
+                        { class: "worker-name" },
+                        "姓名：" + vue.toDisplayString(worker.realName),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "worker-skill" },
+                        "技能等级：" + vue.toDisplayString($setup.getSkillLevelText(worker.skillLevel)),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "worker-rating" },
+                        "评分：⭐ " + vue.toDisplayString(worker.rating),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "worker-phone" },
+                        "电话：" + vue.toDisplayString(worker.phone),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "worker-email" },
+                        "邮箱：" + vue.toDisplayString(worker.email),
+                        1
+                        /* TEXT */
+                      )
+                    ])
+                  ]),
+                  vue.createElementVNode("button", {
+                    class: "chat-button",
+                    onClick: ($event) => $setup.handleChatClick(worker)
+                  }, "聊天", 8, ["onClick"])
+                ]);
+              }),
+              128
+              /* KEYED_FRAGMENT */
+            ))
+          ])
+        ])) : vue.createCommentVNode("v-if", true),
+        $setup.stageData.mainMaterials && $setup.stageData.mainMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 1,
           class: "materials-section"
         }, [
           vue.createElementVNode("text", { class: "section-title" }, "主材清单"),
@@ -10640,7 +10749,7 @@ This will fail in production.`);
           ])
         ])) : vue.createCommentVNode("v-if", true),
         $setup.stageData.auxiliaryMaterials && $setup.stageData.auxiliaryMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 1,
+          key: 2,
           class: "materials-section"
         }, [
           vue.createElementVNode("text", { class: "section-title" }, "辅材清单"),
@@ -10693,7 +10802,7 @@ This will fail in production.`);
           ])
         ])) : vue.createCommentVNode("v-if", true),
         (!$setup.stageData.mainMaterials || $setup.stageData.mainMaterials.length === 0) && (!$setup.stageData.auxiliaryMaterials || $setup.stageData.auxiliaryMaterials.length === 0) ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 2,
+          key: 3,
           class: "no-materials"
         }, [
           vue.createElementVNode("text", { class: "no-materials-text" }, "此阶段暂无材料清单")

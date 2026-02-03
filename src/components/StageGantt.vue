@@ -19,7 +19,7 @@
           v-for="day in days"
           :key="day.date || `empty-${day.day}`"
           class="day"
-          :class="{ active: day.expectedStage || day.actualStage }"
+          :class="{ active: day.expectedStage || day.actualStage , today: day.isToday}"
           @tap="day.expectedStage && showDatePicker(day.expectedStage)"
       >
         <view class="date">{{ day.day }}</view>
@@ -161,9 +161,7 @@ function parseDate(dateStr) {
   return new Date(dateStr);
 }
 
-/**
- * 计算当前月的每一天
- */
+const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 /**
  * 计算当前月的每一天
  */
@@ -214,7 +212,8 @@ const days = computed(() => {
       day: i,
       date,
       expectedStage,
-      actualStage
+      actualStage,
+      isToday: date === todayStr
     })
   }
 
@@ -541,5 +540,11 @@ const closeDatePicker = () => {
   margin-bottom: 20rpx;
   color: #333;
 }
+
+.day.today {
+  border: 2rpx solid #ff4d4f;   /* 红色边框 */
+  background-color: #fff0f0;     /* 可选浅红底 */
+}
+
 
 </style>

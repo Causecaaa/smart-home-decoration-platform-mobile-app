@@ -28,6 +28,10 @@
             <text class="value">{{ stageData.requiredCount }}人</text>
           </view>
           <view class="info-item">
+            <text class="label">预定开始时间</text>
+            <text class="value">{{ stageData.expectedStartAt }}</text>
+          </view>
+          <view class="info-item">
             <text class="label">预计天数</text>
             <text class="value">{{ stageData.estimatedDay }}天</text>
           </view>
@@ -41,6 +45,33 @@
           </view>
         </view>
       </view>
+
+      <!-- 工人列表 -->
+      <view v-if="workers && workers.length > 0" class="workers-section">
+        <text class="section-title">施工人员</text>
+        <view class="workers-list">
+          <view v-for="worker in workers" :key="worker.workerId" class="worker-row">
+            <view class="worker-info-container">
+              <image
+                  :src="worker.avatarUrl || '/static/default-avatar.png'"
+                  class="worker-avatar"
+                  mode="aspectFill"
+              />
+              <view class="worker-details">
+                <text class="worker-name">姓名：{{ worker.realName }}</text>
+                <text class="worker-skill">技能等级：{{ getSkillLevelText(worker.skillLevel) }}</text>
+                <text class="worker-rating">评分：⭐ {{ worker.rating }}</text>
+                <text class="worker-phone">电话：{{ worker.phone }}</text>
+                <text class="worker-email">邮箱：{{ worker.email }}</text>
+              </view>
+            </view>
+            <button class="chat-button" @click="handleChatClick(worker)">聊天</button>
+          </view>
+        </view>
+      </view>
+
+
+
 
       <!-- 主材列表 -->
       <view v-if="stageData.mainMaterials && stageData.mainMaterials.length > 0" class="materials-section">
@@ -89,6 +120,8 @@
 import { ref, onMounted } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import {getStage, getStageDetail} from '../../api/construction';
+import { BASE_URL } from '../../config/apiConfig';
+
 
 // 页面状态
 const stageData = ref({
@@ -107,17 +140,22 @@ const houseId = ref(null);
 const stageId = ref(null);
 // 在 script setup 中添加
 const isLoading = ref(true);
+const workers = ref([]);
 
-// 修改加载函数
+
 const loadStageDetail = async () => {
   try {
     const res = await getStageDetail(houseId.value, stageId.value);
-    // 修正：直接使用 res，而不是 res.data
     stageData.value = {
       ...stageData.value,
-      ...res
+      ...res.stageInfo
     };
-    console.log('阶段详情数据加载成功', stageData.value);
+    // 处理工人信息
+    workers.value = (res.workerResponse?.workers || []).map(worker => ({
+      ...worker,
+      avatarUrl: worker.avatarUrl ? `${BASE_URL}${worker.avatarUrl}` : null
+    }));
+    console.log('阶段详情数据加载成功', stageData.value, '工人列表:', workers.value);
   } catch (error) {
     console.error('加载阶段详情失败:', error);
     uni.showToast({
@@ -128,6 +166,16 @@ const loadStageDetail = async () => {
     isLoading.value = false;
   }
 };
+
+const handleChatClick = (worker) => {
+  console.log('与工人聊天:', worker.realName);
+  uni.navigateTo({
+    url: `/src/pages/contact/contactDetail?targetUserId=
+    ${Number(worker.workerId)}&targetUserName=${worker.realName}&targetAvatarUrl=${worker.avatarUrl}`
+  });
+
+};
+
 
 
 
@@ -171,6 +219,18 @@ const getStatusClass = (status) => {
       return 'status-pending';
   }
 };
+
+const SKILL_LEVEL_MAP = {
+  BEGINNER: '初级',
+  INTERMEDIATE: '中级',
+  SKILLED: '高级',
+  EXPERT: '专家'
+};
+
+const getSkillLevelText = (level) => {
+  return SKILL_LEVEL_MAP[level] || level;
+};
+
 
 // 获取材料类别文本
 const getCategoryText = (category) => {
@@ -426,4 +486,73 @@ onMounted(() => {
   padding-left: 16rpx;
   border-left: 6rpx solid #409eff;
 }
+
+.workers-section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);
+
+  .workers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+  }
+
+  .worker-row {
+    display: flex;
+    justify-content: space-between; /* 让内容和按钮分布在两端 */
+    align-items: center;
+    padding: 16rpx;
+    background-color: #f8f9fa;
+    border-radius: 8rpx;
+  }
+
+  .worker-info-container {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    flex: 1; /* 占据剩余空间，让按钮靠右 */
+  }
+
+  .worker-avatar {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    background-color: #eee;
+  }
+
+  .worker-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4rpx;
+
+    .worker-name {
+      font-size: 26rpx;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .worker-skill,
+    .worker-rating,
+    .worker-phone,
+    .worker-email {
+      font-size: 22rpx;
+      color: #666;
+    }
+  }
+
+  .chat-button {
+    font-size: 24rpx;
+    color: #fff;
+    background-color: #409eff;
+    border: none;
+    border-radius: 8rpx;
+    padding: 8rpx 16rpx;
+    cursor: pointer;
+    white-space: nowrap; /* 防止按钮文字换行 */
+  }
+}
+
 </style>

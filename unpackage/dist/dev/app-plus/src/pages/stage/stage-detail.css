@@ -221,3 +221,65 @@
   padding-left: 0.5rem;
   border-left: 0.1875rem solid #409eff;
 }
+.workers-section {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0.125rem 0.75rem rgba(0, 0, 0, 0.08);
+}
+.workers-section .workers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.workers-section .worker-row {
+  display: flex;
+  justify-content: space-between;
+  /* 让内容和按钮分布在两端 */
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+}
+.workers-section .worker-info-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  /* 占据剩余空间，让按钮靠右 */
+}
+.workers-section .worker-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: #eee;
+}
+.workers-section .worker-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+.workers-section .worker-details .worker-name {
+  font-size: 0.8125rem;
+  font-weight: bold;
+  color: #333;
+}
+.workers-section .worker-details .worker-skill,
+.workers-section .worker-details .worker-rating,
+.workers-section .worker-details .worker-phone,
+.workers-section .worker-details .worker-email {
+  font-size: 0.6875rem;
+  color: #666;
+}
+.workers-section .chat-button {
+  font-size: 0.75rem;
+  color: #fff;
+  background-color: #409eff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  white-space: nowrap;
+  /* 防止按钮文字换行 */
+}

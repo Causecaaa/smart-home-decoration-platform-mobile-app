@@ -12,19 +12,16 @@
       >
         <!-- 发送者头像 -->
         <div class="message-avatar">
-          <img
-            v-if="message.senderId === currentUserInfo.userId"
-            :src="userStore.user.avatar_url ? BASE_URL + userStore.user.avatar_url : defaultAvatar"
-            alt="用户头像"
-            class="avatar-img"
-          />
-          <img
-            v-else
-            :src="targetAvatarUrl ? BASE_URL + targetAvatarUrl : defaultAvatar"
-            alt="联系人头像"
-            class="avatar-img"
+          <image
+              :src="message.senderId === currentUserInfo.userId
+      ? resolveAvatar(userStore.user.avatar_url)
+      : resolveAvatar(targetAvatarUrl)"
+              class="avatar-img"
+              mode="aspectFill"
           />
         </div>
+
+
 
         <div class="message-content-wrapper">
           <div class="message-content">
@@ -95,8 +92,6 @@ import { useUserStore } from '../../store/userStore'
 import {BASE_URL} from "../../config/apiConfig";
 import {onLoad} from '@dcloudio/uni-app'
 
-const defaultAvatar = ref('/static/default-avatar.png') // 或者使用 base64 图片
-
 
 
 const messages = ref([])
@@ -104,6 +99,25 @@ const inputText = ref('')
 const isSending = ref(false)
 const messagesContainer = ref(null)
 const fileInputRef = ref(null)
+
+const DEFAULT_AVATAR = '/static/default-avatar.png'
+
+const resolveAvatar = (avatar) => {
+  if (!avatar) return DEFAULT_AVATAR
+
+  // 已经是完整 http
+  if (avatar.startsWith('http')) return avatar
+
+  // 后端返回的 /uploads/xxx
+  if (avatar.startsWith('/uploads')) {
+    return BASE_URL + avatar
+  }
+
+  // 兜底
+  return DEFAULT_AVATAR
+}
+
+
 
 const props = defineProps({
   targetUserId: {

@@ -29,10 +29,10 @@ const loadChatPartners = async () => {
 
 // 点击联系人进入聊天
 const goToChat = (partner) => {
-  console.log('点击了联系人:', partner)
   uni.navigateTo({
-    url: `/src/pages/contact/contactDetail?targetUserId=${partner.partnerId}&targetUserName=${partner.partnerName}&targetAvatarUrl=${partner.partnerAvatar}`
-  })
+    url: `/src/pages/contact/contactDetail?targetUserId=${Number(partner.partnerId)}&targetUserName=${encodeURIComponent(partner.partnerName)}&targetAvatarUrl=${partner.partnerAvatar || ''}`
+  });
+
 }
 
 const formatTime = (timeString) => {
@@ -67,6 +67,23 @@ const formatTime = (timeString) => {
   }
 }
 
+const DEFAULT_AVATAR = '/static/default-avatar.png'
+
+const resolveAvatar = (avatar) => {
+  if (!avatar) return DEFAULT_AVATAR
+
+  // 已经是完整 http
+  if (avatar.startsWith('http')) return avatar
+
+  // 后端返回的 /uploads/xxx
+  if (avatar.startsWith('/uploads')) {
+    return BASE_URL + avatar
+  }
+
+  // 兜底
+  return DEFAULT_AVATAR
+}
+
 
 
 onShow(() => {
@@ -97,13 +114,10 @@ onShow(() => {
       >
         <view class="partner-avatar">
           <image
-              v-if="partner.partnerAvatar"
-              :src="BASE_URL + partner.partnerAvatar"
+              :src="resolveAvatar(partner.partnerAvatar)"
               class="avatar-img"
           />
-          <view v-else class="default-avatar">
-            {{ partner.partnerName.charAt(0) }}
-          </view>
+
 
           <!-- 🔴 未读红点 -->
           <view
