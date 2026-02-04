@@ -1,5 +1,5 @@
 import {request, uploadRequest} from '../utils/request'
-import { BASE_URL } from "../config/apiConfig";
+
 
 export function registerUser(data) {
     return request({

@@ -8,7 +8,7 @@ export function request(options) {
         const skipGlobalToken = options.skipGlobalToken || false
 
         uni.request({
-            url: BASE_URL + options.url,
+            url: BASE_URL + options.url + (options.params ? '?' + new URLSearchParams(options.params).toString() : ''),
             method: options.method || 'GET',
             data: options.data || {},
             header: {

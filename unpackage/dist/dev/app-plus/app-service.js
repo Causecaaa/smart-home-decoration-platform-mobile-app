@@ -187,7 +187,7 @@ if (uni.restoreGlobal) {
     }
     return target;
   };
-  const _sfc_main$o = {
+  const _sfc_main$p = {
     name: "uniTransition",
     emits: ["click", "change"],
     props: {
@@ -438,7 +438,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$p(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.withDirectives((vue.openBlock(), vue.createElementBlock("view", {
       ref: "ani",
       animation: $data.animationData,
@@ -451,8 +451,8 @@ if (uni.restoreGlobal) {
       [vue.vShow, $data.isShow]
     ]);
   }
-  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__file", "D:/CODE/mobile-app/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
-  const _sfc_main$n = {
+  const __easycom_0$3 = /* @__PURE__ */ _export_sfc(_sfc_main$p, [["render", _sfc_render$p], ["__file", "D:/CODE/mobile-app/uni_modules/uni-transition/components/uni-transition/uni-transition.vue"]]);
+  const _sfc_main$o = {
     name: "uniPopup",
     components: {},
     emits: ["change", "maskClick"],
@@ -805,7 +805,7 @@ if (uni.restoreGlobal) {
       }
     }
   };
-  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$o(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_transition = resolveEasycom(vue.resolveDynamicComponent("uni-transition"), __easycom_0$3);
     return $data.showPopup ? (vue.openBlock(), vue.createElementBlock(
       "view",
@@ -865,7 +865,7 @@ if (uni.restoreGlobal) {
       /* CLASS */
     )) : vue.createCommentVNode("v-if", true);
   }
-  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
+  const __easycom_0$2 = /* @__PURE__ */ _export_sfc(_sfc_main$o, [["render", _sfc_render$o], ["__scopeId", "data-v-4dd3c44b"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-popup/components/uni-popup/uni-popup.vue"]]);
   const BASE_URL = "http://192.168.31.47:8181";
   var isVue2 = false;
   function set(target, key, val) {
@@ -2369,7 +2369,7 @@ This will fail in production.`);
       const userStore = useUserStore();
       const skipGlobalToken = options.skipGlobalToken || false;
       uni.request({
-        url: BASE_URL + options.url,
+        url: BASE_URL + options.url + (options.params ? "?" + new URLSearchParams(options.params).toString() : ""),
         method: options.method || "GET",
         data: options.data || {},
         header: {
@@ -2530,7 +2530,7 @@ This will fail in production.`);
       resetForm
     };
   });
-  const _sfc_main$m = {
+  const _sfc_main$n = {
     __name: "PostCreateForm",
     props: {
       initialData: {
@@ -2635,7 +2635,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$n(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock("view", { class: "form-container" }, [
       vue.createElementVNode(
         "form",
@@ -2746,10 +2746,10 @@ This will fail in production.`);
       )
     ]);
   }
-  const PostCreateForm = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__scopeId", "data-v-0f3d7bb4"], ["__file", "D:/CODE/mobile-app/src/components/PostCreateForm.vue"]]);
+  const PostCreateForm = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$n], ["__scopeId", "data-v-0f3d7bb4"], ["__file", "D:/CODE/mobile-app/src/components/PostCreateForm.vue"]]);
   const _imports_0$1 = "/static/post/like.png";
   const _imports_1 = "/static/post/comment.png";
-  const _sfc_main$l = {
+  const _sfc_main$m = {
     __name: "index",
     setup(__props, { expose: __expose }) {
       __expose();
@@ -2907,7 +2907,7 @@ This will fail in production.`);
       return __returned__;
     }
   };
-  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$m(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "container" }, [
       vue.createElementVNode("scroll-view", {
@@ -3057,7 +3057,7 @@ This will fail in production.`);
       )
     ]);
   }
-  const SrcPagesPostIndex = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__scopeId", "data-v-28671761"], ["__file", "D:/CODE/mobile-app/src/pages/post/index.vue"]]);
+  const SrcPagesPostIndex = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$m], ["__scopeId", "data-v-28671761"], ["__file", "D:/CODE/mobile-app/src/pages/post/index.vue"]]);
   const fontData = [
     {
       "font_class": "arrow-down",
@@ -3708,7 +3708,7 @@ This will fail in production.`);
     const reg = /^[0-9]*$/g;
     return typeof val === "number" || reg.test(val) ? val + "px" : val;
   };
-  const _sfc_main$k = {
+  const _sfc_main$l = {
     name: "UniIcons",
     emits: ["click"],
     props: {
@@ -3762,7 +3762,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$l(_ctx, _cache, $props, $setup, $data, $options) {
     return vue.openBlock(), vue.createElementBlock(
       "text",
       {
@@ -3777,7 +3777,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$l], ["__scopeId", "data-v-d31e1c47"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-icons/components/uni-icons/uni-icons.vue"]]);
   function obj2strClass(obj) {
     let classess = "";
     for (let key in obj) {
@@ -3796,7 +3796,7 @@ This will fail in production.`);
     }
     return style;
   }
-  const _sfc_main$j = {
+  const _sfc_main$k = {
     name: "uni-easyinput",
     emits: [
       "click",
@@ -4153,7 +4153,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$k(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_icons = resolveEasycom(vue.resolveDynamicComponent("uni-icons"), __easycom_0$1);
     return vue.openBlock(), vue.createElementBlock(
       "view",
@@ -4277,7 +4277,7 @@ This will fail in production.`);
       /* CLASS, STYLE */
     );
   }
-  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$k], ["__scopeId", "data-v-09fd5285"], ["__file", "D:/CODE/mobile-app/uni_modules/uni-easyinput/components/uni-easyinput/uni-easyinput.vue"]]);
   function getHousesByUser() {
     return request({
       url: "/house/get-all",
@@ -4310,7 +4310,7 @@ This will fail in production.`);
       method: "GET"
     });
   }
-  const _sfc_main$i = {
+  const _sfc_main$j = {
     name: "homeForm",
     props: { house: Object },
     emits: ["success"],
@@ -4448,7 +4448,7 @@ This will fail in production.`);
       }
     }
   };
-  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+  function _sfc_render$j(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_easyinput = resolveEasycom(vue.resolveDynamicComponent("uni-easyinput"), __easycom_0);
     return vue.openBlock(), vue.createElementBlock("view", { class: "house-form" }, [
       vue.createElementVNode("view", { class: "input-row" }, [
@@ -4658,7 +4658,268 @@ This will fail in production.`);
       ])
     ]);
   }
-  const homeForm = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-5f8d72f0"], ["__file", "D:/CODE/mobile-app/src/components/homeForm.vue"]]);
+  const homeForm = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$j], ["__scopeId", "data-v-5f8d72f0"], ["__file", "D:/CODE/mobile-app/src/components/homeForm.vue"]]);
+  function getWorkerStageCalendar(month) {
+    return request({
+      url: "/worker/calendar",
+      method: "GET",
+      params: {
+        month
+        // 确保 month 参数被传递
+      }
+    });
+  }
+  const _sfc_main$i = {
+    __name: "Project",
+    setup(__props, { expose: __expose }) {
+      __expose();
+      const weeks = ["一", "二", "三", "四", "五", "六", "日"];
+      const currentDate = vue.ref(/* @__PURE__ */ new Date());
+      const currentMonth = vue.computed(() => {
+        const y = currentDate.value.getFullYear();
+        const m = currentDate.value.getMonth() + 1;
+        return `${y}-${String(m).padStart(2, "0")}`;
+      });
+      const onMonthChange = async (e) => {
+        const [y, m] = e.detail.value.split("-");
+        currentDate.value = new Date(Number(y), Number(m) - 1, 1);
+        await loadAssignments();
+      };
+      const assignments = vue.ref([]);
+      const selectedAssignments = vue.ref([]);
+      const taskDetailPopup = vue.ref(null);
+      vue.onMounted(() => {
+        formatAppLog("log", "at src/components/Project.vue:89", "onMounted triggered");
+        loadAssignments();
+      });
+      const loadAssignments = async () => {
+        try {
+          formatAppLog("log", "at src/components/Project.vue:97", "current: " + currentMonth.value);
+          assignments.value = await getWorkerStageCalendar(currentMonth.value);
+        } catch (error) {
+          formatAppLog("error", "at src/components/Project.vue:100", "获取任务失败:", error);
+        }
+      };
+      const days = vue.computed(() => {
+        const [year, month] = currentMonth.value.split("-").map(Number);
+        const firstDay = new Date(year, month - 1, 1).getDay();
+        const adjustedFirstDay = firstDay === 0 ? 7 : firstDay;
+        const totalDays = new Date(year, month, 0).getDate();
+        const result = [];
+        for (let i = 1; i < adjustedFirstDay; i++) {
+          result.push({ day: "", date: null, assignments: [] });
+        }
+        for (let i = 1; i <= totalDays; i++) {
+          const dateStr = `${currentMonth.value}-${String(i).padStart(2, "0")}`;
+          const dailyAssignments = assignments.value.filter(
+            (a) => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at
+          );
+          result.push({
+            day: i,
+            date: dateStr,
+            assignments: dailyAssignments,
+            isToday: dateStr === (/* @__PURE__ */ new Date()).toISOString().slice(0, 10)
+          });
+        }
+        return result;
+      });
+      const getStatusColor = (status) => {
+        switch (status) {
+          case "PENDING":
+            return "#409eff";
+          case "IN_PROGRESS":
+            return "#e6a23c";
+          case "COMPLETED":
+            return "#67c23a";
+          default:
+            return "#909399";
+        }
+      };
+      const showTaskDetails = (tasks) => {
+        selectedAssignments.value = tasks;
+        taskDetailPopup.value.open();
+      };
+      const __returned__ = { weeks, currentDate, currentMonth, onMonthChange, assignments, selectedAssignments, taskDetailPopup, loadAssignments, days, getStatusColor, showTaskDetails, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, get getWorkerStageCalendar() {
+        return getWorkerStageCalendar;
+      }, get onLoad() {
+        return onLoad;
+      } };
+      Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
+      return __returned__;
+    }
+  };
+  function _sfc_render$i(_ctx, _cache, $props, $setup, $data, $options) {
+    const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_0$2);
+    return vue.openBlock(), vue.createElementBlock("view", { class: "worker-calendar" }, [
+      vue.createElementVNode("picker", {
+        mode: "date",
+        fields: "month",
+        value: $setup.currentDate,
+        onChange: $setup.onMonthChange
+      }, [
+        vue.createElementVNode(
+          "view",
+          { class: "month-picker" },
+          vue.toDisplayString($setup.currentMonth),
+          1
+          /* TEXT */
+        )
+      ], 40, ["value"]),
+      vue.createElementVNode("view", { class: "week-header" }, [
+        (vue.openBlock(), vue.createElementBlock(
+          vue.Fragment,
+          null,
+          vue.renderList($setup.weeks, (w) => {
+            return vue.createElementVNode(
+              "text",
+              { key: w },
+              vue.toDisplayString(w),
+              1
+              /* TEXT */
+            );
+          }),
+          64
+          /* STABLE_FRAGMENT */
+        ))
+      ]),
+      vue.createElementVNode("view", { class: "calendar" }, [
+        (vue.openBlock(true), vue.createElementBlock(
+          vue.Fragment,
+          null,
+          vue.renderList($setup.days, (day) => {
+            return vue.openBlock(), vue.createElementBlock("view", {
+              key: day.date || `empty-${day.day}`,
+              class: vue.normalizeClass(["day", { active: day.assignments.length > 0, today: day.isToday }]),
+              onClick: ($event) => day.assignments.length > 0 && $setup.showTaskDetails(day.assignments)
+            }, [
+              vue.createElementVNode(
+                "view",
+                { class: "date" },
+                vue.toDisplayString(day.day),
+                1
+                /* TEXT */
+              ),
+              vue.createElementVNode("view", { class: "task-indicators" }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList(day.assignments, (assignment, index) => {
+                    return vue.openBlock(), vue.createElementBlock(
+                      "view",
+                      {
+                        key: index,
+                        class: "indicator",
+                        style: vue.normalizeStyle({ backgroundColor: $setup.getStatusColor(assignment.status) })
+                      },
+                      null,
+                      4
+                      /* STYLE */
+                    );
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])
+            ], 10, ["onClick"]);
+          }),
+          128
+          /* KEYED_FRAGMENT */
+        ))
+      ]),
+      vue.createVNode(
+        _component_uni_popup,
+        {
+          ref: "taskDetailPopup",
+          type: "bottom"
+        },
+        {
+          default: vue.withCtx(() => [
+            vue.createElementVNode("view", { class: "task-detail" }, [
+              vue.createElementVNode("text", { class: "popup-title" }, "任务详情"),
+              (vue.openBlock(true), vue.createElementBlock(
+                vue.Fragment,
+                null,
+                vue.renderList($setup.selectedAssignments, (assignment, index) => {
+                  return vue.openBlock(), vue.createElementBlock("view", {
+                    key: index,
+                    class: "assignment-item"
+                  }, [
+                    vue.createElementVNode(
+                      "text",
+                      { class: "stage-name" },
+                      vue.toDisplayString(assignment.stageName),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "text",
+                      { class: "address" },
+                      vue.toDisplayString(assignment.city) + " " + vue.toDisplayString(assignment.communityName) + " " + vue.toDisplayString(assignment.buildingNo) + "栋" + vue.toDisplayString(assignment.unitNo) + "单元" + vue.toDisplayString(assignment.roomNo),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "text",
+                      { class: "time-range" },
+                      vue.toDisplayString(assignment.expected_Start_at) + " 至 " + vue.toDisplayString(assignment.expected_End_at),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode("view", { class: "workers-section" }, [
+                      vue.createElementVNode("text", { class: "section-title" }, "施工人员"),
+                      vue.createElementVNode("view", { class: "workers-list" }, [
+                        (vue.openBlock(true), vue.createElementBlock(
+                          vue.Fragment,
+                          null,
+                          vue.renderList(assignment.coworkers, (worker) => {
+                            return vue.openBlock(), vue.createElementBlock("view", {
+                              key: worker.userId,
+                              class: "worker-row"
+                            }, [
+                              vue.createElementVNode("image", {
+                                src: worker.avatarUrl || "/static/default-avatar.png",
+                                class: "worker-avatar",
+                                mode: "aspectFill"
+                              }, null, 8, ["src"]),
+                              vue.createElementVNode("view", { class: "worker-details" }, [
+                                vue.createElementVNode(
+                                  "text",
+                                  { class: "worker-name" },
+                                  vue.toDisplayString(worker.realName),
+                                  1
+                                  /* TEXT */
+                                ),
+                                vue.createElementVNode(
+                                  "text",
+                                  { class: "worker-contact" },
+                                  vue.toDisplayString(worker.phone),
+                                  1
+                                  /* TEXT */
+                                )
+                              ])
+                            ]);
+                          }),
+                          128
+                          /* KEYED_FRAGMENT */
+                        ))
+                      ])
+                    ])
+                  ]);
+                }),
+                128
+                /* KEYED_FRAGMENT */
+              ))
+            ])
+          ]),
+          _: 1
+          /* STABLE */
+        },
+        512
+        /* NEED_PATCH */
+      )
+    ]);
+  }
+  const Project = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$i], ["__scopeId", "data-v-6ef03270"], ["__file", "D:/CODE/mobile-app/src/components/Project.vue"]]);
   const _sfc_main$h = {
     __name: "project",
     setup(__props, { expose: __expose }) {
@@ -4674,12 +4935,13 @@ This will fail in production.`);
       const popup = vue.ref(null);
       const houseMenuPopup = vue.ref(null);
       const selectedHouse = vue.ref(null);
+      const viewMode = vue.ref("house");
       onLoad(() => {
-        formatAppLog("log", "at src/pages/project/project.vue:104", "加载房屋列表");
+        formatAppLog("log", "at src/pages/project/project.vue:127", "加载房屋列表");
         loadHouses();
       });
       onNavigationBarButtonTap((event) => {
-        formatAppLog("log", "at src/pages/project/project.vue:110", "导航栏按钮被点击", event);
+        formatAppLog("log", "at src/pages/project/project.vue:133", "导航栏按钮被点击", event);
         uni.showActionSheet({
           itemList: ["新增房屋", "其他功能1", "其他功能2"],
           success(res) {
@@ -4690,7 +4952,7 @@ This will fail in production.`);
         });
       });
       onShow(() => {
-        formatAppLog("log", "at src/pages/project/project.vue:123", "页面显示，重新加载房屋列表");
+        formatAppLog("log", "at src/pages/project/project.vue:146", "页面显示，重新加载房屋列表");
         loadHouses();
       });
       function showHouseMenu(house) {
@@ -4794,7 +5056,7 @@ This will fail in production.`);
           icon: "success"
         });
       }
-      const __returned__ = { DECORATION_MAP, houses, dialogMode, currentHouse, popup, houseMenuPopup, selectedHouse, showHouseMenu, handleEdit, handleDelete, goLayoutPage, goFurniturePage, startQuotation, startConstruction, loadHouses, openDialog, closeDialog, confirmDelete, performDelete, onFormSuccess, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
+      const __returned__ = { DECORATION_MAP, houses, dialogMode, currentHouse, popup, houseMenuPopup, selectedHouse, viewMode, showHouseMenu, handleEdit, handleDelete, goLayoutPage, goFurniturePage, startQuotation, startConstruction, loadHouses, openDialog, closeDialog, confirmDelete, performDelete, onFormSuccess, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
         return onLoad;
       }, get onNavigationBarButtonTap() {
         return onNavigationBarButtonTap;
@@ -4804,7 +5066,7 @@ This will fail in production.`);
         return getHousesByUser;
       }, get deleteHouse() {
         return deleteHouse;
-      } };
+      }, Project };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
@@ -4812,10 +5074,35 @@ This will fail in production.`);
   function _sfc_render$h(_ctx, _cache, $props, $setup, $data, $options) {
     const _component_uni_popup = resolveEasycom(vue.resolveDynamicComponent("uni-popup"), __easycom_0$2);
     return vue.openBlock(), vue.createElementBlock("view", { class: "houses-container" }, [
-      vue.createElementVNode("view", { class: "header" }, [
-        vue.createElementVNode("text", { class: "title" }, "我的房屋")
+      vue.createElementVNode("view", { class: "project-header" }, [
+        vue.createElementVNode("text", { class: "title" }, "房屋详情"),
+        vue.createElementVNode("view", { class: "view-toggle" }, [
+          vue.createElementVNode(
+            "text",
+            {
+              class: vue.normalizeClass(["toggle-item", $setup.viewMode === "house" && "active"]),
+              onClick: _cache[0] || (_cache[0] = ($event) => $setup.viewMode = "house")
+            },
+            " 房屋 ",
+            2
+            /* CLASS */
+          ),
+          vue.createElementVNode(
+            "text",
+            {
+              class: vue.normalizeClass(["toggle-item", $setup.viewMode === "project" && "active"]),
+              onClick: _cache[1] || (_cache[1] = ($event) => $setup.viewMode = "project")
+            },
+            " 工程 ",
+            2
+            /* CLASS */
+          )
+        ])
       ]),
-      vue.createElementVNode("view", { class: "house-list" }, [
+      $setup.viewMode === "house" ? (vue.openBlock(), vue.createElementBlock("view", {
+        key: 0,
+        class: "house-list"
+      }, [
         (vue.openBlock(true), vue.createElementBlock(
           vue.Fragment,
           null,
@@ -4900,7 +5187,7 @@ This will fail in production.`);
         }, [
           vue.createElementVNode("text", null, "还没有房屋信息，快去新增吧～")
         ])) : vue.createCommentVNode("v-if", true)
-      ]),
+      ])) : vue.createCommentVNode("v-if", true),
       vue.createVNode(
         _component_uni_popup,
         {
@@ -4911,10 +5198,10 @@ This will fail in production.`);
           default: vue.withCtx(() => [
             vue.createElementVNode("view", { class: "menu-content" }, [
               vue.createElementVNode("button", {
-                onClick: _cache[0] || (_cache[0] = ($event) => $setup.handleEdit($setup.selectedHouse))
+                onClick: _cache[2] || (_cache[2] = ($event) => $setup.handleEdit($setup.selectedHouse))
               }, "编辑"),
               vue.createElementVNode("button", {
-                onClick: _cache[1] || (_cache[1] = ($event) => $setup.handleDelete($setup.selectedHouse.houseId))
+                onClick: _cache[3] || (_cache[3] = ($event) => $setup.handleDelete($setup.selectedHouse.houseId))
               }, "删除")
             ])
           ]),
@@ -4959,7 +5246,10 @@ This will fail in production.`);
         },
         512
         /* NEED_PATCH */
-      )
+      ),
+      $setup.viewMode === "project" ? (vue.openBlock(), vue.createElementBlock("view", { key: 1 }, [
+        vue.createVNode($setup["Project"])
+      ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
   const SrcPagesProjectProject = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$h], ["__file", "D:/CODE/mobile-app/src/pages/project/project.vue"]]);

@@ -1,10 +1,26 @@
 <template>
   <view class="houses-container">
-    <view class="header">
-      <text class="title">我的房屋</text>
+    <view class="project-header">
+      <text class="title">房屋详情</text>
+      <view class="view-toggle">
+        <text
+            :class="['toggle-item', viewMode === 'house' && 'active']"
+            @click="viewMode = 'house'"
+        >
+          房屋
+        </text>
+        <text
+            :class="['toggle-item', viewMode === 'project' && 'active']"
+            @click="viewMode = 'project'"
+        >
+          工程
+        </text>
+      </view>
     </view>
 
-    <view class="house-list">
+
+
+    <view v-if="viewMode === 'house'" class="house-list">
       <view class="house-item" v-for="house in houses" :key="house.houseId">
         <!-- 房屋信息头部 - 包含右上角菜单 -->
         <view class="house-header-relative">
@@ -74,6 +90,10 @@
         </view>
       </view>
     </uni-popup>
+
+    <view v-if="viewMode === 'project'">
+      <Project/>
+    </view>
   </view>
 </template>
 
@@ -83,6 +103,8 @@ import { onLoad, onNavigationBarButtonTap, onShow } from '@dcloudio/uni-app'
 
 import homeForm from '../../components/homeForm.vue'
 import { getHousesByUser, deleteHouse } from '../../api/house'
+import Project from '../../components/Project.vue'
+
 
 /* ---------------- 状态 ---------------- */
 const DECORATION_MAP = {
@@ -98,6 +120,7 @@ const popup = ref(null)
 // 新增状态
 const houseMenuPopup = ref(null)
 const selectedHouse = ref(null)
+const viewMode = ref('house')
 
 /* ---------------- 生命周期 ---------------- */
 onLoad(() => {
@@ -248,6 +271,45 @@ function onFormSuccess() {
 
 
 <style>
+.project-header {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 32rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .title {
+    font-size: 40rpx;
+    font-weight: bold;
+    color: #1e1e2f;
+    flex: 1;
+    margin-right: 16rpx;
+  }
+
+  .view-toggle {
+    display: flex;
+    gap: 16rpx;
+
+    .toggle-item {
+      padding: 8rpx 20rpx;
+      border-radius: 20rpx;
+      background: #f0f0f0;
+      font-size: 24rpx;
+      cursor: pointer;
+
+      &.active {
+        background: #409eff;
+        color: #fff;
+      }
+    }
+  }
+}
+
+
+
 .houses-container {
   padding: 30rpx;
   background: #f5f5f5;
