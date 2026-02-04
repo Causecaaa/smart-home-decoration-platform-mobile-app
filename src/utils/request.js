@@ -8,7 +8,7 @@ export function request(options) {
         const skipGlobalToken = options.skipGlobalToken || false
 
         uni.request({
-            url: BASE_URL + options.url + (options.params ? '?' + new URLSearchParams(options.params).toString() : ''),
+            url: BASE_URL + options.url + (options.params ? '?' + buildQuery(options.params) : ''),
             method: options.method || 'GET',
             data: options.data || {},
             header: {
@@ -65,4 +65,10 @@ export function uploadRequest({ url, filePath, formData = {} }) {
             fail: reject
         })
     })
+}
+
+function buildQuery(params = {}) {
+    return Object.keys(params)
+        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+        .join('&')
 }

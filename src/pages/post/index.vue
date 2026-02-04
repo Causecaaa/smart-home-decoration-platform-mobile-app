@@ -279,7 +279,10 @@ const onRefresh = async () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: #f5f5f5;
+  padding: 0 10px; /* 左右各留10px间距 */
 }
+
 
 .content-list {
   flex: 1;          /* ✅ 关键 */
@@ -294,8 +297,6 @@ const onRefresh = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
   position: relative;
   z-index: 10;
 }
@@ -311,12 +312,13 @@ const onRefresh = async () => {
 }
 
 .post-card {
-  background-color: #fff;
   margin: 10px;
-  border-radius: 8px;
+  border-radius: 12px; /* 增大圆角 */
   padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* 强化阴影效果 */
+  background-color: #fff; /* 明确卡片背景色 */
 }
+
 
 .user-info {
   display: flex;
@@ -385,11 +387,12 @@ const onRefresh = async () => {
 
 .stats-bar {
   display: flex;
-  justify-content: flex-end;  /* 靠右对齐 */
+  justify-content: flex-end;
   gap: 15px;
   padding-top: 8px;
-  border-top: 1px solid #eee;
+  border-top: 2px solid #ddd; /* 加粗分割线 */
 }
+
 
 .stat-item {
   display: flex;
@@ -418,12 +421,14 @@ const onRefresh = async () => {
 
 /* 新增文章弹窗样式 */
 .modal {
-  background: #fff;
   border-radius: 24rpx;
   width: 80vw;
   max-height: 80vh;
   padding: 30rpx;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* 强化弹窗阴影 */
+  background-color: #fff; /* 明确弹窗背景色 */
 }
+
 
 .modal-header {
   display: flex;

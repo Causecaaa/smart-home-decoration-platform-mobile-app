@@ -18,8 +18,6 @@
       </view>
     </view>
 
-
-
     <view v-if="viewMode === 'house'" class="house-list">
       <view class="house-item" v-for="house in houses" :key="house.houseId">
         <!-- 房屋信息头部 - 包含右上角菜单 -->
@@ -45,16 +43,16 @@
         <!-- 报价和施工按钮 -->
         <view class="construction-buttons" v-if="house.canStartQuotation || house.canStartConstruction">
           <button
-            class="construction-btn quotation-btn"
-            v-if="house.canStartQuotation"
-            @click="startQuotation(house)"
+              class="construction-btn quotation-btn"
+              v-if="house.canStartQuotation"
+              @click="startQuotation(house)"
           >
             报价
           </button>
           <button
-            class="construction-btn construction-btn-only"
-            v-if="house.canStartConstruction"
-            @click="startConstruction(house)"
+              class="construction-btn construction-btn-only"
+              v-if="house.canStartConstruction"
+              @click="startConstruction(house)"
           >
             进入施工
           </button>
@@ -97,6 +95,7 @@
   </view>
 </template>
 
+
 <script setup>
 import { ref, onMounted } from 'vue'
 import { onLoad, onNavigationBarButtonTap, onShow } from '@dcloudio/uni-app'
@@ -104,6 +103,7 @@ import { onLoad, onNavigationBarButtonTap, onShow } from '@dcloudio/uni-app'
 import homeForm from '../../components/homeForm.vue'
 import { getHousesByUser, deleteHouse } from '../../api/house'
 import Project from '../../components/Project.vue'
+import {useUserStore} from "../../store/userStore";
 
 
 /* ---------------- 状态 ---------------- */
@@ -120,8 +120,11 @@ const popup = ref(null)
 // 新增状态
 const houseMenuPopup = ref(null)
 const selectedHouse = ref(null)
-const viewMode = ref('house')
 
+const userStore = useUserStore()
+const role = userStore.user.role
+
+const viewMode = ref(role === 'WORKER' ? 'project' : 'house')
 /* ---------------- 生命周期 ---------------- */
 onLoad(() => {
   console.log('加载房屋列表')

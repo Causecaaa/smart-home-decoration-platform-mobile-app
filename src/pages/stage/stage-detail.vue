@@ -71,8 +71,6 @@
       </view>
 
 
-
-
       <!-- 主材列表 -->
       <view v-if="stageData.mainMaterials && stageData.mainMaterials.length > 0" class="materials-section">
         <text class="section-title">主材清单</text>
@@ -113,6 +111,8 @@
         <text class="no-materials-text">此阶段暂无材料清单</text>
       </view>
     </view>
+
+
   </view>
 </template>
 
