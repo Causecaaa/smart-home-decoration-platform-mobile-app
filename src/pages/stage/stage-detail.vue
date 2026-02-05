@@ -79,7 +79,7 @@
 
               </view>
             </view>
-            <button class="chat-button" @click="handleChatClick(worker)">聊天</button>
+            <button class="chat-button" @click="handleChatClick(worker)">联系</button>
           </view>
         </view>
       </view>
@@ -99,10 +99,13 @@
             </view>
             <view class="material-specs">
               <text class="spec-item">面积：{{ item.area }}㎡</text>
+              <!-- 新增 remark 显示 -->
+              <text v-if="item.remark" class="spec-item remark">备注：{{ item.remark }}</text>
             </view>
           </view>
         </view>
       </view>
+
 
       <!-- 辅材列表 -->
       <view v-if="stageData.auxiliaryMaterials && stageData.auxiliaryMaterials.length > 0" class="materials-section">
@@ -518,6 +521,12 @@ const handleAcceptStage = async () => {
     display: flex;
     flex-direction: column;
     gap: 8rpx;
+
+    .remark {
+      font-size: 24rpx;
+      color: #999; // 使用浅灰色突出备注信息
+      margin-top: 8rpx;
+    }
 
     .spec-item {
       font-size: 24rpx;

@@ -31,7 +31,9 @@
                 <text class="spec-item">面积：{{ item.area }}㎡</text>
                 <text class="spec-item">单价：¥{{ item.unitPrice }}/㎡</text>
                 <text class="spec-item total">小计：¥{{ formatNumber(item.cost) }}</text>
+                <text v-if="item.remark" class="spec-item remark">备注：{{ item.remark }}</text>
               </view>
+
             </view>
           </view>
         </view>
@@ -482,6 +484,12 @@ onMounted(() => {
       display: flex;
       flex-direction: column;
       gap: 8rpx;
+
+      .remark {
+        font-size: 22rpx;
+        color: #999;
+        margin-top: 8rpx;
+      }
 
       .spec-item {
         font-size: 24rpx;

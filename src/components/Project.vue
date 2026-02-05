@@ -137,7 +137,7 @@
 
             </view>
           </view>
-          <button class="chat-button" @click="handleChatClick(worker)">聊天</button>
+          <button class="chat-button" @click="handleChatClick(worker)">联系</button>
         </view>
       </view>
     </view>
