@@ -856,9 +856,23 @@
 &[data-v-6ef03270]:last-child {
         margin-bottom: 0; /* 最后一项去掉底部间距 */
 }
+.complete-task-btn[data-v-6ef03270] {
+        font-size: 0.75rem;
+        color: #fff;
+        background-color: #67c23a; /* 绿色背景 */
+        border: none;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.3s ease; /* 添加过渡效果 */
+}
+.complete-task-btn[data-v-6ef03270]:hover {
+        background-color: #5daf34; /* hover 时加深颜色 */
+}
 .task-header[data-v-6ef03270] {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-between; /* 左右分布 */
         align-items: center;
         margin-bottom: 0.5rem;
 .stage-name[data-v-6ef03270] {
@@ -912,6 +926,13 @@
 }
 .day.today.selected[data-v-6ef03270] {
   outline: 0.09375rem solid #ffd04b;
+}
+.day.leave[data-v-6ef03270] {
+  background-color: #ffebee; /* 浅红色背景 */
+  border: 0.0625rem dashed #f44336; /* 红色虚线边框 */
+}
+.day.leave .date[data-v-6ef03270] {
+  color: #f44336; /* 红色文字 */
 }
 .materials-section[data-v-6ef03270] {
   background: #fff;
@@ -1230,6 +1251,9 @@
     white-space: nowrap; /* 防止按钮文字换行 */
 }
 }
+
+
+
 
 
 

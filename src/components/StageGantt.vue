@@ -80,7 +80,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
-import { getStage, updateStageSchedule } from '../api/construction'
+import { getStage, updateStageSchedule } from '../api/stage'
 import { onLoad } from '@dcloudio/uni-app'
 
 const houseId = ref(null)
@@ -162,51 +162,51 @@ function parseDate(dateStr) {
 }
 
 const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-/**
- * 计算当前月的每一天
- */
-const days = computed(() => {
-  if (!currentMonth.value || !stages.value || !Array.isArray(stages.value)) return []
 
-  const [year, month] = currentMonth.value.split('-').map(Number)
+const days = computed(() => {
+  if (!currentMonth.value || !stages.value || !Array.isArray(stages.value)) return [];
+
+  const [year, month] = currentMonth.value.split('-').map(Number);
 
   // 获取当月第一天是周几（1-7，1为周一）
-  const firstDay = new Date(year, month - 1, 1).getDay()
-  const adjustedFirstDay = firstDay === 0 ? 7 : firstDay // 将周日(0)转为7，确保周一为1
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const adjustedFirstDay = firstDay === 0 ? 7 : firstDay;
 
   // 获取当月总天数
-  const total = new Date(year, month, 0).getDate()
+  const total = new Date(year, month, 0).getDate();
 
-  const result = []
+  const result = [];
 
-  // 添加上个月的空格子（调整为周一开头）
+  // 添加上个月的空格子
   for (let i = 1; i < adjustedFirstDay; i++) {
     result.push({
       day: '',
       date: null,
       expectedStage: null,
       actualStage: null
-    })
+    });
   }
 
   // 添加当月的日期
   for (let i = 1; i <= total; i++) {
-    const date = `${currentMonth.value}-${String(i).padStart(2, '0')}`
+    const date = `${currentMonth.value}-${String(i).padStart(2, '0')}`;
 
     // 找该日期属于哪个预期阶段
     const expectedStage = stages.value.find(s => {
-      const start = s.expectedStartAt.slice(0, 10)
-      const end = addDays(start, s.estimatedDay)
-      return date >= start && date <= end
-    })
+      const start = s.expectedStartAt.slice(0, 10);
+      const end = addDays(start, s.estimatedDay);
+      return date >= start && date <= end;
+    });
 
     // 找该日期属于哪个实际阶段
     const actualStage = stages.value.find(s => {
       if (!s.start_at) return false;
-      const start = s.start_at.slice(0, 10)
-      const end = s.end_at ? s.end_at.slice(0, 10) : start
-      return date >= start && date <= end
-    })
+
+      // 动态设置 end_at：若为空则设为今日
+      const start = s.start_at.slice(0, 10);
+      const end = s.end_at ? s.end_at.slice(0, 10) : todayStr;
+      return date >= start && date <= end;
+    });
 
     result.push({
       day: i,
@@ -214,11 +214,12 @@ const days = computed(() => {
       expectedStage,
       actualStage,
       isToday: date === todayStr
-    })
+    });
   }
 
-  return result
-})
+  return result;
+});
+
 
 
 /**

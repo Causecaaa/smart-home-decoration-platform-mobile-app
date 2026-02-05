@@ -82,9 +82,9 @@
   border: 0.03125rem solid #b3e19d;
 }
 .stage-header .stage-info .stage-status.status-accepted {
-  background-color: #f0f0f9;
-  color: #909399;
-  border: 0.03125rem solid #d3d4e2;
+  background-color: #f4ecf9;
+  color: #953ac2;
+  border: 0.03125rem solid #bf9fe6;
 }
 .basic-info-section {
   background: #fff;
@@ -268,6 +268,7 @@
 .workers-section .worker-details .worker-skill,
 .workers-section .worker-details .worker-rating,
 .workers-section .worker-details .worker-phone,
+.workers-section .worker-details .worker-period,
 .workers-section .worker-details .worker-email {
   font-size: 0.6875rem;
   color: #666;
@@ -282,4 +283,38 @@
   cursor: pointer;
   white-space: nowrap;
   /* 防止按钮文字换行 */
+}
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.action-buttons .start-button,
+.action-buttons .accept-button {
+  width: 6.25rem;
+  height: 1.875rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+.action-buttons .start-button {
+  background-color: #409eff;
+}
+.action-buttons .accept-button {
+  background-color: #67c23a;
+}
+.half-package-hint {
+  background-color: #fffbe6;
+  border: 0.03125rem solid #ffe58f;
+  border-radius: 0.375rem;
+  padding: 0.625rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.half-package-hint .hint-text {
+  font-size: 0.8125rem;
+  color: #faad14;
+  font-weight: bold;
 }

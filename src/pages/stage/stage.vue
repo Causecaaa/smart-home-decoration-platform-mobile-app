@@ -7,12 +7,14 @@
         <text
           :class="['toggle-item', viewMode === 'list' && 'active']"
           @click="viewMode = 'list'"
+          @tap="loadStages"
         >
           阶段列表
         </text>
         <text
           :class="['toggle-item', viewMode === 'gantt' && 'active']"
           @click="viewMode = 'gantt'"
+          @tap="loadStages"
         >
           甘特图
         </text>
@@ -27,7 +29,7 @@
           <text class="stage-name">{{ stageItem.stageName }}</text>
           <view class="stage-actions">
             <text class="stage-status" :class="getStatusClass(stageItem.status)">{{ stageItem.status }}</text>
-            <button v-if="stageItem.status === '待开始'"
+            <button
                     class="enter-btn"
                     @click="enterStageDetail(stageItem)">
               进入
@@ -83,8 +85,8 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import { onLoad } from '@dcloudio/uni-app';
-import { getStage, updateStageSchedule } from '../../api/construction';
+import { onLoad ,onShow} from '@dcloudio/uni-app';
+import { getStage, updateStageSchedule } from '../../api/stage';
 import StageGantt from '../../components/StageGantt.vue'; // 假设组件已存在
 
 // 页面状态
@@ -98,6 +100,11 @@ onLoad((query) => {
     houseId.value = Number(query.houseId);
   }
 });
+
+onShow(() => {
+  loadStages();
+});
+
 
 // 加载施工阶段数据
 const loadStages = async () => {
@@ -181,9 +188,6 @@ const formatDate = (dateString) => {
   return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 };
 
-onMounted(() => {
-  loadStages();
-});
 </script>
 
 <style lang="scss">
@@ -294,9 +298,9 @@ onMounted(() => {
         }
 
         &.status-accepted {
-          background-color: #f0f0f9;
-          color: #909399;
-          border: 1rpx solid #d3d4e2;
+          background-color: #f4ecf9;
+          color: #953ac2;
+          border: 1rpx solid #bf9fe6;
         }
       }
 

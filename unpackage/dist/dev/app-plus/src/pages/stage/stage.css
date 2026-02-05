@@ -376,9 +376,9 @@
   border: 0.03125rem solid #b3e19d;
 }
 .stage-card .stage-header .stage-actions .stage-status.status-accepted {
-  background-color: #f0f0f9;
-  color: #909399;
-  border: 0.03125rem solid #d3d4e2;
+  background-color: #f4ecf9;
+  color: #953ac2;
+  border: 0.03125rem solid #bf9fe6;
 }
 .stage-card .stage-header .stage-actions .enter-btn {
   font-size: 0.6875rem;

@@ -46,6 +46,18 @@
         </view>
       </view>
 
+      <!-- 设计图纸展示 -->
+      <view v-if="stageData.designing_image_url" class="basic-info-section">
+        <text class="section-title">设计图纸</text>
+        <image
+            :src="`${BASE_URL}${stageData.designing_image_url}`"
+            class="design-image"
+            mode="aspectFit"
+            @tap="previewImage(`${BASE_URL}${stageData.designing_image_url}`)"
+        />
+      </view>
+
+
       <!-- 工人列表 -->
       <view v-if="workers && workers.length > 0" class="workers-section">
         <text class="section-title">施工人员</text>
@@ -63,6 +75,8 @@
                 <text class="worker-rating">评分：⭐ {{ worker.rating }}</text>
                 <text class="worker-phone">电话：{{ worker.phone }}</text>
                 <text class="worker-email">邮箱：{{ worker.email }}</text>
+                <text class="worker-period">时间：{{ formatDate(worker.expectedStartAt) }} - {{ formatDate(worker.expectedEndAt) }}</text>
+
               </view>
             </view>
             <button class="chat-button" @click="handleChatClick(worker)">聊天</button>
@@ -74,6 +88,9 @@
       <!-- 主材列表 -->
       <view v-if="stageData.mainMaterials && stageData.mainMaterials.length > 0" class="materials-section">
         <text class="section-title">主材清单</text>
+        <view v-if="stageData.decorationType === 'HALF'" class="half-package-hint">
+          <text class="hint-text">**半包装修不包含主材部分**<br>**以下主材仅供参考，请自行购买主材**</text>
+        </view>
         <view class="materials-list">
           <view v-for="(item, index) in stageData.mainMaterials" :key="index" class="material-item">
             <view class="material-info">
@@ -111,16 +128,26 @@
         <text class="no-materials-text">此阶段暂无材料清单</text>
       </view>
     </view>
+    <!-- 按钮操作区域 -->
+    <view v-if="stageData.status === '待开始' && isStartable" class="action-buttons">
+      <button class="start-button" @click="handleStartStage">开始</button>
+    </view>
+
+    <view v-else-if="stageData.status === '已完成'" class="action-buttons">
+      <button class="accept-button" @click="handleAcceptStage">验收</button>
+    </view>
 
 
   </view>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { onLoad } from '@dcloudio/uni-app';
-import {getStage, getStageDetail} from '../../api/construction';
+import {ref, onMounted, computed} from 'vue';
+import { onLoad ,onShow} from '@dcloudio/uni-app';
+import {getStage, getStageDetail} from '../../api/stage';
 import { BASE_URL } from '../../config/apiConfig';
+import { startStage, acceptStage } from '../../api/stage';
+
 
 
 // 页面状态
@@ -134,13 +161,20 @@ const stageData = ref({
   requiredCount: 0,
   estimatedDay: 0,
   start_at: null,
-  end_at: null
+  end_at: null,
+  decorationType: '' // 新增字段
 });
+
 const houseId = ref(null);
 const stageId = ref(null);
-// 在 script setup 中添加
 const isLoading = ref(true);
 const workers = ref([]);
+const isStartable = computed(() => {
+  if (!stageData.value.expectedStartAt) return false;
+  const expectedStartTime = new Date(stageData.value.expectedStartAt).getTime();
+  const currentTime = new Date().getTime();
+  return currentTime >= expectedStartTime;
+});
 
 
 const loadStageDetail = async () => {
@@ -148,7 +182,8 @@ const loadStageDetail = async () => {
     const res = await getStageDetail(houseId.value, stageId.value);
     stageData.value = {
       ...stageData.value,
-      ...res.stageInfo
+      ...res.stageInfo,
+      decorationType: res.decorationType // 存储装修类型
     };
     // 处理工人信息
     workers.value = (res.workerResponse?.workers || []).map(worker => ({
@@ -167,6 +202,7 @@ const loadStageDetail = async () => {
   }
 };
 
+
 const handleChatClick = (worker) => {
   console.log('与工人聊天:', worker.realName);
   uni.navigateTo({
@@ -176,8 +212,12 @@ const handleChatClick = (worker) => {
 
 };
 
-
-
+// 图片预览
+const previewImage = (imgUrl) => {
+  uni.previewImage({
+    urls: [imgUrl]
+  })
+}
 
 // 材料类别映射
 const CATEGORY_MAP = {
@@ -195,15 +235,25 @@ const MAIN_MATERIAL_TYPE_MAP = {
   CABINET: '柜体'
 };
 
-// 处理页面加载参数
-onLoad((query) => {
-  if (query.houseId) {
-    houseId.value = Number(query.houseId);
+onLoad((options) => {
+  console.log('页面参数 options:', options); // 正确获取参数
+  if (!options.houseId) {
+    uni.showToast({ title: '缺少 houseId', icon: 'none' });
+    return;
   }
-  if (query.stageId) {
-    stageId.value = Number(query.stageId);
-  }
+  houseId.value = Number(options.houseId);
+  stageId.value = options.stageId ? Number(options.stageId) : null;
+
+  // 参数拿到后再加载数据
+  loadStageDetail();
 });
+
+
+onShow(() => {
+  loadStageDetail();
+});
+
+
 
 
 // 获取状态样式类
@@ -249,9 +299,61 @@ const formatDate = (dateString) => {
   return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 };
 
-onMounted(() => {
-  loadStageDetail();
-});
+// 开始阶段
+const handleStartStage = async () => {
+  uni.showModal({
+    title: '确认开始',
+    content: '请确认所有材料与人员均已到场',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          await startStage(houseId.value, stageData.value.order);
+          uni.showToast({
+            title: '阶段已开始',
+            icon: 'success'
+          });
+          // 刷新页面数据
+          await loadStageDetail();
+        } catch (error) {
+          console.error('开始阶段失败:', error);
+          uni.showToast({
+            title: '开始阶段失败',
+            icon: 'none'
+          });
+        }
+      }
+    }
+  });
+};
+
+// 验收阶段
+const handleAcceptStage = async () => {
+  uni.showModal({
+    title: '确认验收',
+    content: '确定要验收该阶段吗？',
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          await acceptStage(houseId.value, stageData.value.order);
+          uni.showToast({
+            title: '阶段已验收',
+            icon: 'success'
+          });
+          // 刷新页面数据
+          await loadStageDetail();
+        } catch (error) {
+          console.error('验收阶段失败:', error);
+          uni.showToast({
+            title: '验收阶段失败',
+            icon: 'none'
+          });
+        }
+      }
+    }
+  });
+};
+
+
 </script>
 
 <style lang="scss">
@@ -320,9 +422,9 @@ onMounted(() => {
       }
 
       &.status-accepted {
-        background-color: #f0f0f9;
-        color: #909399;
-        border: 1rpx solid #d3d4e2;
+        background-color: #f4ecf9;
+        color: #953ac2;
+        border: 1rpx solid #bf9fe6;
       }
     }
   }
@@ -537,6 +639,7 @@ onMounted(() => {
     .worker-skill,
     .worker-rating,
     .worker-phone,
+    .worker-period,
     .worker-email {
       font-size: 22rpx;
       color: #666;
@@ -555,4 +658,42 @@ onMounted(() => {
   }
 }
 
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 32rpx;
+
+  .start-button,
+  .accept-button {
+    width: 200rpx;
+    height: 60rpx;
+    font-size: 28rpx;
+    border-radius: 8rpx;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .start-button {
+    background-color: #409eff; // 蓝色表示“开始”
+  }
+
+  .accept-button {
+    background-color: #67c23a; // 绿色表示“验收”
+  }
+}
+.half-package-hint {
+  background-color: #fffbe6;
+  border: 1rpx solid #ffe58f;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 32rpx;
+  text-align: center;
+
+  .hint-text {
+    font-size: 26rpx;
+    color: #faad14;
+    font-weight: bold;
+  }
+}
 </style>

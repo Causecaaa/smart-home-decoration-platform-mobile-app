@@ -52,7 +52,7 @@
                 </view>
                 <view v-else-if="layoutDetail.payStatus === 'DEPOSIT_PAID'">
                   <text class="bill-text">已支付定金：¥{{ layoutDetail.depositAmount }}</text>
-                  <view v-if="layoutDetail.furnitureStatus === 'CONFIRMED'">
+                  <view v-if="layoutDetail.canPayFinal">
                     <text class="bill-hint">✅ 所有方案已确认，可支付尾款</text>
                     <button class="btn btn-primary" @tap="payFinalAmount(layoutDetail.billId)">支付尾款</button>
                   </view>

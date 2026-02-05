@@ -19,12 +19,12 @@
           :class="{
     active: day.assignments.length > 0,
     today: day.isToday,
-    selected: day.date === selectedDate
+    selected: day.date === selectedDate,
+    leave: day.isLeave // 新增请假状态样式
   }"
           @tap="selectDay(day)"
       >
-
-      <view class="date">{{ day.day }}</view>
+        <view class="date">{{ day.day }}</view>
         <view class="task-indicators">
           <view
               v-for="(assignment, index) in day.assignments"
@@ -34,6 +34,7 @@
           ></view>
         </view>
       </view>
+
     </view>
 
     <view v-if="selectedDate" class="date-action-bar">
@@ -42,8 +43,8 @@
 
       <button
           class="leave-btn"
-          v-if="canRequestLeave"
-          @click="requestLeave"
+          v-if="canRequestLeave && !hasLeave"
+          @click="Leave"
       >
         请假
       </button>
@@ -55,6 +56,7 @@
       >
         取消请假
       </button>
+
     </view>
 
 
@@ -76,6 +78,14 @@
           <text class="task-status" :class="getStatusClass(assignment.status)">
             {{ assignment.status }}
           </text>
+
+          <button
+              v-if="assignment.status === 'IN_PROGRESS'"
+              class="complete-task-btn"
+              @click="completeTask(assignment)"
+          >
+            完成任务
+          </button>
         </view>
 
         <!-- 地址信息 -->
@@ -94,8 +104,18 @@
             {{ assignment.expected_Start_at }} 至 {{ assignment.expected_End_at }}
           </text>
         </view>
+
+        <view v-if="assignment.designation_image_url" class="design-image-container">
+          <image
+              :src="`${BASE_URL}${assignment.designation_image_url}`"
+              class="design-image"
+              mode="aspectFit"
+              @tap="previewImage(`${BASE_URL}${assignment.designation_image_url}`)"
+          />
+        </view>
       </view>
     </view>
+
 
 
     <!-- 工人列表 -->
@@ -111,10 +131,10 @@
             />
             <view class="worker-details">
               <text class="worker-name">姓名：{{ worker.realName }}</text>
-              <text class="worker-skill">技能等级：{{ getSkillLevelText(worker.skillLevel) }}</text>
-              <text class="worker-rating">评分：⭐ {{ worker.rating }}</text>
               <text class="worker-phone">电话：{{ worker.phone }}</text>
               <text class="worker-email">邮箱：{{ worker.email }}</text>
+              <text class="worker-email">工作时间：{{ (worker.expected_Start_at) }} - {{ (worker.expected_End_at) }}</text>
+
             </view>
           </view>
           <button class="chat-button" @click="handleChatClick(worker)">聊天</button>
@@ -175,7 +195,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getWorkerStageCalendar } from '../api/worker'
+import {cancelLeaveRequest, getWorkerStageCalendar, requestLeave} from '../api/worker'
+import {completeStage} from "../api/stage";
+import {BASE_URL} from "../config/apiConfig";
 
 const weeks = ['一', '二', '三', '四', '五', '六', '日']
 const currentDate = ref(new Date())
@@ -185,7 +207,7 @@ const currentMonth = computed(() => {
   return `${y}-${String(m).padStart(2, '0')}`
 })
 const selectedDate = ref('')
-
+const hasLeave = ref(false); // 是否已请假
 const todayStr = new Date().toISOString().slice(0, 10)
 
 
@@ -193,7 +215,97 @@ const canRequestLeave = computed(() => {
   if (!selectedDate.value) return false
   return selectedDate.value > todayStr
 })
+// 图片预览
+const previewImage = (imgUrl) => {
+  uni.previewImage({
+    urls: [imgUrl]
+  })
+}
 
+const Leave = async () => {
+  // 初始化请假类型和原因
+  let leaveType = '';
+  let reason = '';
+
+  // 自定义弹窗组件或使用 uni.showActionSheet + uni.showModal 实现
+  uni.showActionSheet({
+    itemList: ['病假 (SICK)', '事假 (PERSONAL)', '其他 (OTHER)'],
+    success: async (res) => {
+      const leaveTypes = ['SICK', 'PERSONAL', 'OTHER'];
+      leaveType = leaveTypes[res.tapIndex];
+
+      // 输入请假原因
+      uni.showModal({
+        title: '请输入请假原因',
+        editable: true,
+        placeholderText: '请填写具体原因...',
+        success: async (inputRes) => {
+          if (inputRes.confirm) {
+            reason = inputRes.content.trim();
+
+            if (!reason) {
+              uni.showToast({
+                title: '请假原因不能为空',
+                icon: 'none'
+              });
+              return;
+            }
+
+            try {
+              // 调用请假接口，传递请假日期、类型和原因
+              await requestLeave(selectedDate.value, leaveType, reason);
+
+              uni.showToast({
+                title: '请假申请已提交',
+                icon: 'success'
+              });
+
+              // 重新加载任务数据以更新视图
+              await loadAssignments();
+            } catch (error) {
+              console.error('请假申请失败:', error);
+              uni.showToast({
+                title: '操作失败，请重试',
+                icon: 'none'
+              });
+            }
+          }
+        }
+      });
+    }
+  });
+};
+
+
+const cancelLeave = async () => {
+  uni.showModal({
+    title: '确认取消请假',
+    content: `确定要取消 ${selectedDate.value} 的请假吗？`,
+    success: async (res) => {
+      if (res.confirm) {
+        try {
+          // 调用取消请假接口（假设后端提供此接口）
+          await cancelLeaveRequest(selectedDate.value);
+
+          // 显示成功提示
+          uni.showToast({
+            title: '请假已取消',
+            icon: 'success'
+          });
+
+          // 重新加载任务数据以更新视图
+          await loadAssignments();
+        } catch (error) {
+          console.error('取消请假失败:', error);
+          uni.showToast({
+            title: '操作失败，请重试',
+            icon: 'none'
+          });
+        }
+      }
+    }
+  });
+};
 
 
 const assignments = ref([])
@@ -225,15 +337,6 @@ const allAuxMaterials = computed(() => {
   return Object.values(map)
 })
 
-const loadAssignments = async () => {
-  try {
-    const response = await getWorkerStageCalendar(currentMonth.value)
-    assignments.value = response?.assignments || []
-    generateDays()
-  } catch (err) {
-    console.error(err)
-  }
-}
 
 const getStatusClass = status => {
   switch (status) {
@@ -248,23 +351,47 @@ const getStatusClass = status => {
   }
 }
 
+const loadAssignments = async () => {
+  try {
+    const response = await getWorkerStageCalendar(currentMonth.value);
+    assignments.value = response?.assignments || [];
+    generateDays(response); // 将 response 传递给 generateDays
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-const generateDays = () => {
-  const [year, month] = currentMonth.value.split('-').map(Number)
-  const firstDay = new Date(year, month - 1, 1).getDay()
-  const adjustedFirstDay = firstDay === 0 ? 7 : firstDay
-  const totalDays = new Date(year, month, 0).getDate()
+const generateDays = (response) => { // 接收 response 参数
+  const [year, month] = currentMonth.value.split('-').map(Number);
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const adjustedFirstDay = firstDay === 0 ? 7 : firstDay;
+  const totalDays = new Date(year, month, 0).getDate();
 
-  const result = []
-  for (let i = 1; i < adjustedFirstDay; i++) result.push({ day: '', date: null, assignments: [] })
+  const result = [];
+  for (let i = 1; i < adjustedFirstDay; i++) {
+    result.push({ day: '', date: null, assignments: [], isLeave: false });
+  }
 
   for (let i = 1; i <= totalDays; i++) {
-    const dateStr = `${currentMonth.value}-${String(i).padStart(2, '0')}`
-    const dailyAssignments = assignments.value.filter(a => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at)
-    result.push({ day: i, date: dateStr, assignments: dailyAssignments, isToday: dateStr === new Date().toISOString().slice(0, 10) })
+    const dateStr = `${currentMonth.value}-${String(i).padStart(2, '0')}`;
+    const dailyAssignments = assignments.value.filter(
+        a => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at
+    );
+
+    // 检查是否是请假日期
+    const isLeave = response?.leaveDays?.includes(dateStr) || false;
+
+    result.push({
+      day: i,
+      date: dateStr,
+      assignments: dailyAssignments,
+      isToday: dateStr === new Date().toISOString().slice(0, 10),
+      isLeave // 标记是否为请假日期
+    });
   }
-  days.value = result
-}
+  days.value = result;
+};
+
 
 const onMonthChange = async e => {
   const value = e?.detail?.value
@@ -276,17 +403,47 @@ const onMonthChange = async e => {
   await loadAssignments()
 }
 
+const completeTask = async (assignment) => {
+  try {
+    // 调用完成任务的 API
+    await completeStage(assignment.stageId);
 
-const selectDay = day => {
-  selectedDate.value = day.date
+    await loadAssignments()
+
+    // 手动更新 assignment 的状态
+    assignment.status = 'COMPLETED';
+
+    // 触发响应式更新（强制刷新）
+    selectedAssignments.value = [...selectedAssignments.value];
+
+
+    uni.showToast({
+      title: '任务已完成',
+      icon: 'success'
+    });
+  } catch (error) {
+    console.error('完成任务失败:', error);
+    uni.showToast({
+      title: '操作失败',
+      icon: 'none'
+    });
+  }
+};
+
+
+const selectDay = (day) => {
+  selectedDate.value = day.date;
+
+  // 判断是否已请假
+  hasLeave.value = day.isLeave;
 
   if (day.assignments && day.assignments.length > 0) {
-    selectedAssignments.value = day.assignments
+    selectedAssignments.value = day.assignments;
   } else {
-    // 没任务也允许点，但清空详情
-    selectedAssignments.value = []
+    selectedAssignments.value = [];
   }
-}
+};
+
 
 
 
@@ -395,6 +552,8 @@ onMounted(() => loadAssignments())
         opacity: 0.9;
       }
 
+
+
     }
   }
 
@@ -425,9 +584,25 @@ onMounted(() => loadAssignments())
         margin-bottom: 0; /* 最后一项去掉底部间距 */
       }
 
+      .complete-task-btn {
+        font-size: 24rpx;
+        color: #fff;
+        background-color: #67c23a; /* 绿色背景 */
+        border: none;
+        border-radius: 8rpx;
+        padding: 8rpx 16rpx;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.3s ease; /* 添加过渡效果 */
+      }
+
+      .complete-task-btn:hover {
+        background-color: #5daf34; /* hover 时加深颜色 */
+      }
+
       .task-header {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-between; /* 左右分布 */
         align-items: center;
         margin-bottom: 16rpx;
 
@@ -493,6 +668,15 @@ onMounted(() => loadAssignments())
 }
 .day.today.selected {
   outline: 3rpx solid #ffd04b;
+}
+
+.day.leave {
+  background-color: #ffebee; /* 浅红色背景 */
+  border: 2rpx dashed #f44336; /* 红色虚线边框 */
+}
+
+.day.leave .date {
+  color: #f44336; /* 红色文字 */
 }
 
 
@@ -854,5 +1038,8 @@ onMounted(() => loadAssignments())
     white-space: nowrap; /* 防止按钮文字换行 */
   }
 }
+
+
+
 
 </style>

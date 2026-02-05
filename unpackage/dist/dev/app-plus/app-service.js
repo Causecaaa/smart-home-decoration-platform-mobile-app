@@ -4672,6 +4672,67 @@ This will fail in production.`);
       }
     });
   }
+  function requestLeave(leaveDate, leaveType, reason) {
+    return request({
+      url: "/worker/leave",
+      method: "POST",
+      data: {
+        leaveDate,
+        // 传递请假日期
+        leaveType,
+        // 传递请假类型
+        reason
+        // 传递请假原因
+      }
+    });
+  }
+  function cancelLeaveRequest(leaveDate) {
+    return request({
+      url: "/worker/leave/cancel",
+      method: "POST",
+      data: {
+        leaveDate
+        // 确保 leaveDate 参数被传递
+      }
+    });
+  }
+  function getStage(houseId) {
+    return request({
+      url: `/stage/${houseId}`,
+      // 修改为正确的路径
+      method: "GET"
+    });
+  }
+  function getStageDetail(houseId, orderId) {
+    return request({
+      url: `/stage/${houseId}/${orderId}`,
+      method: "GET"
+    });
+  }
+  function updateStageSchedule(houseId, stageOrder, expectedStartAt) {
+    return request({
+      url: `/stage/${houseId}/${stageOrder}/schedule?expectedStartAt=${expectedStartAt}`,
+      method: "POST"
+    });
+  }
+  function startStage(houseId, stageOrder) {
+    return request({
+      url: `/stage/${houseId}/${stageOrder}/start`,
+      method: "POST"
+    });
+  }
+  function completeStage(stageId) {
+    return request({
+      url: `/stage/${stageId}/complete`,
+      method: "POST"
+    });
+  }
+  function acceptStage(houseId, stageOrder) {
+    return request({
+      url: `/stage/${houseId}/${stageOrder}/accept`,
+      method: "POST"
+    });
+  }
   const _sfc_main$i = {
     __name: "Project",
     setup(__props, { expose: __expose }) {
@@ -4684,12 +4745,84 @@ This will fail in production.`);
         return `${y}-${String(m).padStart(2, "0")}`;
       });
       const selectedDate = vue.ref("");
+      const hasLeave = vue.ref(false);
       const todayStr = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
       const canRequestLeave = vue.computed(() => {
         if (!selectedDate.value)
           return false;
         return selectedDate.value > todayStr;
       });
+      const previewImage = (imgUrl) => {
+        uni.previewImage({
+          urls: [imgUrl]
+        });
+      };
+      const Leave = async () => {
+        let leaveType = "";
+        let reason = "";
+        uni.showActionSheet({
+          itemList: ["病假 (SICK)", "事假 (PERSONAL)", "其他 (OTHER)"],
+          success: async (res) => {
+            const leaveTypes = ["SICK", "PERSONAL", "OTHER"];
+            leaveType = leaveTypes[res.tapIndex];
+            uni.showModal({
+              title: "请输入请假原因",
+              editable: true,
+              placeholderText: "请填写具体原因...",
+              success: async (inputRes) => {
+                if (inputRes.confirm) {
+                  reason = inputRes.content.trim();
+                  if (!reason) {
+                    uni.showToast({
+                      title: "请假原因不能为空",
+                      icon: "none"
+                    });
+                    return;
+                  }
+                  try {
+                    await requestLeave(selectedDate.value, leaveType, reason);
+                    uni.showToast({
+                      title: "请假申请已提交",
+                      icon: "success"
+                    });
+                    await loadAssignments();
+                  } catch (error) {
+                    formatAppLog("error", "at src/components/Project.vue:266", "请假申请失败:", error);
+                    uni.showToast({
+                      title: "操作失败，请重试",
+                      icon: "none"
+                    });
+                  }
+                }
+              }
+            });
+          }
+        });
+      };
+      const cancelLeave = async () => {
+        uni.showModal({
+          title: "确认取消请假",
+          content: `确定要取消 ${selectedDate.value} 的请假吗？`,
+          success: async (res) => {
+            if (res.confirm) {
+              try {
+                await cancelLeaveRequest(selectedDate.value);
+                uni.showToast({
+                  title: "请假已取消",
+                  icon: "success"
+                });
+                await loadAssignments();
+              } catch (error) {
+                formatAppLog("error", "at src/components/Project.vue:299", "取消请假失败:", error);
+                uni.showToast({
+                  title: "操作失败，请重试",
+                  icon: "none"
+                });
+              }
+            }
+          }
+        });
+      };
       const assignments = vue.ref([]);
       const days = vue.ref([]);
       const selectedAssignments = vue.ref([]);
@@ -4723,15 +4856,6 @@ This will fail in production.`);
         });
         return Object.values(map);
       });
-      const loadAssignments = async () => {
-        try {
-          const response = await getWorkerStageCalendar(currentMonth.value);
-          assignments.value = (response == null ? void 0 : response.assignments) || [];
-          generateDays();
-        } catch (err) {
-          formatAppLog("error", "at src/components/Project.vue:234", err);
-        }
-      };
       const getStatusClass = (status) => {
         switch (status) {
           case "PENDING":
@@ -4744,18 +4868,39 @@ This will fail in production.`);
             return "";
         }
       };
-      const generateDays = () => {
+      const loadAssignments = async () => {
+        try {
+          const response = await getWorkerStageCalendar(currentMonth.value);
+          assignments.value = (response == null ? void 0 : response.assignments) || [];
+          generateDays(response);
+        } catch (err) {
+          formatAppLog("error", "at src/components/Project.vue:360", err);
+        }
+      };
+      const generateDays = (response) => {
+        var _a;
         const [year, month] = currentMonth.value.split("-").map(Number);
         const firstDay = new Date(year, month - 1, 1).getDay();
         const adjustedFirstDay = firstDay === 0 ? 7 : firstDay;
         const totalDays = new Date(year, month, 0).getDate();
         const result = [];
-        for (let i = 1; i < adjustedFirstDay; i++)
-          result.push({ day: "", date: null, assignments: [] });
+        for (let i = 1; i < adjustedFirstDay; i++) {
+          result.push({ day: "", date: null, assignments: [], isLeave: false });
+        }
         for (let i = 1; i <= totalDays; i++) {
           const dateStr = `${currentMonth.value}-${String(i).padStart(2, "0")}`;
-          const dailyAssignments = assignments.value.filter((a) => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at);
-          result.push({ day: i, date: dateStr, assignments: dailyAssignments, isToday: dateStr === (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) });
+          const dailyAssignments = assignments.value.filter(
+            (a) => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at
+          );
+          const isLeave = ((_a = response == null ? void 0 : response.leaveDays) == null ? void 0 : _a.includes(dateStr)) || false;
+          result.push({
+            day: i,
+            date: dateStr,
+            assignments: dailyAssignments,
+            isToday: dateStr === (/* @__PURE__ */ new Date()).toISOString().slice(0, 10),
+            isLeave
+            // 标记是否为请假日期
+          });
         }
         days.value = result;
       };
@@ -4771,8 +4916,27 @@ This will fail in production.`);
         currentDate.value = new Date(Number(y), Number(m) - 1, 1);
         await loadAssignments();
       };
+      const completeTask = async (assignment) => {
+        try {
+          await completeStage(assignment.stageId);
+          await loadAssignments();
+          assignment.status = "COMPLETED";
+          selectedAssignments.value = [...selectedAssignments.value];
+          uni.showToast({
+            title: "任务已完成",
+            icon: "success"
+          });
+        } catch (error) {
+          formatAppLog("error", "at src/components/Project.vue:425", "完成任务失败:", error);
+          uni.showToast({
+            title: "操作失败",
+            icon: "none"
+          });
+        }
+      };
       const selectDay = (day) => {
         selectedDate.value = day.date;
+        hasLeave.value = day.isLeave;
         if (day.assignments && day.assignments.length > 0) {
           selectedAssignments.value = day.assignments;
         } else {
@@ -4803,8 +4967,16 @@ This will fail in production.`);
         }
       };
       vue.onMounted(() => loadAssignments());
-      const __returned__ = { weeks, currentDate, currentMonth, selectedDate, todayStr, canRequestLeave, assignments, days, selectedAssignments, allWorkers, allMainMaterials, allAuxMaterials, loadAssignments, getStatusClass, generateDays, onMonthChange, selectDay, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, SKILL_LEVEL_MAP, getSkillLevelText, getCategoryText, getMainMaterialTypeText, handleChatClick, getStatusColor, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, get getWorkerStageCalendar() {
+      const __returned__ = { weeks, currentDate, currentMonth, selectedDate, hasLeave, todayStr, canRequestLeave, previewImage, Leave, cancelLeave, assignments, days, selectedAssignments, allWorkers, allMainMaterials, allAuxMaterials, getStatusClass, loadAssignments, generateDays, onMonthChange, completeTask, selectDay, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, SKILL_LEVEL_MAP, getSkillLevelText, getCategoryText, getMainMaterialTypeText, handleChatClick, getStatusColor, ref: vue.ref, computed: vue.computed, onMounted: vue.onMounted, get cancelLeaveRequest() {
+        return cancelLeaveRequest;
+      }, get getWorkerStageCalendar() {
         return getWorkerStageCalendar;
+      }, get requestLeave() {
+        return requestLeave;
+      }, get completeStage() {
+        return completeStage;
+      }, get BASE_URL() {
+        return BASE_URL;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -4853,7 +5025,9 @@ This will fail in production.`);
               class: vue.normalizeClass(["day", {
                 active: day.assignments.length > 0,
                 today: day.isToday,
-                selected: day.date === $setup.selectedDate
+                selected: day.date === $setup.selectedDate,
+                leave: day.isLeave
+                // 新增请假状态样式
               }]),
               onClick: ($event) => $setup.selectDay(day)
             }, [
@@ -4896,15 +5070,15 @@ This will fail in production.`);
         class: "date-action-bar"
       }, [
         vue.createElementVNode("text", { class: "selected-date-text" }),
-        $setup.canRequestLeave ? (vue.openBlock(), vue.createElementBlock("button", {
+        $setup.canRequestLeave && !$setup.hasLeave ? (vue.openBlock(), vue.createElementBlock("button", {
           key: 0,
           class: "leave-btn",
-          onClick: _cache[0] || (_cache[0] = (...args) => _ctx.requestLeave && _ctx.requestLeave(...args))
+          onClick: $setup.Leave
         }, " 请假 ")) : vue.createCommentVNode("v-if", true),
-        _ctx.hasLeave ? (vue.openBlock(), vue.createElementBlock("button", {
+        $setup.hasLeave ? (vue.openBlock(), vue.createElementBlock("button", {
           key: 1,
           class: "cancel-leave-btn",
-          onClick: _cache[1] || (_cache[1] = (...args) => _ctx.cancelLeave && _ctx.cancelLeave(...args))
+          onClick: $setup.cancelLeave
         }, " 取消请假 ")) : vue.createCommentVNode("v-if", true)
       ])) : vue.createCommentVNode("v-if", true),
       $setup.selectedDate && $setup.selectedAssignments.length === 0 ? (vue.openBlock(), vue.createElementBlock("view", {
@@ -4942,7 +5116,12 @@ This will fail in production.`);
                   vue.toDisplayString(assignment.status),
                   3
                   /* TEXT, CLASS */
-                )
+                ),
+                assignment.status === "IN_PROGRESS" ? (vue.openBlock(), vue.createElementBlock("button", {
+                  key: 0,
+                  class: "complete-task-btn",
+                  onClick: ($event) => $setup.completeTask(assignment)
+                }, " 完成任务 ", 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
               ]),
               vue.createElementVNode("view", { class: "task-address" }, [
                 vue.createElementVNode("text", { class: "icon" }, "📍"),
@@ -4963,7 +5142,18 @@ This will fail in production.`);
                   1
                   /* TEXT */
                 )
-              ])
+              ]),
+              assignment.designation_image_url ? (vue.openBlock(), vue.createElementBlock("view", {
+                key: 0,
+                class: "design-image-container"
+              }, [
+                vue.createElementVNode("image", {
+                  src: `${$setup.BASE_URL}${assignment.designation_image_url}`,
+                  class: "design-image",
+                  mode: "aspectFit",
+                  onClick: ($event) => $setup.previewImage(`${$setup.BASE_URL}${assignment.designation_image_url}`)
+                }, null, 8, ["src", "onClick"])
+              ])) : vue.createCommentVNode("v-if", true)
             ]);
           }),
           128
@@ -5000,20 +5190,6 @@ This will fail in production.`);
                     ),
                     vue.createElementVNode(
                       "text",
-                      { class: "worker-skill" },
-                      "技能等级：" + vue.toDisplayString($setup.getSkillLevelText(worker.skillLevel)),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createElementVNode(
-                      "text",
-                      { class: "worker-rating" },
-                      "评分：⭐ " + vue.toDisplayString(worker.rating),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createElementVNode(
-                      "text",
                       { class: "worker-phone" },
                       "电话：" + vue.toDisplayString(worker.phone),
                       1
@@ -5023,6 +5199,13 @@ This will fail in production.`);
                       "text",
                       { class: "worker-email" },
                       "邮箱：" + vue.toDisplayString(worker.email),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "text",
+                      { class: "worker-email" },
+                      "工作时间：" + vue.toDisplayString(worker.expected_Start_at) + " - " + vue.toDisplayString(worker.expected_End_at),
                       1
                       /* TEXT */
                     )
@@ -9276,7 +9459,7 @@ This will fail in production.`);
                       1
                       /* TEXT */
                     ),
-                    $setup.layoutDetail.furnitureStatus === "CONFIRMED" ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
+                    $setup.layoutDetail.canPayFinal ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
                       vue.createElementVNode("text", { class: "bill-hint" }, "✅ 所有方案已确认，可支付尾款"),
                       vue.createElementVNode("button", {
                         class: "btn btn-primary",
@@ -10039,9 +10222,9 @@ This will fail in production.`);
         try {
           const res = await getHouseQuotation(houseId.value);
           quotationData.value = res;
-          formatAppLog("log", "at src/pages/quotation/quotation.vue:147", "报价数据加载成功", res);
+          formatAppLog("log", "at src/pages/quotation/quotation.vue:150", "报价数据加载成功", res);
         } catch (error) {
-          formatAppLog("error", "at src/pages/quotation/quotation.vue:149", "加载报价失败:", error);
+          formatAppLog("error", "at src/pages/quotation/quotation.vue:152", "加载报价失败:", error);
           uni.showToast({
             title: "加载报价失败",
             icon: "none"
@@ -10076,7 +10259,7 @@ This will fail in production.`);
             title: "支付失败，请稍后重试",
             icon: "none"
           });
-          formatAppLog("error", "at src/pages/quotation/quotation.vue:188", "支付失败:", e);
+          formatAppLog("error", "at src/pages/quotation/quotation.vue:191", "支付失败:", e);
         }
       };
       const getPaymentStatusText = (status) => {
@@ -10106,6 +10289,7 @@ This will fail in production.`);
     }
   };
   function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
+    var _a;
     return vue.openBlock(), vue.createElementBlock("view", { class: "quotation-container" }, [
       vue.createElementVNode("view", { class: "quotation-header" }, [
         vue.createElementVNode("text", { class: "title" }, "装修报价单")
@@ -10113,6 +10297,16 @@ This will fail in production.`);
       $setup.quotationData ? (vue.openBlock(), vue.createElementBlock("view", { key: 0 }, [
         vue.createElementVNode("view", { class: "rooms-section" }, [
           vue.createElementVNode("text", { class: "section-title" }, "房间主材明细"),
+          ((_a = $setup.quotationData) == null ? void 0 : _a.decorationType) === "HALF" ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "half-package-hint"
+          }, [
+            vue.createElementVNode("text", { class: "hint-text" }, [
+              vue.createTextVNode("**半包装修不包含主材部分**"),
+              vue.createElementVNode("br"),
+              vue.createTextVNode("**以下主材仅供参考，请自行购买主材**")
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
           (vue.openBlock(true), vue.createElementBlock(
             vue.Fragment,
             null,
@@ -10341,25 +10535,6 @@ This will fail in production.`);
     ]);
   }
   const SrcPagesQuotationQuotation = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$4], ["__file", "D:/CODE/mobile-app/src/pages/quotation/quotation.vue"]]);
-  function getStage(houseId) {
-    return request({
-      url: `/stage/${houseId}`,
-      // 修改为正确的路径
-      method: "GET"
-    });
-  }
-  function getStageDetail(houseId, orderId) {
-    return request({
-      url: `/stage/${houseId}/${orderId}`,
-      method: "GET"
-    });
-  }
-  function updateStageSchedule(houseId, stageOrder, expectedStartAt) {
-    return request({
-      url: `/stage/${houseId}/${stageOrder}/schedule?expectedStartAt=${expectedStartAt}`,
-      method: "POST"
-    });
-  }
   const _sfc_main$3 = {
     __name: "StageGantt",
     emits: ["change"],
@@ -10441,7 +10616,7 @@ This will fail in production.`);
             if (!s.start_at)
               return false;
             const start = s.start_at.slice(0, 10);
-            const end = s.end_at ? s.end_at.slice(0, 10) : start;
+            const end = s.end_at ? s.end_at.slice(0, 10) : todayStr;
             return date >= start && date <= end;
           });
           result.push({
@@ -10500,7 +10675,7 @@ This will fail in production.`);
           uni.showToast({ title: "更新成功", icon: "success" });
           closeDatePicker();
         } catch (error) {
-          formatAppLog("error", "at src/components/StageGantt.vue:292", "更新阶段计划失败:", error);
+          formatAppLog("error", "at src/components/StageGantt.vue:293", "更新阶段计划失败:", error);
           uni.showToast({ title: "更新失败", icon: "error" });
         }
       };
@@ -10670,21 +10845,24 @@ This will fail in production.`);
           houseId.value = Number(query.houseId);
         }
       });
+      onShow(() => {
+        loadStages();
+      });
       const loadStages = async () => {
         try {
           const res = await getStage(houseId.value);
-          formatAppLog("log", "at src/pages/stage/stage.vue:106", "原始API返回数据", res);
+          formatAppLog("log", "at src/pages/stage/stage.vue:113", "原始API返回数据", res);
           if (res && res.stages) {
             stagesData.value = res;
           } else if (res && res.data && res.data.stages) {
             stagesData.value = res.data;
           } else {
             stagesData.value = { stages: [] };
-            formatAppLog("warn", "at src/pages/stage/stage.vue:118", "API 返回数据格式不符合预期", res);
+            formatAppLog("warn", "at src/pages/stage/stage.vue:125", "API 返回数据格式不符合预期", res);
           }
-          formatAppLog("log", "at src/pages/stage/stage.vue:121", "施工阶段数据加载成功", stagesData.value);
+          formatAppLog("log", "at src/pages/stage/stage.vue:128", "施工阶段数据加载成功", stagesData.value);
         } catch (error) {
-          formatAppLog("error", "at src/pages/stage/stage.vue:123", "加载施工阶段失败:", error);
+          formatAppLog("error", "at src/pages/stage/stage.vue:130", "加载施工阶段失败:", error);
           uni.showToast({
             title: "加载施工阶段失败",
             icon: "none"
@@ -10700,7 +10878,7 @@ This will fail in production.`);
             icon: "success"
           });
         } catch (error) {
-          formatAppLog("error", "at src/pages/stage/stage.vue:141", "排期更新失败:", error);
+          formatAppLog("error", "at src/pages/stage/stage.vue:148", "排期更新失败:", error);
           uni.showToast({
             title: "排期更新失败",
             icon: "none"
@@ -10736,11 +10914,10 @@ This will fail in production.`);
         const date = new Date(dateString);
         return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
       };
-      vue.onMounted(() => {
-        loadStages();
-      });
       const __returned__ = { stagesData, houseId, viewMode, loadStages, onGanttChange, isStatusActive, getStatusClass, enterStageDetail, formatDate, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
         return onLoad;
+      }, get onShow() {
+        return onShow;
       }, get getStage() {
         return getStage;
       }, get updateStageSchedule() {
@@ -10759,7 +10936,10 @@ This will fail in production.`);
             "text",
             {
               class: vue.normalizeClass(["toggle-item", $setup.viewMode === "list" && "active"]),
-              onClick: _cache[0] || (_cache[0] = ($event) => $setup.viewMode = "list")
+              onClick: [
+                _cache[0] || (_cache[0] = ($event) => $setup.viewMode = "list"),
+                $setup.loadStages
+              ]
             },
             " 阶段列表 ",
             2
@@ -10769,7 +10949,10 @@ This will fail in production.`);
             "text",
             {
               class: vue.normalizeClass(["toggle-item", $setup.viewMode === "gantt" && "active"]),
-              onClick: _cache[1] || (_cache[1] = ($event) => $setup.viewMode = "gantt")
+              onClick: [
+                _cache[1] || (_cache[1] = ($event) => $setup.viewMode = "gantt"),
+                $setup.loadStages
+              ]
             },
             " 甘特图 ",
             2
@@ -10808,11 +10991,10 @@ This will fail in production.`);
                     3
                     /* TEXT, CLASS */
                   ),
-                  stageItem.status === "待开始" ? (vue.openBlock(), vue.createElementBlock("button", {
-                    key: 0,
+                  vue.createElementVNode("button", {
                     class: "enter-btn",
                     onClick: ($event) => $setup.enterStageDetail(stageItem)
-                  }, " 进入 ", 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
+                  }, " 进入 ", 8, ["onClick"])
                 ])
               ]),
               vue.createElementVNode("view", { class: "stage-details-grid" }, [
@@ -10953,27 +11135,38 @@ This will fail in production.`);
         requiredCount: 0,
         estimatedDay: 0,
         start_at: null,
-        end_at: null
+        end_at: null,
+        decorationType: ""
+        // 新增字段
       });
       const houseId = vue.ref(null);
       const stageId = vue.ref(null);
       const isLoading = vue.ref(true);
       const workers = vue.ref([]);
+      const isStartable = vue.computed(() => {
+        if (!stageData.value.expectedStartAt)
+          return false;
+        const expectedStartTime = new Date(stageData.value.expectedStartAt).getTime();
+        const currentTime = (/* @__PURE__ */ new Date()).getTime();
+        return currentTime >= expectedStartTime;
+      });
       const loadStageDetail = async () => {
         var _a;
         try {
           const res = await getStageDetail(houseId.value, stageId.value);
           stageData.value = {
             ...stageData.value,
-            ...res.stageInfo
+            ...res.stageInfo,
+            decorationType: res.decorationType
+            // 存储装修类型
           };
           workers.value = (((_a = res.workerResponse) == null ? void 0 : _a.workers) || []).map((worker) => ({
             ...worker,
             avatarUrl: worker.avatarUrl ? `${BASE_URL}${worker.avatarUrl}` : null
           }));
-          formatAppLog("log", "at src/pages/stage/stage-detail.vue:158", "阶段详情数据加载成功", stageData.value, "工人列表:", workers.value);
+          formatAppLog("log", "at src/pages/stage/stage-detail.vue:193", "阶段详情数据加载成功", stageData.value, "工人列表:", workers.value);
         } catch (error) {
-          formatAppLog("error", "at src/pages/stage/stage-detail.vue:160", "加载阶段详情失败:", error);
+          formatAppLog("error", "at src/pages/stage/stage-detail.vue:195", "加载阶段详情失败:", error);
           uni.showToast({
             title: "加载阶段详情失败",
             icon: "none"
@@ -10983,10 +11176,15 @@ This will fail in production.`);
         }
       };
       const handleChatClick = (worker) => {
-        formatAppLog("log", "at src/pages/stage/stage-detail.vue:171", "与工人聊天:", worker.realName);
+        formatAppLog("log", "at src/pages/stage/stage-detail.vue:207", "与工人聊天:", worker.realName);
         uni.navigateTo({
           url: `/src/pages/contact/contactDetail?targetUserId=
     ${Number(worker.workerId)}&targetUserName=${worker.realName}&targetAvatarUrl=${worker.avatarUrl}`
+        });
+      };
+      const previewImage = (imgUrl) => {
+        uni.previewImage({
+          urls: [imgUrl]
         });
       };
       const CATEGORY_MAP = {
@@ -11001,13 +11199,18 @@ This will fail in production.`);
         CEILING: "天花板",
         CABINET: "柜体"
       };
-      onLoad((query) => {
-        if (query.houseId) {
-          houseId.value = Number(query.houseId);
+      onLoad((options) => {
+        formatAppLog("log", "at src/pages/stage/stage-detail.vue:239", "页面参数 options:", options);
+        if (!options.houseId) {
+          uni.showToast({ title: "缺少 houseId", icon: "none" });
+          return;
         }
-        if (query.stageId) {
-          stageId.value = Number(query.stageId);
-        }
+        houseId.value = Number(options.houseId);
+        stageId.value = options.stageId ? Number(options.stageId) : null;
+        loadStageDetail();
+      });
+      onShow(() => {
+        loadStageDetail();
       });
       const getStatusClass = (status) => {
         switch (status) {
@@ -11042,17 +11245,68 @@ This will fail in production.`);
         const date = new Date(dateString);
         return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`;
       };
-      vue.onMounted(() => {
-        loadStageDetail();
-      });
-      const __returned__ = { stageData, houseId, stageId, isLoading, workers, loadStageDetail, handleChatClick, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, getStatusClass, SKILL_LEVEL_MAP, getSkillLevelText, getCategoryText, getMainMaterialTypeText, formatDate, ref: vue.ref, onMounted: vue.onMounted, get onLoad() {
+      const handleStartStage = async () => {
+        uni.showModal({
+          title: "确认开始",
+          content: "请确认所有材料与人员均已到场",
+          success: async (res) => {
+            if (res.confirm) {
+              try {
+                await startStage(houseId.value, stageData.value.order);
+                uni.showToast({
+                  title: "阶段已开始",
+                  icon: "success"
+                });
+                await loadStageDetail();
+              } catch (error) {
+                formatAppLog("error", "at src/pages/stage/stage-detail.vue:318", "开始阶段失败:", error);
+                uni.showToast({
+                  title: "开始阶段失败",
+                  icon: "none"
+                });
+              }
+            }
+          }
+        });
+      };
+      const handleAcceptStage = async () => {
+        uni.showModal({
+          title: "确认验收",
+          content: "确定要验收该阶段吗？",
+          success: async (res) => {
+            if (res.confirm) {
+              try {
+                await acceptStage(houseId.value, stageData.value.order);
+                uni.showToast({
+                  title: "阶段已验收",
+                  icon: "success"
+                });
+                await loadStageDetail();
+              } catch (error) {
+                formatAppLog("error", "at src/pages/stage/stage-detail.vue:345", "验收阶段失败:", error);
+                uni.showToast({
+                  title: "验收阶段失败",
+                  icon: "none"
+                });
+              }
+            }
+          }
+        });
+      };
+      const __returned__ = { stageData, houseId, stageId, isLoading, workers, isStartable, loadStageDetail, handleChatClick, previewImage, CATEGORY_MAP, MAIN_MATERIAL_TYPE_MAP, getStatusClass, SKILL_LEVEL_MAP, getSkillLevelText, getCategoryText, getMainMaterialTypeText, formatDate, handleStartStage, handleAcceptStage, ref: vue.ref, onMounted: vue.onMounted, computed: vue.computed, get onLoad() {
         return onLoad;
+      }, get onShow() {
+        return onShow;
       }, get getStage() {
         return getStage;
       }, get getStageDetail() {
         return getStageDetail;
       }, get BASE_URL() {
         return BASE_URL;
+      }, get startStage() {
+        return startStage;
+      }, get acceptStage() {
+        return acceptStage;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -11164,8 +11418,20 @@ This will fail in production.`);
             ])) : vue.createCommentVNode("v-if", true)
           ])
         ]),
-        $setup.workers && $setup.workers.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+        $setup.stageData.designing_image_url ? (vue.openBlock(), vue.createElementBlock("view", {
           key: 0,
+          class: "basic-info-section"
+        }, [
+          vue.createElementVNode("text", { class: "section-title" }, "设计图纸"),
+          vue.createElementVNode("image", {
+            src: `${$setup.BASE_URL}${$setup.stageData.designing_image_url}`,
+            class: "design-image",
+            mode: "aspectFit",
+            onClick: _cache[0] || (_cache[0] = ($event) => $setup.previewImage(`${$setup.BASE_URL}${$setup.stageData.designing_image_url}`))
+          }, null, 8, ["src"])
+        ])) : vue.createCommentVNode("v-if", true),
+        $setup.workers && $setup.workers.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+          key: 1,
           class: "workers-section"
         }, [
           vue.createElementVNode("text", { class: "section-title" }, "施工人员"),
@@ -11219,6 +11485,13 @@ This will fail in production.`);
                         "邮箱：" + vue.toDisplayString(worker.email),
                         1
                         /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "worker-period" },
+                        "时间：" + vue.toDisplayString($setup.formatDate(worker.expectedStartAt)) + " - " + vue.toDisplayString($setup.formatDate(worker.expectedEndAt)),
+                        1
+                        /* TEXT */
                       )
                     ])
                   ]),
@@ -11234,10 +11507,20 @@ This will fail in production.`);
           ])
         ])) : vue.createCommentVNode("v-if", true),
         $setup.stageData.mainMaterials && $setup.stageData.mainMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 1,
+          key: 2,
           class: "materials-section"
         }, [
           vue.createElementVNode("text", { class: "section-title" }, "主材清单"),
+          $setup.stageData.decorationType === "HALF" ? (vue.openBlock(), vue.createElementBlock("view", {
+            key: 0,
+            class: "half-package-hint"
+          }, [
+            vue.createElementVNode("text", { class: "hint-text" }, [
+              vue.createTextVNode("**半包装修不包含主材部分**"),
+              vue.createElementVNode("br"),
+              vue.createTextVNode("**以下主材仅供参考，请自行购买主材**")
+            ])
+          ])) : vue.createCommentVNode("v-if", true),
           vue.createElementVNode("view", { class: "materials-list" }, [
             (vue.openBlock(true), vue.createElementBlock(
               vue.Fragment,
@@ -11280,7 +11563,7 @@ This will fail in production.`);
           ])
         ])) : vue.createCommentVNode("v-if", true),
         $setup.stageData.auxiliaryMaterials && $setup.stageData.auxiliaryMaterials.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 2,
+          key: 3,
           class: "materials-section"
         }, [
           vue.createElementVNode("text", { class: "section-title" }, "辅材清单"),
@@ -11333,12 +11616,29 @@ This will fail in production.`);
           ])
         ])) : vue.createCommentVNode("v-if", true),
         (!$setup.stageData.mainMaterials || $setup.stageData.mainMaterials.length === 0) && (!$setup.stageData.auxiliaryMaterials || $setup.stageData.auxiliaryMaterials.length === 0) ? (vue.openBlock(), vue.createElementBlock("view", {
-          key: 3,
+          key: 4,
           class: "no-materials"
         }, [
           vue.createElementVNode("text", { class: "no-materials-text" }, "此阶段暂无材料清单")
         ])) : vue.createCommentVNode("v-if", true)
-      ]))
+      ])),
+      $setup.stageData.status === "待开始" && $setup.isStartable ? (vue.openBlock(), vue.createElementBlock("view", {
+        key: 2,
+        class: "action-buttons"
+      }, [
+        vue.createElementVNode("button", {
+          class: "start-button",
+          onClick: $setup.handleStartStage
+        }, "开始")
+      ])) : $setup.stageData.status === "已完成" ? (vue.openBlock(), vue.createElementBlock("view", {
+        key: 3,
+        class: "action-buttons"
+      }, [
+        vue.createElementVNode("button", {
+          class: "accept-button",
+          onClick: $setup.handleAcceptStage
+        }, "验收")
+      ])) : vue.createCommentVNode("v-if", true)
     ]);
   }
   const SrcPagesStageStageDetail = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1], ["__file", "D:/CODE/mobile-app/src/pages/stage/stage-detail.vue"]]);

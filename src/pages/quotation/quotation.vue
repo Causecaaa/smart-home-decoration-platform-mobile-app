@@ -9,6 +9,9 @@
       <!-- 房间主材列表 -->
       <view class="rooms-section">
         <text class="section-title">房间主材明细</text>
+        <view v-if="quotationData?.decorationType === 'HALF'" class="half-package-hint">
+          <text class="hint-text">**半包装修不包含主材部分**<br>**以下主材仅供参考，请自行购买主材**</text>
+        </view>
         <view v-for="room in quotationData.rooms" :key="room.roomId" class="room-card">
           <view class="room-header">
             <text class="room-name">{{ room.roomName }}</text>
@@ -501,4 +504,20 @@ onMounted(() => {
   font-size: 28rpx;
   color: #666;
 }
+
+.half-package-hint {
+  background-color: #fffbe6;
+  border: 1rpx solid #ffe58f;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 32rpx;
+  text-align: center;
+
+  .hint-text {
+    font-size: 26rpx;
+    color: #faad14;
+    font-weight: bold;
+  }
+}
+
 </style>

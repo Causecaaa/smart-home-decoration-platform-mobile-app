@@ -10,3 +10,27 @@ export function getWorkerStageCalendar(month) {
         }
     });
 }
+
+
+export function requestLeave(leaveDate, leaveType, reason) {
+    return request({
+        url: '/worker/leave',
+        method: 'POST',
+        data: {
+            leaveDate,  // 传递请假日期
+            leaveType,  // 传递请假类型
+            reason      // 传递请假原因
+        }
+    });
+}
+
+
+export function cancelLeaveRequest(leaveDate){
+    return request({
+        url: '/worker/leave/cancel',
+        method: 'POST',
+        data: {
+            leaveDate // 确保 leaveDate 参数被传递
+        }
+    });
+}
