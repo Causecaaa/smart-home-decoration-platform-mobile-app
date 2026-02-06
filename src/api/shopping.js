@@ -97,6 +97,13 @@ export function checkoutStageOrder(stageId) {
     })
 }
 
+export function getOrders(stageId) {
+    return request({
+        url: `/stage-order/${stageId}/orders`,
+        method: 'GET'
+    })
+}
+
 /**
  * 支付订单
  * @param {number} orderId - 订单ID

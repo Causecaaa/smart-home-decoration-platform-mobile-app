@@ -11154,10 +11154,29 @@ This will fail in production.`);
       method: "GET"
     });
   }
+  function checkoutStageOrder(stageId) {
+    return request({
+      url: `/stage-order/${stageId}/checkout`,
+      method: "POST"
+    });
+  }
+  function getOrders(stageId) {
+    return request({
+      url: `/stage-order/${stageId}/orders`,
+      method: "GET"
+    });
+  }
+  function payStageOrder(orderId) {
+    return request({
+      url: `/stage-order/${orderId}/pay-order`,
+      method: "PATCH"
+    });
+  }
   const pageSize = 10;
   const _sfc_main$4 = {
     __name: "Product",
-    setup(__props, { expose: __expose }) {
+    emits: ["checkout-success"],
+    setup(__props, { expose: __expose, emit: __emit }) {
       __expose();
       const stageId = vue.ref(null);
       const searchParams = vue.ref({
@@ -11223,7 +11242,11 @@ This will fail in production.`);
           page,
           size: pageSize
         });
-        productList.value = res.content || [];
+        productList.value = (res.content || []).map((product) => ({
+          ...product,
+          imageUrl: product.image_url ? `${BASE_URL}${product.image_url}` : ""
+          // 拼接完整URL
+        }));
         totalPages.value = res.totalPages || 0;
         totalElements.value = res.totalElements || 0;
         currentPage.value = page;
@@ -11244,11 +11267,30 @@ This will fail in production.`);
         cart.value = await getCart(stageId.value);
       };
       const addToCart = async (product) => {
-        await addCartItem(stageId.value, {
-          productId: product.productId,
-          quantity: 1
-        });
-        loadCart();
+        formatAppLog("log", "at src/components/mall/Product.vue:191", "尝试加入购物车:", product);
+        try {
+          await addCartItem(stageId.value, {
+            productId: product.productId,
+            quantity: 1
+          });
+          loadCart();
+          uni.showToast({ title: "已加入购物车", icon: "success" });
+        } catch (error) {
+          formatAppLog("error", "at src/components/mall/Product.vue:200", "加入购物车失败:", error);
+          uni.showToast({ title: "加入购物车失败", icon: "none" });
+        }
+      };
+      const emit = __emit;
+      const handleCheckout = async () => {
+        try {
+          const orderInfo = await checkoutStageOrder(stageId.value);
+          formatAppLog("log", "at src/components/mall/Product.vue:211", "结算成功:", orderInfo);
+          uni.showToast({ title: "结算成功", icon: "success" });
+          emit("checkout-success");
+        } catch (error) {
+          formatAppLog("error", "at src/components/mall/Product.vue:217", "结算失败:", error);
+          uni.showToast({ title: "结算失败", icon: "none" });
+        }
       };
       const increment = async (item) => {
         await updateCartItem(stageId.value, item.id, {
@@ -11267,7 +11309,7 @@ This will fail in production.`);
         loadCart();
       };
       onLoad((options) => {
-        formatAppLog("log", "at src/components/mall/Product.vue:196", "页面参数 option1s:", options);
+        formatAppLog("log", "at src/components/mall/Product.vue:242", "页面参数 option1s:", options);
         if (!options.stageId) {
           uni.showToast({ title: "缺少 stageId 参数", icon: "none" });
           return;
@@ -11280,7 +11322,7 @@ This will fail in production.`);
         return searchTimer;
       }, set searchTimer(v) {
         searchTimer = v;
-      }, loadProductList, changePage, cart, showCart, toggleCart, loadCart, addToCart, increment, decrement, computed: vue.computed, onMounted: vue.onMounted, ref: vue.ref, watch: vue.watch, get onLoad() {
+      }, loadProductList, changePage, cart, showCart, toggleCart, loadCart, addToCart, emit, handleCheckout, increment, decrement, computed: vue.computed, onMounted: vue.onMounted, ref: vue.ref, watch: vue.watch, get onLoad() {
         return onLoad;
       }, get onShow() {
         return onShow;
@@ -11294,6 +11336,10 @@ This will fail in production.`);
         return removeCartItem;
       }, get updateCartItem() {
         return updateCartItem;
+      }, get checkoutStageOrder() {
+        return checkoutStageOrder;
+      }, get BASE_URL() {
+        return BASE_URL;
       } };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
@@ -11314,7 +11360,7 @@ This will fail in production.`);
             vue.createElementVNode(
               "view",
               { class: "picker-box" },
-              "物料类型：" + vue.toDisplayString($setup.selectedMaterialTypeLabel),
+              "物料：" + vue.toDisplayString($setup.selectedMaterialTypeLabel),
               1
               /* TEXT */
             )
@@ -11468,7 +11514,10 @@ This will fail in production.`);
           1
           /* TEXT */
         ),
-        vue.createElementVNode("text", { class: "checkout-btn" }, "去结算")
+        vue.createElementVNode("text", {
+          class: "checkout-btn",
+          onClick: $setup.handleCheckout
+        }, "去结算")
       ]),
       $setup.showCart ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 3,
@@ -11479,19 +11528,49 @@ This will fail in production.`);
           null,
           vue.renderList($setup.cart.items, (item) => {
             return vue.openBlock(), vue.createElementBlock("view", {
-              key: item.id
+              key: item.id,
+              class: "cart-item"
             }, [
-              vue.createElementVNode(
-                "text",
-                null,
-                vue.toDisplayString(item.productName) + " x " + vue.toDisplayString(item.quantity),
-                1
-                /* TEXT */
-              ),
-              vue.createElementVNode("view", { class: "cart-item-btns" }, [
+              item.image_url ? (vue.openBlock(), vue.createElementBlock("image", {
+                key: 0,
+                src: $setup.BASE_URL + item.image_url,
+                class: "cart-item-image",
+                mode: "aspectFill"
+              }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true),
+              vue.createElementVNode("view", { class: "cart-item-info" }, [
+                vue.createElementVNode(
+                  "text",
+                  { class: "cart-item-name" },
+                  vue.toDisplayString(item.productName),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "text",
+                  { class: "cart-item-brand" },
+                  "品牌：" + vue.toDisplayString(item.brand),
+                  1
+                  /* TEXT */
+                ),
+                vue.createElementVNode(
+                  "text",
+                  { class: "cart-item-price" },
+                  "单价：¥" + vue.toDisplayString(item.price),
+                  1
+                  /* TEXT */
+                )
+              ]),
+              vue.createElementVNode("view", { class: "cart-item-controls" }, [
                 vue.createElementVNode("button", {
                   onClick: vue.withModifiers(($event) => $setup.decrement(item), ["stop"])
                 }, "-", 8, ["onClick"]),
+                vue.createElementVNode(
+                  "text",
+                  { class: "cart-item-quantity" },
+                  vue.toDisplayString(item.quantity),
+                  1
+                  /* TEXT */
+                ),
                 vue.createElementVNode("button", {
                   onClick: vue.withModifiers(($event) => $setup.increment(item), ["stop"])
                 }, "+", 8, ["onClick"])
@@ -11509,291 +11588,163 @@ This will fail in production.`);
     __name: "Order",
     setup(__props, { expose: __expose }) {
       __expose();
-      const stageId = vue.ref(null);
-      const searchParams = vue.ref({
-        materialType: null,
-        mainCategory: null,
-        subCategory: null,
-        keyword: ""
-      });
-      const productList = vue.ref([]);
-      const totalPages = vue.ref(0);
-      const currentPage = vue.ref(0);
-      const totalElements = vue.ref(0);
-      const pageSize2 = vue.ref(10);
-      const materialTypes = [
-        { label: "全部", value: null },
-        { label: "主材", value: 1 },
-        { label: "辅材", value: 2 }
-      ];
-      const categoriesMap = {
-        1: { FLOOR: ["全部", "TILES", "WOOD_FLOOR", "COMPOSITE_FLOOR", "STONE"], WALL: ["全部", "EMULSION_PAINT", "WALLPAPER", "ARTISTIC_COATING", "DIATOM_MUDE"], CEILING: ["全部", "PLASTERBOARD_CEILING", "INTEGRATED_CEILING", "ALUMINUM_SCREW_CEILING", "ORIGINAL_TOP_BRUSH_WHITE", "WOODEN_DECORATIVE_CEILING"], CABINET: ["全部", "SOLID_WOOD_PARTICLE_BOARD", "MULTI_LAYER_SOLID_WOOD_BOARD", "DENSITY_BOARD", "STAINLESS_STEEL", "ACRYLIC"] },
-        2: { AUX: ["全部", "ADHESIVE", "WATERPROOF", "PUTTY", "KEEL"] }
-      };
-      const categoriesLabelMap = { FLOOR: "地面", WALL: "墙面", CEILING: "吊顶", CABINET: "橱柜", AUX: "辅材", TILES: "抛釉瓷砖", WOOD_FLOOR: "多层实木地板", COMPOSITE_FLOOR: "复合强化地板", STONE: "天然大理石", EMULSION_PAINT: "乳胶漆", WALLPAPER: "壁纸", ARTISTIC_COATING: "艺术涂料", DIATOM_MUDE: "硅藻泥", PLASTERBOARD_CEILING: "石膏板吊顶", INTEGRATED_CEILING: "集成吊顶", ALUMINUM_SCREW_CEILING: "铝扣板吊顶", ORIGINAL_TOP_BRUSH_WHITE: "原顶刷白", WOODEN_DECORATIVE_CEILING: "木饰面吊顶", SOLID_WOOD_PARTICLE_BOARD: "实木颗粒板", MULTI_LAYER_SOLID_WOOD_BOARD: "多层实木板", DENSITY_BOARD: "密度板", STAINLESS_STEEL: "不锈钢柜体", ACRYLIC: "亚克力门板", ADHESIVE: "瓷砖胶", WATERPROOF: "防水涂料", PUTTY: "腻子粉", KEEL: "龙骨" };
-      const selectedMaterialType = vue.ref(null);
-      const selectedMainCategory = vue.ref(null);
-      const selectedSubCategory = vue.ref(null);
-      const selectedMaterialTypeLabel = vue.computed(() => {
-        var _a;
-        return ((_a = materialTypes.find((m) => m.value === selectedMaterialType.value)) == null ? void 0 : _a.label) || "全部";
-      });
-      const mainCategoryOptions = vue.computed(() => selectedMaterialType.value ? Object.keys(categoriesMap[selectedMaterialType.value]).map((k) => ({ label: categoriesLabelMap[k], value: k })).concat({ label: "全部", value: null }) : [{ label: "全部", value: null }]);
-      const subCategoryOptions = vue.computed(() => selectedMaterialType.value && selectedMainCategory.value ? categoriesMap[selectedMaterialType.value][selectedMainCategory.value].map((k) => ({ label: categoriesLabelMap[k] || k, value: k === "全部" ? null : k })) : [{ label: "全部", value: null }]);
-      const selectedMainCategoryLabel = vue.computed(() => selectedMainCategory.value ? categoriesLabelMap[selectedMainCategory.value] || selectedMainCategory.value : "全部");
-      const selectedSubCategoryLabel = vue.computed(() => selectedSubCategory.value ? categoriesLabelMap[selectedSubCategory.value] || selectedSubCategory.value : "全部");
-      const onMaterialTypeChange = (e) => {
-        selectedMaterialType.value = materialTypes[e.detail.value].value;
-        selectedMainCategory.value = null;
-        selectedSubCategory.value = null;
-        loadProductList(0);
-      };
-      const onMainCategoryChange = (e) => {
-        selectedMainCategory.value = mainCategoryOptions.value[e.detail.value].value;
-        selectedSubCategory.value = null;
-        loadProductList(0);
-      };
-      const onSubCategoryChange = (e) => {
-        selectedSubCategory.value = subCategoryOptions.value[e.detail.value].value;
-        loadProductList(0);
-      };
-      vue.watch(() => searchParams.value.keyword, () => {
-        loadProductList(0);
-      });
-      const loadProductList = async (page = 0) => {
-        var _a;
+      const stageId = vue.ref(0);
+      const orders = vue.ref([]);
+      const loadOrders = async () => {
         try {
-          const res = await getProductList({
-            materialType: selectedMaterialType.value,
-            mainCategory: selectedMainCategory.value,
-            subCategory: selectedSubCategory.value,
-            keyword: searchParams.value.keyword,
-            page,
-            size: pageSize2.value
-          });
-          productList.value = res.content || [];
-          totalPages.value = res.totalPages || 0;
-          totalElements.value = res.totalElements || 0;
-          currentPage.value = ((_a = res.pageable) == null ? void 0 : _a.pageNumber) || page;
-        } catch (e) {
-          formatAppLog("error", "at src/components/mall/Order.vue:136", e);
-          uni.showToast({ title: "加载失败", icon: "none" });
+          const res = await getOrders(stageId.value);
+          orders.value = res || [];
+        } catch (error) {
+          formatAppLog("error", "at src/components/mall/Order.vue:57", "获取订单失败:", error);
+          uni.showToast({ title: "获取订单失败", icon: "none" });
         }
       };
-      const changePage = (page) => {
-        const p = Math.max(Math.min(page, totalPages.value - 1), 0);
-        loadProductList(p);
-      };
-      const toggleCart = () => {
-        showCart.value = !showCart.value;
-      };
-      const goToProductDetail = (productId) => {
-        uni.navigateTo({ url: `/pages/product/detail?productId=${productId}` });
-      };
-      const cartItems = vue.ref([]);
-      const showCart = vue.ref(false);
-      const cartCount = vue.computed(() => cartItems.value.reduce((s, i) => s + i.quantity, 0));
-      const cartTotal = vue.computed(() => cartItems.value.reduce((s, i) => s + i.quantity * i.price, 0));
-      const addToCart = async (product) => {
-        const exist = cartItems.value.find((i) => i.productId === product.productId);
-        if (exist)
-          exist.quantity += 1;
-        else
-          cartItems.value.push({ productId: product.productId, name: product.name, price: product.price, quantity: 1 });
-        try {
-          await addCartItem(stageId.value, { productId: product.productId, quantity: 1 });
-        } catch (e) {
-          formatAppLog("error", "at src/components/mall/Order.vue:161", e);
-        }
-      };
-      const increment = async (item) => {
-        item.quantity += 1;
-        try {
-          await updateCartItem(stageId.value, item.productId, item.quantity);
-        } catch (e) {
-          formatAppLog("error", "at src/components/mall/Order.vue:167", e);
-        }
-      };
-      const decrement = async (item) => {
-        if (item.quantity > 1) {
-          item.quantity -= 1;
-          try {
-            await updateCartItem(stageId.value, item.productId, item.quantity);
-          } catch (e) {
-            formatAppLog("error", "at src/components/mall/Order.vue:172", e);
-          }
-        } else {
-          cartItems.value = cartItems.value.filter((i) => i.productId !== item.productId);
-          try {
-            await removeCartItem(stageId.value, item.productId);
-          } catch (e) {
-            formatAppLog("error", "at src/components/mall/Order.vue:175", e);
-          }
-        }
-      };
-      const loadCart = async () => {
-        try {
-          const res = await getCart(stageId.value);
-          if (res.items) {
-            cartItems.value = res.items.map((i) => ({
-              productId: i.productId,
-              name: i.productName,
-              price: i.price,
-              quantity: i.quantity
-            }));
-          }
-        } catch (e) {
-          formatAppLog("error", "at src/components/mall/Order.vue:192", "加载购物车失败", e);
-        }
-      };
-      onLoad(async (options) => {
+      onLoad((options) => {
+        formatAppLog("log", "at src/components/mall/Order.vue:64", "页面参数 options:", options);
         if (!options.stageId) {
           uni.showToast({ title: "缺少 stageId 参数", icon: "none" });
           return;
         }
         stageId.value = Number(options.stageId);
-        await loadProductList(0);
-        await loadCart();
       });
-      const __returned__ = { stageId, searchParams, productList, totalPages, currentPage, totalElements, pageSize: pageSize2, materialTypes, categoriesMap, categoriesLabelMap, selectedMaterialType, selectedMainCategory, selectedSubCategory, selectedMaterialTypeLabel, mainCategoryOptions, subCategoryOptions, selectedMainCategoryLabel, selectedSubCategoryLabel, onMaterialTypeChange, onMainCategoryChange, onSubCategoryChange, loadProductList, changePage, toggleCart, goToProductDetail, cartItems, showCart, cartCount, cartTotal, addToCart, increment, decrement, loadCart, ref: vue.ref, computed: vue.computed, watch: vue.watch, get onLoad() {
+      onShow(() => {
+        loadOrders();
+      });
+      const getStatusText = (status) => {
+        const statusMap = {
+          "CREATED": "待支付",
+          "PAID": "已支付",
+          "SHIPPED": "已发货",
+          "DELIVERED": "已完成"
+        };
+        return statusMap[status] || status;
+      };
+      const getStatusClass = (status) => {
+        return `status-${status.toLowerCase()}`;
+      };
+      const handlePay = async (orderId) => {
+        try {
+          await payStageOrder(orderId);
+          uni.showToast({ title: "支付成功", icon: "success" });
+          loadOrders();
+        } catch (error) {
+          formatAppLog("error", "at src/components/mall/Order.vue:96", "支付失败:", error);
+          uni.showToast({ title: "支付失败", icon: "none" });
+        }
+      };
+      const __returned__ = { stageId, orders, loadOrders, getStatusText, getStatusClass, handlePay, get BASE_URL() {
+        return BASE_URL;
+      }, get getOrders() {
+        return getOrders;
+      }, get payStageOrder() {
+        return payStageOrder;
+      }, get onLoad() {
         return onLoad;
-      }, get getProductList() {
-        return getProductList;
-      }, get addCartItem() {
-        return addCartItem;
-      }, get getCart() {
-        return getCart;
-      }, get updateCartItem() {
-        return updateCartItem;
-      }, get removeCartItem() {
-        return removeCartItem;
-      } };
+      }, get onShow() {
+        return onShow;
+      }, ref: vue.ref };
       Object.defineProperty(__returned__, "__isScriptSetup", { enumerable: false, value: true });
       return __returned__;
     }
   };
   function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "product-container" }, [
-      vue.createElementVNode("view", { class: "filter-section" }, [
-        vue.createElementVNode(
-          "picker",
-          {
-            mode: "selector",
-            range: $setup.materialTypes,
-            "range-key": "label",
-            onChange: $setup.onMaterialTypeChange
-          },
-          [
-            vue.createElementVNode(
-              "view",
-              { class: "picker-box" },
-              "物料类型：" + vue.toDisplayString($setup.selectedMaterialTypeLabel),
-              1
-              /* TEXT */
-            )
-          ],
-          32
-          /* NEED_HYDRATION */
-        ),
-        vue.createElementVNode("picker", {
-          mode: "selector",
-          range: $setup.mainCategoryOptions,
-          "range-key": "label",
-          onChange: $setup.onMainCategoryChange
-        }, [
-          vue.createElementVNode(
-            "view",
-            { class: "picker-box" },
-            "主分类：" + vue.toDisplayString($setup.selectedMainCategoryLabel),
-            1
-            /* TEXT */
-          )
-        ], 40, ["range"]),
-        vue.createElementVNode("picker", {
-          mode: "selector",
-          range: $setup.subCategoryOptions,
-          "range-key": "label",
-          onChange: $setup.onSubCategoryChange
-        }, [
-          vue.createElementVNode(
-            "view",
-            { class: "picker-box" },
-            "辅分类：" + vue.toDisplayString($setup.selectedSubCategoryLabel),
-            1
-            /* TEXT */
-          )
-        ], 40, ["range"])
-      ]),
-      vue.createElementVNode("view", { class: "search-section" }, [
-        vue.withDirectives(vue.createElementVNode(
-          "input",
-          {
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => $setup.searchParams.keyword = $event),
-            placeholder: "请输入关键字"
-          },
-          null,
-          512
-          /* NEED_PATCH */
-        ), [
-          [vue.vModelText, $setup.searchParams.keyword]
-        ])
-      ]),
-      $setup.productList.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "order-container" }, [
+      $setup.orders.length > 0 ? (vue.openBlock(), vue.createElementBlock("view", {
         key: 0,
-        class: "product-list"
+        class: "order-list"
       }, [
         (vue.openBlock(true), vue.createElementBlock(
           vue.Fragment,
           null,
-          vue.renderList($setup.productList, (product) => {
+          vue.renderList($setup.orders, (order) => {
             return vue.openBlock(), vue.createElementBlock("view", {
-              key: product.productId,
-              class: "product-card"
+              key: order.id,
+              class: "order-card"
             }, [
-              product.imageUrl ? (vue.openBlock(), vue.createElementBlock("image", {
-                key: 0,
-                src: product.imageUrl,
-                class: "product-image",
-                mode: "aspectFill"
-              }, null, 8, ["src"])) : vue.createCommentVNode("v-if", true),
-              vue.createElementVNode("view", { class: "product-info" }, [
+              vue.createElementVNode("view", { class: "order-header" }, [
                 vue.createElementVNode(
                   "text",
-                  { class: "product-name" },
-                  vue.toDisplayString(product.name),
+                  { class: "order-id" },
+                  "订单号: " + vue.toDisplayString(order.id),
                   1
                   /* TEXT */
                 ),
                 vue.createElementVNode(
                   "text",
-                  { class: "product-brand" },
-                  "品牌：" + vue.toDisplayString(product.brand),
-                  1
-                  /* TEXT */
-                ),
-                vue.createElementVNode(
-                  "text",
-                  { class: "product-price" },
-                  "¥" + vue.toDisplayString(product.price),
-                  1
-                  /* TEXT */
-                ),
-                vue.createElementVNode(
-                  "text",
-                  { class: "product-description" },
-                  vue.toDisplayString(product.description),
-                  1
-                  /* TEXT */
-                ),
-                product.stock < 100 ? (vue.openBlock(), vue.createElementBlock("text", {
-                  key: 0,
-                  class: "low-stock"
-                }, "库存紧张")) : vue.createCommentVNode("v-if", true)
+                  {
+                    class: vue.normalizeClass(["order-status", $setup.getStatusClass(order.status)])
+                  },
+                  vue.toDisplayString($setup.getStatusText(order.status)),
+                  3
+                  /* TEXT, CLASS */
+                )
               ]),
-              vue.createElementVNode("button", {
-                class: "add-to-cart",
-                onClick: vue.withModifiers(($event) => $setup.addToCart(product), ["stop"])
-              }, "加入购物车", 8, ["onClick"])
+              vue.createElementVNode("view", { class: "order-items" }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList(order.items, (item) => {
+                    return vue.openBlock(), vue.createElementBlock("view", {
+                      key: item.id,
+                      class: "order-item"
+                    }, [
+                      vue.createElementVNode("image", {
+                        src: $setup.BASE_URL + item.image_url,
+                        class: "item-image",
+                        mode: "aspectFill"
+                      }, null, 8, ["src"]),
+                      vue.createElementVNode("view", { class: "item-info" }, [
+                        vue.createElementVNode(
+                          "text",
+                          { class: "item-name" },
+                          vue.toDisplayString(item.productName),
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "item-brand" },
+                          "品牌: " + vue.toDisplayString(item.brand),
+                          1
+                          /* TEXT */
+                        ),
+                        vue.createElementVNode(
+                          "text",
+                          { class: "item-price" },
+                          "¥" + vue.toDisplayString(item.price),
+                          1
+                          /* TEXT */
+                        )
+                      ]),
+                      vue.createElementVNode("view", { class: "item-quantity" }, [
+                        vue.createElementVNode(
+                          "text",
+                          null,
+                          "x" + vue.toDisplayString(item.quantity),
+                          1
+                          /* TEXT */
+                        )
+                      ])
+                    ]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ]),
+              vue.createElementVNode("view", { class: "order-footer" }, [
+                vue.createElementVNode(
+                  "text",
+                  { class: "order-total" },
+                  "总计: ¥" + vue.toDisplayString(order.totalAmount),
+                  1
+                  /* TEXT */
+                ),
+                order.status === "CREATED" ? (vue.openBlock(), vue.createElementBlock("button", {
+                  key: 0,
+                  class: "pay-button",
+                  onClick: ($event) => $setup.handlePay(order.id)
+                }, " 立即支付 ", 8, ["onClick"])) : vue.createCommentVNode("v-if", true)
+              ])
             ]);
           }),
           128
@@ -11801,82 +11752,10 @@ This will fail in production.`);
         ))
       ])) : (vue.openBlock(), vue.createElementBlock("view", {
         key: 1,
-        class: "loading-text"
-      }, "暂无商品")),
-      $setup.totalPages > 1 ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 2,
-        class: "pagination"
+        class: "no-orders"
       }, [
-        vue.createElementVNode("button", {
-          disabled: $setup.currentPage <= 0,
-          onClick: _cache[1] || (_cache[1] = ($event) => $setup.changePage($setup.currentPage - 1))
-        }, "上一页", 8, ["disabled"]),
-        vue.createElementVNode(
-          "text",
-          null,
-          "第 " + vue.toDisplayString($setup.currentPage + 1) + " / " + vue.toDisplayString($setup.totalPages) + " 页，共 " + vue.toDisplayString($setup.totalElements) + " 条",
-          1
-          /* TEXT */
-        ),
-        vue.createElementVNode("button", {
-          disabled: $setup.currentPage + 1 >= $setup.totalPages,
-          onClick: _cache[2] || (_cache[2] = ($event) => $setup.changePage($setup.currentPage + 1))
-        }, "下一页", 8, ["disabled"])
-      ])) : vue.createCommentVNode("v-if", true),
-      vue.createElementVNode("view", {
-        class: "cart-bar",
-        onClick: _cache[3] || (_cache[3] = ($event) => $setup.showCart.value = !$setup.showCart.value)
-      }, [
-        vue.createElementVNode(
-          "text",
-          null,
-          "已选 " + vue.toDisplayString($setup.cartCount) + " 件",
-          1
-          /* TEXT */
-        ),
-        vue.createElementVNode(
-          "text",
-          null,
-          "总计 ¥" + vue.toDisplayString($setup.cartTotal.toFixed(2)),
-          1
-          /* TEXT */
-        ),
-        vue.createElementVNode("text", { class: "checkout-btn" }, "去结算")
-      ]),
-      $setup.showCart ? (vue.openBlock(), vue.createElementBlock("view", {
-        key: 3,
-        class: "cart-drawer"
-      }, [
-        (vue.openBlock(true), vue.createElementBlock(
-          vue.Fragment,
-          null,
-          vue.renderList($setup.cartItems, (item) => {
-            return vue.openBlock(), vue.createElementBlock("view", {
-              class: "cart-item",
-              key: item.productId
-            }, [
-              vue.createElementVNode(
-                "text",
-                null,
-                vue.toDisplayString(item.name) + " x " + vue.toDisplayString(item.quantity),
-                1
-                /* TEXT */
-              ),
-              vue.createElementVNode("view", null, [
-                vue.createElementVNode("button", {
-                  onClick: vue.withModifiers(($event) => $setup.decrement(item), ["stop"])
-                }, "-", 8, ["onClick"]),
-                vue.createElementVNode("button", {
-                  onClick: vue.withModifiers(($event) => $setup.increment(item), ["stop"])
-                }, "+", 8, ["onClick"])
-              ])
-            ]);
-          }),
-          128
-          /* KEYED_FRAGMENT */
-        )),
-        vue.createElementVNode("button", { class: "checkout-btn" }, "去结算")
-      ])) : vue.createCommentVNode("v-if", true)
+        vue.createElementVNode("text", null, "暂无订单")
+      ]))
     ]);
   }
   const Order = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$3], ["__scopeId", "data-v-97fe7711"], ["__file", "D:/CODE/mobile-app/src/components/mall/Order.vue"]]);
@@ -11886,6 +11765,9 @@ This will fail in production.`);
       __expose();
       const viewMode = vue.ref("product");
       const stageId = vue.ref(0);
+      const switchToOrderView = () => {
+        viewMode.value = "order";
+      };
       onLoad((options) => {
         if (!options.stageId) {
           uni.showToast({ title: "缺少 stageId", icon: "none" });
@@ -11893,7 +11775,7 @@ This will fail in production.`);
         }
         stageId.value = Number(options.stageId);
       });
-      const __returned__ = { viewMode, stageId, ref: vue.ref, get onLoad() {
+      const __returned__ = { viewMode, stageId, switchToOrderView, ref: vue.ref, get onLoad() {
         return onLoad;
       }, get onShow() {
         return onShow;
@@ -11932,7 +11814,8 @@ This will fail in production.`);
       vue.createElementVNode("view", { class: "view-container" }, [
         $setup.viewMode === "product" ? (vue.openBlock(), vue.createBlock($setup["Product"], {
           key: 0,
-          "stage-id": $setup.stageId
+          "stage-id": $setup.stageId,
+          onCheckoutSuccess: $setup.switchToOrderView
         }, null, 8, ["stage-id"])) : $setup.viewMode === "order" ? (vue.openBlock(), vue.createBlock($setup["Order"], {
           key: 1,
           "stage-id": $setup.stageId
@@ -11988,9 +11871,9 @@ This will fail in production.`);
             ...worker,
             avatarUrl: worker.avatarUrl ? `${BASE_URL}${worker.avatarUrl}` : null
           }));
-          formatAppLog("log", "at src/pages/stage/stage-detail.vue:237", "阶段详情数据加载成功", stageData.value, "工人列表:", workers.value);
+          formatAppLog("log", "at src/pages/stage/stage-detail.vue:253", "阶段详情数据加载成功", stageData.value, "工人列表:", workers.value);
         } catch (error) {
-          formatAppLog("error", "at src/pages/stage/stage-detail.vue:239", "加载阶段详情失败:", error);
+          formatAppLog("error", "at src/pages/stage/stage-detail.vue:255", "加载阶段详情失败:", error);
           uni.showToast({
             title: "加载阶段详情失败",
             icon: "none"
@@ -12006,7 +11889,7 @@ This will fail in production.`);
         });
       };
       const handleChatClick = (worker) => {
-        formatAppLog("log", "at src/pages/stage/stage-detail.vue:258", "与工人聊天:", worker.realName);
+        formatAppLog("log", "at src/pages/stage/stage-detail.vue:274", "与工人聊天:", worker.realName);
         uni.navigateTo({
           url: `/src/pages/contact/contactDetail?targetUserId=
     ${Number(worker.workerId)}&targetUserName=${worker.realName}&targetAvatarUrl=${worker.avatarUrl}`
@@ -12030,7 +11913,7 @@ This will fail in production.`);
         CABINET: "柜体"
       };
       onLoad((options) => {
-        formatAppLog("log", "at src/pages/stage/stage-detail.vue:290", "页面参数 options:", options);
+        formatAppLog("log", "at src/pages/stage/stage-detail.vue:306", "页面参数 options:", options);
         if (!options.houseId) {
           uni.showToast({ title: "缺少 houseId", icon: "none" });
           return;
@@ -12089,7 +11972,7 @@ This will fail in production.`);
                 });
                 await loadStageDetail();
               } catch (error) {
-                formatAppLog("error", "at src/pages/stage/stage-detail.vue:369", "开始阶段失败:", error);
+                formatAppLog("error", "at src/pages/stage/stage-detail.vue:385", "开始阶段失败:", error);
                 uni.showToast({
                   title: "开始阶段失败",
                   icon: "none"
@@ -12113,7 +11996,7 @@ This will fail in production.`);
                 });
                 await loadStageDetail();
               } catch (error) {
-                formatAppLog("error", "at src/pages/stage/stage-detail.vue:396", "验收阶段失败:", error);
+                formatAppLog("error", "at src/pages/stage/stage-detail.vue:412", "验收阶段失败:", error);
                 uni.showToast({
                   title: "验收阶段失败",
                   icon: "none"
@@ -12439,45 +12322,54 @@ This will fail in production.`);
                       /* TEXT */
                     )
                   ]),
-                  vue.createElementVNode("view", { class: "material-specs" }, [
-                    vue.createElementVNode(
-                      "text",
-                      { class: "spec-item" },
-                      "品牌：" + vue.toDisplayString(item.brand),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createElementVNode(
-                      "text",
-                      { class: "spec-item" },
-                      "单价：¥" + vue.toDisplayString(item.unitPrice),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createElementVNode(
-                      "text",
-                      { class: "spec-item" },
-                      "数量：" + vue.toDisplayString(item.quantity),
-                      1
-                      /* TEXT */
-                    ),
-                    vue.createElementVNode(
-                      "text",
-                      { class: "spec-item" },
-                      "小计：¥" + vue.toDisplayString(item.subtotal),
-                      1
-                      /* TEXT */
-                    ),
-                    item.remark ? (vue.openBlock(), vue.createElementBlock(
-                      "text",
-                      {
-                        key: 0,
-                        class: "spec-item remark"
-                      },
-                      "备注：" + vue.toDisplayString(item.remark),
-                      1
-                      /* TEXT */
-                    )) : vue.createCommentVNode("v-if", true)
+                  vue.createElementVNode("view", { class: "material-item-row" }, [
+                    vue.createElementVNode("view", { class: "material-specs" }, [
+                      vue.createElementVNode(
+                        "text",
+                        { class: "spec-item" },
+                        "品牌：" + vue.toDisplayString(item.brand),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "spec-item" },
+                        "单价：¥" + vue.toDisplayString(item.unitPrice),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "spec-item" },
+                        "数量：" + vue.toDisplayString(item.quantity),
+                        1
+                        /* TEXT */
+                      ),
+                      vue.createElementVNode(
+                        "text",
+                        { class: "spec-item" },
+                        "小计：¥" + vue.toDisplayString(item.subtotal),
+                        1
+                        /* TEXT */
+                      ),
+                      item.remark ? (vue.openBlock(), vue.createElementBlock(
+                        "text",
+                        {
+                          key: 0,
+                          class: "spec-item remark"
+                        },
+                        "备注：" + vue.toDisplayString(item.remark),
+                        1
+                        /* TEXT */
+                      )) : vue.createCommentVNode("v-if", true)
+                    ]),
+                    item.image_url ? (vue.openBlock(), vue.createElementBlock("image", {
+                      key: 0,
+                      src: `${$setup.BASE_URL}${item.image_url}`,
+                      class: "material-image",
+                      mode: "aspectFill",
+                      onClick: ($event) => $setup.previewImage(`${$setup.BASE_URL}${item.image_url}`)
+                    }, null, 8, ["src", "onClick"])) : vue.createCommentVNode("v-if", true)
                   ])
                 ]);
               }),

@@ -3,7 +3,7 @@
     <!-- 筛选 -->
     <view class="filter-section">
       <picker mode="selector" :range="materialTypes" range-key="label" @change="onMaterialTypeChange">
-        <view class="picker-box">物料类型：{{ selectedMaterialTypeLabel }}</view>
+        <view class="picker-box">物料：{{ selectedMaterialTypeLabel }}</view>
       </picker>
       <picker mode="selector" :range="mainCategoryOptions" range-key="label" @change="onMainCategoryChange">
         <view class="picker-box">主分类：{{ selectedMainCategoryLabel }}</view>
@@ -45,19 +45,33 @@
     <view class="cart-bar" @click="toggleCart">
       <text>已选 {{ cart.items.length }} 件</text>
       <text>总计 ¥{{ cart.totalAmount.toFixed(2) }}</text>
-      <text class="checkout-btn">去结算</text>
+      <text class="checkout-btn" @click="handleCheckout">去结算</text>
     </view>
 
     <!-- 浮层购物车 -->
     <view v-if="showCart" class="cart-drawer">
-      <view v-for="item in cart.items" :key="item.id">
-        <text>{{ item.productName }} x {{ item.quantity }}</text>
-        <view class="cart-item-btns">
+      <view v-for="item in cart.items" :key="item.id" class="cart-item">
+        <!-- 商品图片 -->
+        <image v-if="item.image_url" :src="BASE_URL + item.image_url" class="cart-item-image" mode="aspectFill"/>
+
+        <!-- 商品信息 -->
+        <view class="cart-item-info">
+          <text class="cart-item-name">{{ item.productName }}</text>
+          <text class="cart-item-brand">品牌：{{ item.brand }}</text>
+          <text class="cart-item-price">单价：¥{{ item.price }}</text>
+        </view>
+
+        <!-- 数量操作 -->
+        <view class="cart-item-controls">
           <button @click.stop="decrement(item)">-</button>
+          <text class="cart-item-quantity">{{ item.quantity }}</text>
           <button @click.stop="increment(item)">+</button>
         </view>
       </view>
     </view>
+
+
+
   </view>
 </template>
 
@@ -69,8 +83,10 @@ import {
   getCart,
   getProductList,
   removeCartItem,
-  updateCartItem
+  updateCartItem,
+  checkoutStageOrder
 } from '../../api/shopping'
+import {BASE_URL} from "../../config/apiConfig";
 
 /* 基础参数 */
 const stageId = ref(null)
@@ -128,7 +144,6 @@ watch(
     }
 )
 
-/* 加载商品 */
 const loadProductList = async (page = 0) => {
   const res = await getProductList({
     materialType: selectedMaterialType.value,
@@ -137,13 +152,19 @@ const loadProductList = async (page = 0) => {
     keyword: searchParams.value.keyword,
     page,
     size: pageSize
-  })
+  });
 
-  productList.value = res.content || []
-  totalPages.value = res.totalPages || 0
-  totalElements.value = res.totalElements || 0
-  currentPage.value = page
-}
+  // 处理商品列表，拼接完整图片URL
+  productList.value = (res.content || []).map(product => ({
+    ...product,
+    imageUrl: product.image_url ? `${BASE_URL}${product.image_url}` : '' // 拼接完整URL
+  }));
+
+  totalPages.value = res.totalPages || 0;
+  totalElements.value = res.totalElements || 0;
+  currentPage.value = page;
+};
+
 
 const changePage = page => {
   const p = Math.max(0, Math.min(page, totalPages.value - 1))
@@ -167,12 +188,37 @@ const loadCart = async () => {
 }
 
 const addToCart = async product => {
-  await addCartItem(stageId.value, {
-    productId: product.productId,
-    quantity: 1
-  })
-  loadCart()
+  console.log('尝试加入购物车:', product); // 添加日志
+  try {
+    await addCartItem(stageId.value, {
+      productId: product.productId,
+      quantity: 1
+    });
+    loadCart(); // 成功后重新加载购物车
+    uni.showToast({ title: '已加入购物车', icon: 'success' }); // 显示提示
+  } catch (error) {
+    console.error('加入购物车失败:', error);
+    uni.showToast({ title: '加入购物车失败', icon: 'none' });
+  }
+};
+
+const emit = defineEmits(['checkout-success']);
+
+const handleCheckout = async () => {
+  try {
+    // 调用结算API
+    const orderInfo = await checkoutStageOrder(stageId.value)
+    console.log('结算成功:', orderInfo)
+    uni.showToast({ title: '结算成功', icon: 'success' })
+
+    // 触发事件通知父组件切换视图
+    emit('checkout-success');
+  } catch (error) {
+    console.error('结算失败:', error)
+    uni.showToast({ title: '结算失败', icon: 'none' })
+  }
 }
+
 
 const increment = async item => {
   await updateCartItem(stageId.value, item.id, {
@@ -216,5 +262,79 @@ onLoad((options) =>{
 .loading-text{text-align:center;color:#999;font-size:24rpx;margin-top:32rpx}
 .pagination{display:flex;justify-content:center;align-items:center;gap:12rpx;margin-top:24rpx;button{padding:8rpx 12rpx;border-radius:6rpx;border:1px solid #409eff;background:#fff;color:#409eff;&:disabled{border-color:#ccc;color:#ccc}}text{font-size:24rpx}}
 .cart-bar{position:fixed;bottom:0;left:0;right:0;height:100rpx;background:#fff;border-top:1px solid #ddd;display:flex;justify-content:space-around;align-items:center;font-size:28rpx;z-index:100;box-shadow:0 -2rpx 8rpx rgba(0,0,0,0.1);.checkout-btn{background:#409eff;color:#fff;padding:12rpx 20rpx;border-radius:12rpx}}
-.cart-drawer{position:fixed;bottom:100rpx;left:0;right:0;max-height:400rpx;background:#fff;border-top:1px solid #ddd;box-shadow:0 -2rpx 12rpx rgba(0,0,0,0.1);padding:16rpx;overflow-y:auto;.cart-item{display:flex;justify-content:space-between;margin-bottom:12rpx}.cart-item-btns button{margin:0 8rpx}.checkout-btn{width:100%;padding:12rpx;background-color:#409eff;color:#fff;border-radius:12rpx;text-align:center}}
+.cart-drawer {
+  position: fixed;
+  bottom: 100rpx;
+  left: 0;
+  right: 0;
+  max-height: 600rpx;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.1);
+  padding: 16rpx;
+  overflow-y: auto;
+
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16rpx 0;
+    border-bottom: 1rpx solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4rpx;
+
+      .cart-item-name {
+        font-size: 28rpx;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .cart-item-brand,
+      .cart-item-price {
+        font-size: 24rpx;
+        color: #666;
+      }
+    }
+
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+
+      button {
+        width: 48rpx;
+        height: 48rpx;
+        border-radius: 50%;
+        background-color: #409eff;
+        color: #fff;
+        font-size: 24rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .cart-item-quantity {
+        font-size: 28rpx;
+        font-weight: bold;
+        color: #333;
+      }
+    }
+  }
+}
+
+.cart-item-image {
+  width: 120rpx;  // 与商品列表中的图片宽度保持一致
+  height: 120rpx; // 与商品列表中的图片高度保持一致
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+}
+
 </style>

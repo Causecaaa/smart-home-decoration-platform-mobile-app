@@ -16,13 +16,16 @@
         >
           订单
         </text>
-
       </view>
     </view>
 
     <!-- 切换组件 -->
     <view class="view-container">
-      <Product v-if="viewMode === 'product'" :stage-id="stageId" />
+      <Product
+          v-if="viewMode === 'product'"
+          :stage-id="stageId"
+          @checkout-success="switchToOrderView"
+      />
       <Order v-else-if="viewMode === 'order'" :stage-id="stageId" />
     </view>
   </view>
@@ -35,6 +38,11 @@ import Product from "../../components/mall/Product.vue";
 import Order from "../../components/mall/Order.vue";
 const viewMode = ref('product');
 const stageId = ref(0);
+
+// 切换到订单视图
+const switchToOrderView = () => {
+  viewMode.value = 'order';
+};
 
 onLoad((options) => {
   if (!options.stageId) {

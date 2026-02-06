@@ -125,16 +125,32 @@
               <text class="material-type">{{ getMainMaterialTypeText(item.type) }}</text>
               <text class="material-display-name">{{ item.displayName }}</text>
             </view>
-            <view class="material-specs">
-              <text class="spec-item">品牌：{{ item.brand }}</text>
-              <text class="spec-item">单价：¥{{ item.unitPrice }}</text>
-              <text class="spec-item">数量：{{ item.quantity }}</text>
-              <text class="spec-item">小计：¥{{ item.subtotal }}</text>
-              <text v-if="item.remark" class="spec-item remark">备注：{{ item.remark }}</text>
+
+            <view class="material-item-row">
+
+              <view class="material-specs">
+                <text class="spec-item">品牌：{{ item.brand }}</text>
+                <text class="spec-item">单价：¥{{ item.unitPrice }}</text>
+                <text class="spec-item">数量：{{ item.quantity }}</text>
+                <text class="spec-item">小计：¥{{ item.subtotal }}</text>
+                <text v-if="item.remark" class="spec-item remark">备注：{{ item.remark }}</text>
+              </view>
+
+              <image
+                  v-if="item.image_url"
+                  :src="`${BASE_URL}${item.image_url}`"
+                  class="material-image"
+                  mode="aspectFill"
+                  @tap="previewImage(`${BASE_URL}${item.image_url}`)"
+              />
+
             </view>
+
           </view>
         </view>
       </view>
+
+
 
       <!-- 如果没有已购买的主材显示提示 -->
       <view v-else-if="stageData.decorationType === 'HALF' && stageData.mainMaterials && stageData.mainMaterials.length > 0" class="no-materials">
@@ -565,23 +581,39 @@ const handleAcceptStage = async () => {
     }
   }
 
-  .material-specs {
+  .material-item-row {
     display: flex;
-    flex-direction: column;
-    gap: 8rpx;
+    gap: 24rpx;
+    align-items: flex-start;
 
-    .remark {
-      font-size: 24rpx;
-      color: #999; // 使用浅灰色突出备注信息
-      margin-top: 8rpx;
+    .material-image {
+      width: 190rpx;
+      height: 190rpx;
+      border-radius: 12rpx;
+      background-color: #f0f0f0;
+      flex-shrink: 0;
     }
 
-    .spec-item {
-      font-size: 24rpx;
-      color: #666;
-    }
+
   }
 }
+.material-specs {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr); // 两列布局，如果想四列可以改
+  gap: 12rpx;
+
+  .spec-item {
+    font-size: 24rpx;
+    color: #666;
+  }
+
+  .remark {
+    grid-column: span 2; // 备注占满整行
+    color: #999;
+  }
+}
+
 
 .aux-material-card {
   border: 1rpx solid #dcdcdc;
