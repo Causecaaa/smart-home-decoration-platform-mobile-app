@@ -185,10 +185,6 @@
                         <text v-if="scheme.cabinetArea">({{ scheme.cabinetArea }}㎡)</text>
                       </text>
                     </view>
-                    <view class="material-item">
-                      <text class="material-label">备注:</text>
-                      <text class="material-value">{{ scheme.remark || '无' }}</text>
-                    </view>
                   </view>
 
 

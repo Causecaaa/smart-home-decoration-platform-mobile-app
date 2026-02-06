@@ -163,6 +163,11 @@
   flex-direction: column;
   gap: 0.25rem;
 }
+.material-item .material-specs .remark {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 0.25rem;
+}
 .material-item .material-specs .spec-item {
   font-size: 0.75rem;
   color: #666;
@@ -199,6 +204,27 @@
 .aux-material-card .material-details .detail-item {
   font-size: 0.75rem;
   color: #666;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.375rem;
+}
+.section-header .section-title {
+  flex: 1;
+  /* 占满左边空间 */
+  font-size: 1rem;
+  font-weight: bold;
+  color: #1e1e2f;
+}
+.section-header .mall-button {
+  font-size: 0.75rem;
+  color: #fff;
+  background-color: #409eff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
 }
 .no-materials {
   text-align: center;

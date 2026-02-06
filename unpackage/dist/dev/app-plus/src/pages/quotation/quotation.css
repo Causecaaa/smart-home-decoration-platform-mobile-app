@@ -249,6 +249,11 @@
   flex-direction: column;
   gap: 0.25rem;
 }
+.room-card .material-item .material-specs .remark {
+  font-size: 0.6875rem;
+  color: #999;
+  margin-top: 0.25rem;
+}
 .room-card .material-item .material-specs .spec-item {
   font-size: 0.75rem;
   color: #666;

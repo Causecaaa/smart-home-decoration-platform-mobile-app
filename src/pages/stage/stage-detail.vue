@@ -87,7 +87,16 @@
 
       <!-- 主材列表 -->
       <view v-if="stageData.mainMaterials && stageData.mainMaterials.length > 0" class="materials-section">
-        <text class="section-title">主材清单</text>
+        <view class="section-header">
+          <text class="section-title">主材清单</text>
+          <button
+              v-if="stageData.decorationType === 'HALF'"
+              class="mall-button"
+              @click="goToMall"
+          >
+            前往商城
+          </button>
+        </view>
         <view v-if="stageData.decorationType === 'HALF'" class="half-package-hint">
           <text class="hint-text">**半包装修不包含主材部分**<br>**以下主材仅供参考，请自行购买主材**</text>
         </view>
@@ -99,12 +108,40 @@
             </view>
             <view class="material-specs">
               <text class="spec-item">面积：{{ item.area }}㎡</text>
-              <!-- 新增 remark 显示 -->
               <text v-if="item.remark" class="spec-item remark">备注：{{ item.remark }}</text>
             </view>
           </view>
         </view>
       </view>
+
+
+
+      <!-- 已购买主材清单 -->
+      <view v-if="stageData.purchasedMainMaterials && stageData.purchasedMainMaterials.length > 0" class="materials-section">
+        <text class="section-title">已购买主材清单</text>
+        <view class="materials-list">
+          <view v-for="(item, index) in stageData.purchasedMainMaterials" :key="index" class="material-item">
+            <view class="material-info">
+              <text class="material-type">{{ getMainMaterialTypeText(item.type) }}</text>
+              <text class="material-display-name">{{ item.displayName }}</text>
+            </view>
+            <view class="material-specs">
+              <text class="spec-item">品牌：{{ item.brand }}</text>
+              <text class="spec-item">单价：¥{{ item.unitPrice }}</text>
+              <text class="spec-item">数量：{{ item.quantity }}</text>
+              <text class="spec-item">小计：¥{{ item.subtotal }}</text>
+              <text v-if="item.remark" class="spec-item remark">备注：{{ item.remark }}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 如果没有已购买的主材显示提示 -->
+      <view v-else-if="stageData.decorationType === 'HALF' && stageData.mainMaterials && stageData.mainMaterials.length > 0" class="no-materials">
+        <text class="no-materials-text">暂无已购买的主材</text>
+      </view>
+
+
 
 
       <!-- 辅材列表 -->
@@ -157,6 +194,8 @@ import { startStage, acceptStage } from '../../api/stage';
 const stageData = ref({
   mainMaterials: [],
   auxiliaryMaterials: [],
+  purchasedMainMaterials: [], // 新增字段
+  purchasedAuxiliaryMaterials: [], // 可选：如果需要显示已购买的辅材
   order: null,
   stageName: '',
   status: '',
@@ -165,8 +204,9 @@ const stageData = ref({
   estimatedDay: 0,
   start_at: null,
   end_at: null,
-  decorationType: '' // 新增字段
+  decorationType: ''
 });
+
 
 const houseId = ref(null);
 const stageId = ref(null);
@@ -186,7 +226,8 @@ const loadStageDetail = async () => {
     stageData.value = {
       ...stageData.value,
       ...res.stageInfo,
-      decorationType: res.decorationType // 存储装修类型
+      decorationType: res.decorationType,
+      purchasedMainMaterials: res.stageInfo.purchasedMainMaterials || [] // 提取已购买主材
     };
     // 处理工人信息
     workers.value = (res.workerResponse?.workers || []).map(worker => ({
@@ -203,6 +244,13 @@ const loadStageDetail = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const goToMall = () => {
+  // 跳转到商城页面，可以根据实际路由调整
+  uni.navigateTo({
+    url: `/src/pages/mall/mall?stageId=${stageData.value.stageId}` // 示例商城页面路径
+  });
 };
 
 
@@ -573,6 +621,34 @@ const handleAcceptStage = async () => {
     }
   }
 }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.section-header .section-title {
+  flex: 1; /* 占满左边空间 */
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1e1e2f;
+}
+
+.section-header .mall-button {
+  font-size: 24rpx;
+  color: #fff;
+  background-color: #409eff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 8rpx 16rpx;
+  cursor: pointer;
+}
+
+
+
+
+
 
 .no-materials {
   text-align: center;

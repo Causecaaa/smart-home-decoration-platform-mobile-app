@@ -69,6 +69,8 @@ export function uploadRequest({ url, filePath, formData = {} }) {
 
 function buildQuery(params = {}) {
     return Object.keys(params)
+        .filter(key => params[key] !== null && params[key] !== '') // 过滤无效参数
         .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-        .join('&')
+        .join('&');
 }
+

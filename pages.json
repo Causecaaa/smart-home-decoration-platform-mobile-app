@@ -70,12 +70,20 @@
 		{ "path": "src/pages/post/edit", "style": { "navigationBarTitleText": "编辑"}},
 		{ "path": "src/pages/quotation/quotation", "style": { "navigationBarTitleText": "报价"}},
 		{ "path": "src/pages/stage/stage", "style": { "navigationBarTitleText": "施工"}},
+		{ "path": "src/pages/mall/mall", "style": { "navigationBarTitleText": "材料"}},
 		{
 			"path": "src/pages/stage/stage-detail",
 			"style": {
 				"navigationBarTitleText": "详情"
 			}
+		},
+		{
+			"path": "src/pages/mall/product",
+			"style": {
+				"navigationBarTitleText": "商品列表"
+			}
 		}
+
 
 
 
