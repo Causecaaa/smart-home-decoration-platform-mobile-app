@@ -35,9 +35,9 @@ export function cancelLeaveRequest(leaveDate){
     });
 }
 
-export function updateStage(houseId, stageId, stageUpdateRequest) {
+export function updateStage(stageId, stageUpdateRequest) {
     return request({
-        url: `/stage/${houseId}/${stageId}/update`,
+        url: `/stage/${stageId}/update`,
         method: 'POST',
         data: stageUpdateRequest
     });
@@ -65,11 +65,11 @@ export function getLaborMarket(stageId, minLevel, page = 0, size = 5) {
 //     private List<Long> workerIds;
 // }
 
-export function inviteWorkers(stageId, request) {
+export function inviteWorkers(stageId, request1) {
     return request({
         url: `/stage/${stageId}/invite-workers`,
         method: 'POST',
-        data: request
+        data: request1
     });
 }
 
