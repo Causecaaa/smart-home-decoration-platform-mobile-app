@@ -35,28 +35,29 @@
         </text>
 
         <!-- 主行动：跳转布局页面 -->
-        <view class="design-buttons">
+        <view class="design-buttons" v-if="house.decorationType !== 'LOOSE'">
           <button class="design-btn" @click="goLayoutPage(house.houseId)">布局设计</button>
           <button class="design-btn furniture-btn" @click="goFurniturePage(house)">家具设计</button>
         </view>
 
         <!-- 报价和施工按钮 -->
-        <view class="construction-buttons" v-if="house.canStartQuotation || house.canStartConstruction">
+        <view class="construction-buttons">
           <button
               class="construction-btn quotation-btn"
-              v-if="house.canStartQuotation"
+              v-if="house.canStartQuotation && house.decorationType !== 'LOOSE'"
               @click="startQuotation(house)"
           >
             报价
           </button>
           <button
               class="construction-btn construction-btn-only"
-              v-if="house.canStartConstruction"
+              v-if="house.canStartConstruction || house.decorationType === 'LOOSE'"
               @click="startConstruction(house)"
           >
             进入施工
           </button>
         </view>
+
       </view>
 
       <!-- 房屋列表为空时显示 -->

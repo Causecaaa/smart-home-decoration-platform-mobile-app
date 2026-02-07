@@ -17,7 +17,15 @@
 
       <!-- 阶段基本信息 -->
       <view class="basic-info-section">
-        <text class="section-title">阶段信息</text>
+        <view class="section-header">
+          <text class="section-title">阶段信息</text>
+          <button
+              class="mall-button"
+              @click="goToLaborMarket"
+          >
+            人才市场
+          </button>
+        </view>
         <view class="info-grid">
           <view class="info-item">
             <text class="label">主要工种</text>
@@ -29,7 +37,7 @@
           </view>
           <view class="info-item">
             <text class="label">预定开始时间</text>
-            <text class="value">{{ stageData.expectedStartAt }}</text>
+            <text class="value">{{ formatDate(stageData.expectedStartAt) }}</text>
           </view>
           <view class="info-item">
             <text class="label">预计天数</text>
@@ -83,6 +91,28 @@
           </view>
         </view>
       </view>
+
+      <!-- 推荐材料列表 -->
+      <view v-if="stageData.recommendedMaterialTypes && stageData.recommendedMaterialTypes.length > 0" class="materials-section">
+        <view class="section-header">
+          <text class="section-title">推荐完成</text>
+          <button
+              class="mall-button"
+              @click="goToMall"
+          >
+            商城
+          </button>
+        </view>
+        <view class="materials-list">
+          <view v-for="(type, index) in stageData.recommendedMaterialTypes" :key="index" class="material-item">
+            <view class="material-info">
+              <text class="material-type">{{ getMainMaterialTypeText(type) }}</text>
+              <text class="material-display-name">推荐购买该类型材料</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
 
 
       <!-- 主材列表 -->
@@ -178,7 +208,7 @@
       </view>
 
       <!-- 如果没有材料显示提示 -->
-      <view v-if="(!stageData.mainMaterials || stageData.mainMaterials.length === 0) &&
+      <view v-if="(! stageData.decorationType === 'LOOSE') && (!stageData.mainMaterials || stageData.mainMaterials.length === 0) &&
                  (!stageData.auxiliaryMaterials || stageData.auxiliaryMaterials.length === 0)"
             class="no-materials">
         <text class="no-materials-text">此阶段暂无材料清单</text>
@@ -193,6 +223,37 @@
       <button class="accept-button" @click="handleAcceptStage">验收</button>
     </view>
 
+    <!-- 修改弹窗 -->
+    <uni-popup ref="modifyPopup" type="center">
+      <view class="modal">
+        <view class="modal-header">
+          <text>修改阶段信息</text>
+          <text class="close" @click="closeModifyDialog">×</text>
+        </view>
+        <view class="modal-body">
+          <view class="form-item">
+            <label>所需人数：</label>
+            <input v-model="modifyData.requiredCount" placeholder="请输入所需人数" />
+          </view>
+          <view class="form-item">
+            <label>预计天数：</label>
+            <input v-model="modifyData.estimatedDay" placeholder="请输入预计天数" />
+          </view>
+          <view class="form-item">
+            <label>预定开始时间：</label>
+            <picker mode="date" :value="modifyData.expectedStartAt" @change="onDateChange">
+              <view class="picker">{{ modifyData.expectedStartAt || '请选择日期' }}</view>
+            </picker>
+          </view>
+        </view>
+        <view class="modal-footer">
+          <button class="cancel-btn" @click="closeModifyDialog">取消</button>
+          <button class="confirm-btn" @click="confirmModify">确认</button>
+        </view>
+      </view>
+    </uni-popup>
+
+
 
   </view>
 </template>
@@ -203,6 +264,7 @@ import { onLoad ,onShow} from '@dcloudio/uni-app';
 import {getStage, getStageDetail} from '../../api/stage';
 import { BASE_URL } from '../../config/apiConfig';
 import { startStage, acceptStage } from '../../api/stage';
+import {updateStage} from "../../api/worker";
 
 
 
@@ -234,6 +296,15 @@ const isStartable = computed(() => {
   const currentTime = new Date().getTime();
   return currentTime >= expectedStartTime;
 });
+// 格式化日期，只保留年月日
+const formatDate = (dateString) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 
 const loadStageDetail = async () => {
@@ -266,6 +337,12 @@ const goToMall = () => {
   // 跳转到商城页面，可以根据实际路由调整
   uni.navigateTo({
     url: `/src/pages/mall/mall?stageId=${stageData.value.stageId}` // 示例商城页面路径
+  });
+};
+
+const goToLaborMarket = () => {
+  uni.navigateTo({
+    url: `/src/pages/mall/labor-market?stageId=${stageData.value.stageId}` // 示例商城页面路径
   });
 };
 
@@ -359,12 +436,6 @@ const getMainMaterialTypeText = (type) => {
   return MAIN_MATERIAL_TYPE_MAP[type] || type;
 };
 
-// 格式化日期
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-};
 
 // 开始阶段
 const handleStartStage = async () => {
@@ -813,4 +884,117 @@ const handleAcceptStage = async () => {
     font-weight: bold;
   }
 }
+
+.modify-dialog {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  width: 80vw;
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24rpx;
+
+    .dialog-title {
+      font-size: 32rpx;
+      font-weight: bold;
+    }
+
+    .close {
+      font-size: 40rpx;
+      cursor: pointer;
+    }
+  }
+
+  .dialog-body {
+    input, .picker {
+      width: 100%;
+      padding: 16rpx;
+      margin-bottom: 16rpx;
+      border: 1rpx solid #ccc;
+      border-radius: 8rpx;
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 24rpx;
+
+    button {
+      padding: 12rpx 24rpx;
+      border-radius: 8rpx;
+      border: none;
+      color: #fff;
+      background-color: #409eff;
+    }
+  }
+}
+
+.modal {
+  background: #fff;
+  border-radius: 24rpx;
+  width: 80vw;
+  max-height: 80vh;
+  padding: 30rpx;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 24rpx;
+    padding-bottom: 24rpx;
+    border-bottom: 1rpx solid #eee;
+
+    .close {
+      cursor: pointer;
+      font-size: 40rpx;
+    }
+  }
+
+  .modal-body {
+    .form-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20rpx;
+
+      label {
+        font-size: 28rpx;
+        width: 180rpx;
+      }
+
+      input,
+      .picker {
+        flex: 1;
+        padding: 12rpx;
+        border: 1rpx solid #ccc;
+        border-radius: 8rpx;
+      }
+    }
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 24rpx;
+
+    button {
+      padding: 12rpx 24rpx;
+      border-radius: 8rpx;
+      border: none;
+      color: #fff;
+    }
+
+    .cancel-btn {
+      background-color: #ccc;
+    }
+
+    .confirm-btn {
+      background-color: #409eff;
+    }
+  }
+}
+
 </style>

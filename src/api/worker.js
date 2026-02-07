@@ -34,3 +34,49 @@ export function cancelLeaveRequest(leaveDate){
         }
     });
 }
+
+export function updateStage(houseId, stageId, stageUpdateRequest) {
+    return request({
+        url: `/stage/${houseId}/${stageId}/update`,
+        method: 'POST',
+        data: stageUpdateRequest
+    });
+}
+
+export function getLaborMarket(stageId, minLevel, page = 0, size = 5) {
+    return request({
+        url: '/worker/labor-market',
+        method: 'GET',
+        params: {
+            stageId,
+            minLevel,
+            page,
+            size
+        }
+    });
+}
+
+// 邀请工人接口
+// public class InviteWorkersRequest {
+//     @NotNull(message = "日薪不能为空")
+//     private BigDecimal dailyWage;
+//
+//     @NotEmpty(message = "工人列表不能为空")
+//     private List<Long> workerIds;
+// }
+
+export function inviteWorkers(stageId, request) {
+    return request({
+        url: `/stage/${stageId}/invite-workers`,
+        method: 'POST',
+        data: request
+    });
+}
+
+// 获取阶段邀请列表接口
+export function listStageInvites(stageId) {
+    return request({
+        url: `/stage/${stageId}/invites`,
+        method: 'GET'
+    });
+}
