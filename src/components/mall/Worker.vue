@@ -3,7 +3,7 @@
     <view class="basic-info-section">
       <view class="section-header">
         <text class="section-title">阶段信息</text>
-        <button class="mall-button" @click="openModifyDialog">修改</button>
+        <button class="mall-button " v-if="stageData.canEdit" @click="openModifyDialog">修改</button>
       </view>
       <view class="info-grid">
         <view class="info-item">
@@ -45,10 +45,18 @@
             </view>
           </view>
           <view class="worker-actions">
-            <button class="add-worker-btn" :disabled="isSelected(worker.userId)" @click.stop="addWorker(worker)">
-              +
-            </button>
+            <view v-if="worker.status === 'INVITED'" class="status-tag invited">✉️ 已邀请</view>
+            <view v-else-if="worker.status === 'WORKER_ACCEPTED'" class="status-tag accepted">✅ 已接受</view>
+            <view v-else-if="worker.status === 'WORKER_REJECTED'" class="status-tag rejected">❌ 已拒绝</view>
+            <view v-else
+                  class="checkbox"
+                  :class="{ checked: isSelected(worker.userId) }"
+                  @click.stop="toggleWorkerSelection(worker)"
+            >
+              <text v-if="isSelected(worker.userId)">✓</text>
+            </view>
           </view>
+
         </view>
       </view>
     </view>
@@ -322,6 +330,26 @@ const openModifyDialog = () => {
   modifyPopup.value?.open();
 };
 
+// 切换工人选中状态
+const toggleWorkerSelection = (worker) => {
+  const index = selectedWorkers.value.findIndex(item => item.userId === worker.userId);
+
+  if (index > -1) {
+    // 如果已选中，则取消选中
+    selectedWorkers.value.splice(index, 1);
+    uni.showToast({
+      title: '已取消选择',
+      icon: 'none'
+    });
+  } else {
+    // 如果未选中，则加入选中列表
+    selectedWorkers.value.push(worker);
+    uni.showToast({
+      title: '已选中',
+      icon: 'success'
+    });
+  }
+};
 
 // 关闭修改弹窗
 const closeModifyDialog = () => {
@@ -771,5 +799,45 @@ const confirmModify = async () => {
   }
 }
 
+.checkbox {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 8rpx;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #999;
+  transition: all 0.2s ease;
+
+  &.checked {
+    background-color: #409eff;
+    color: #fff;
+  }
+}
+
+
+.status-tag {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+
+  &.invited {
+    background-color: #409eff; // 蓝色
+  }
+
+  &.accepted {
+    background-color: #67c23a; // 绿色
+  }
+
+  &.rejected {
+    background-color: #f56c6c; // 红色
+  }
+}
 
 </style>

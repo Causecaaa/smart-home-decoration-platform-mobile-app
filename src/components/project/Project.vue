@@ -49,6 +49,7 @@
         请假
       </button>
 
+
       <button
           class="cancel-leave-btn"
           v-if="hasLeave"
@@ -125,10 +126,11 @@
         <view v-for="worker in allWorkers" :key="worker.userId" class="worker-row">
           <view class="worker-info-container">
             <image
-                :src="worker.avatarUrl || '/static/default-avatar.png'"
+                :src="resolveAvatar(worker.avatarUrl)"
                 class="worker-avatar"
                 mode="aspectFill"
             />
+
             <view class="worker-details">
               <text class="worker-name">姓名：{{ worker.realName }}</text>
               <text class="worker-phone">电话：{{ worker.phone }}</text>
@@ -195,9 +197,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import {cancelLeaveRequest, getWorkerStageCalendar, requestLeave} from '../api/worker'
-import {completeStage} from "../api/stage";
-import {BASE_URL} from "../config/apiConfig";
+import {cancelLeaveRequest, getWorkerStageCalendar, requestLeave} from '../../api/worker'
+import {completeStage} from "../../api/stage";
+import {BASE_URL} from "../../config/apiConfig";
 
 const weeks = ['一', '二', '三', '四', '五', '六', '日']
 const currentDate = ref(new Date())
@@ -212,9 +214,16 @@ const todayStr = new Date().toISOString().slice(0, 10)
 
 
 const canRequestLeave = computed(() => {
-  if (!selectedDate.value) return false
-  return selectedDate.value > todayStr
-})
+  if (!selectedDate.value) return false;
+
+  // 找到当前选中的日期
+  const selectedDay = days.value.find(day => day.date === selectedDate.value);
+
+  // 如果找不到日期或日期不允许请假，则不能请假
+  return selectedDate.value > todayStr && selectedDay?.canLeave;
+});
+
+
 // 图片预览
 const previewImage = (imgUrl) => {
   uni.previewImage({
@@ -307,6 +316,11 @@ const cancelLeave = async () => {
   });
 };
 
+const resolveAvatar = (avatarUrl) => {
+  if (!avatarUrl) return '/static/default-avatar.png';
+  if (avatarUrl.startsWith('http')) return avatarUrl; // 已是完整 URL
+  return BASE_URL + avatarUrl;
+};
 
 const assignments = ref([])
 const days = ref([])
@@ -361,7 +375,7 @@ const loadAssignments = async () => {
   }
 };
 
-const generateDays = (response) => { // 接收 response 参数
+const generateDays = (response) => {
   const [year, month] = currentMonth.value.split('-').map(Number);
   const firstDay = new Date(year, month - 1, 1).getDay();
   const adjustedFirstDay = firstDay === 0 ? 7 : firstDay;
@@ -369,24 +383,30 @@ const generateDays = (response) => { // 接收 response 参数
 
   const result = [];
   for (let i = 1; i < adjustedFirstDay; i++) {
-    result.push({ day: '', date: null, assignments: [], isLeave: false });
+    result.push({ day: '', date: null, assignments: [], isLeave: false, canLeave: true });
   }
 
   for (let i = 1; i <= totalDays; i++) {
     const dateStr = `${currentMonth.value}-${String(i).padStart(2, '0')}`;
     const dailyAssignments = assignments.value.filter(
-        a => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at
+      a => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at
     );
 
     // 检查是否是请假日期
     const isLeave = response?.leaveDays?.includes(dateStr) || false;
+
+    // 检查是否在任务时间内（不可请假）
+    const isInTaskPeriod = assignments.value.some(
+      a => dateStr >= a.expected_Start_at && dateStr <= a.expected_End_at && !a.canLeave
+    );
 
     result.push({
       day: i,
       date: dateStr,
       assignments: dailyAssignments,
       isToday: dateStr === new Date().toISOString().slice(0, 10),
-      isLeave // 标记是否为请假日期
+      isLeave,
+      canLeave: !isInTaskPeriod // 如果在任务时间内且不可请假，则标记为 false
     });
   }
   days.value = result;

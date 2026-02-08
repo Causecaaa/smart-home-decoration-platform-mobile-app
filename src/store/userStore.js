@@ -1,53 +1,62 @@
 import { defineStore } from 'pinia'
-import {validateToken} from "../api/auth";
+import { validateToken } from '../api/auth'
 
 export const useUserStore = defineStore('user', {
     state: () => ({
         token: '',
         user: null,
-        hasTokenChanged: false  // 添加标记
+        worker: null,
     }),
 
     actions: {
         loginSuccess(data) {
             this.token = data.token
             this.user = data.user
+            this.worker = data.worker || null
 
             uni.setStorageSync('token', data.token)
             uni.setStorageSync('user', data.user)
+            uni.setStorageSync('worker', data.worker || null)
         },
 
         logout() {
             this.token = ''
             this.user = null
+            this.worker = null
+
             uni.removeStorageSync('token')
             uni.removeStorageSync('user')
+            uni.removeStorageSync('worker')
+
             uni.reLaunch({ url: '/src/pages/login/login' })
         },
 
         async init() {
             const token = uni.getStorageSync('token')
-            const user = uni.getStorageSync('user')
 
-            if (token) {
-                console.log('init token', token)
-                try {
-                    const res = await validateToken(token)
-                    console.log('success')
-                    this.token = token
-                    this.user = res.user
+            if (!token) return
 
-                } catch (error) {
-                    console.error('Token validation failed:', error)
-                    // 验证失败时登出
-                    this.logout()
-                }
+            try {
+                const res = await validateToken(token)
+
+                this.token = token
+                this.user = res.user
+                this.worker = res.worker || null
+
+                // 同步刷新本地缓存（很重要）
+                uni.setStorageSync('user', res.user)
+                uni.setStorageSync('worker', res.worker || null)
+
+            } catch (error) {
+                console.error('Token validation failed:', error)
+                this.logout()
             }
         },
 
         updateUserInfo(userData) {
             if (this.user) {
                 Object.assign(this.user, userData)
+                uni.setStorageSync('user', this.user)
             }
         }
     }

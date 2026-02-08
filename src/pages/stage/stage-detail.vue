@@ -19,14 +19,24 @@
       <view class="basic-info-section">
         <view class="section-header">
           <text class="section-title">阶段信息</text>
-          <button
-              class="mall-button"
-              @click="goToLaborMarket"
-          >
-            人才市场
-          </button>
+          <view class="button-container">
+            <button
+                class="mall-button"
+                @click="goToLaborMarket"
+                v-if="stageData.decorationType === 'LOOSE'"
+            >
+              人才市场
+            </button>
+            <button
+                class="mall-button"
+                @click="goToMall"
+                v-if="stageData.decorationType === 'LOOSE'"
+            >
+              商城
+            </button>
+          </view>
         </view>
-        <view class="info-grid">
+          <view class="info-grid">
           <view class="info-item">
             <text class="label">主要工种</text>
             <text class="value worker-type">{{ stageData.mainWorkerType }}</text>
@@ -96,12 +106,7 @@
       <view v-if="stageData.recommendedMaterialTypes && stageData.recommendedMaterialTypes.length > 0" class="materials-section">
         <view class="section-header">
           <text class="section-title">推荐完成</text>
-          <button
-              class="mall-button"
-              @click="goToMall"
-          >
-            商城
-          </button>
+
         </view>
         <view class="materials-list">
           <view v-for="(type, index) in stageData.recommendedMaterialTypes" :key="index" class="material-item">
@@ -728,6 +733,7 @@ const handleAcceptStage = async () => {
 .section-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   margin-bottom: 12rpx;
 }
 
@@ -995,6 +1001,21 @@ const handleAcceptStage = async () => {
       background-color: #409eff;
     }
   }
+}
+.section-header .button-container {
+  display: flex;
+  gap: 16rpx; /* 按钮之间的间距 */
+}
+
+.mall-button {
+  font-size: 24rpx;
+  color: #fff;
+  background-color: #409eff;
+  border: none;
+  border-radius: 8rpx;
+  padding: 8rpx 16rpx;
+  cursor: pointer;
+  white-space: nowrap; /* 防止文字换行 */
 }
 
 </style>

@@ -10,8 +10,19 @@
           房屋
         </text>
         <text
+            :class="['toggle-item', viewMode === 'invites' && 'active']"
+            @click="viewMode = 'invites'"
+            v-if="userStore.user.role === 'WORKER' &&
+            userStore.worker &&
+            userStore.worker.isPlatformWorker === 0"
+        >
+          接单
+        </text>
+        <text
             :class="['toggle-item', viewMode === 'project' && 'active']"
             @click="viewMode = 'project'"
+            v-if="userStore.user.role === 'WORKER' &&
+            userStore.worker"
         >
           工程
         </text>
@@ -93,6 +104,9 @@
     <view v-if="viewMode === 'project'">
       <Project/>
     </view>
+    <view v-if="viewMode === 'invites'">
+      <Invites/>
+    </view>
   </view>
 </template>
 
@@ -103,8 +117,10 @@ import { onLoad, onNavigationBarButtonTap, onShow } from '@dcloudio/uni-app'
 
 import homeForm from '../../components/homeForm.vue'
 import { getHousesByUser, deleteHouse } from '../../api/house'
-import Project from '../../components/Project.vue'
+import Project from '../../components/project/Project.vue'
 import {useUserStore} from "../../store/userStore";
+import Invites from "../../components/project/Invites.vue";
+
 
 
 /* ---------------- 状态 ---------------- */

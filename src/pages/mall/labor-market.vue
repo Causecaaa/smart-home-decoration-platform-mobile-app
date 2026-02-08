@@ -25,7 +25,7 @@
           v-if="viewMode === 'list'"
           :stage-id="stageId"
       />
-      <Order v-else-if="viewMode === 'order'" :stage-id="stageId" />
+      <WorkerOrder v-else-if="viewMode === 'order'" :stage-id="stageId" />
     </view>
   </view>
 </template>
@@ -35,6 +35,7 @@ import {ref} from "vue";
 import { onLoad ,onShow} from '@dcloudio/uni-app';
 import Worker from "../../components/mall/Worker.vue";
 import Order from "../../components/mall/Order.vue";
+import WorkerOrder from "../../components/mall/WorkerOrder.vue";
 const viewMode = ref('list');
 const stageId = ref(0);
 

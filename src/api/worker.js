@@ -80,3 +80,28 @@ export function listStageInvites(stageId) {
         method: 'GET'
     });
 }
+
+// 获取当前用户的邀请列表
+export function listWorkerInvites() {
+    return request({
+        url: '/worker/invites',
+        method: 'GET'
+    });
+}
+
+// 响应邀请（接受或拒绝）
+export function respondToInvite(assignmentId, response) {
+    return request({
+        url: `/worker/invites/${assignmentId}/respond`,
+        method: 'POST',
+        data: response // response 应包含 accept 字段（true/false）
+    });
+}
+
+// 获取阶段的工人排序信息
+export function getWorkerOrderByStage(stageId) {
+    return request({
+        url: `/stage/${stageId}/worker-order`,
+        method: 'GET'
+    });
+}
